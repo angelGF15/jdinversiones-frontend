@@ -1,1 +1,34 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Tokens de diseño JDinversiones (Sección 8 del contexto) */
+  --color-primary: #032EDD;
+  --color-blue-50: #EEF2FF;
+  --color-blue-100: #DDE5FF;
+  --color-blue-300: #8EA5FF;
+  --color-blue-500: #032EDD;
+  --color-blue-700: #021F97;
+  --color-blue-900: #010F48;
+
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-info: #06B6D4;
+
+  --color-gray-50: #F8FAFC;
+  --color-gray-100: #F1F5F9;
+  --color-gray-300: #CBD5E1;
+  --color-gray-500: #64748B;
+  --color-gray-700: #334155;
+  --color-gray-900: #0F172A;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Inter', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
