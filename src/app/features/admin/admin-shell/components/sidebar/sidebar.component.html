@@ -1,0 +1,118 @@
+<!-- Mobile Backdrop Overlay -->
+@if (isOpen) {
+  <div
+    class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 md:hidden animate-fade-in"
+    (click)="closeMobile.emit()"
+    aria-hidden="true"
+  ></div>
+}
+
+<!-- Sidebar Drawer Container -->
+<aside
+  class="fixed inset-y-0 left-0 z-50 flex flex-col bg-slate-900 border-r border-slate-800 transition-all duration-300 ease-in-out md:static md:translate-x-0"
+  [class.translate-x-0]="isOpen"
+  [class.-translate-x-full]="!isOpen"
+  [class.w-64]="!isCollapsed"
+  [class.w-20]="isCollapsed"
+  [class.md:w-64]="!isCollapsed"
+  [class.md:w-20]="isCollapsed"
+  aria-label="Navegación principal"
+>
+  <!-- Brand & Logo Header -->
+  <div class="h-16 px-4 flex items-center justify-between border-b border-slate-800 flex-shrink-0">
+    <div class="flex items-center gap-3 overflow-hidden">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-blue-600 to-blue-800 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-primary/20 border border-blue-400/30">
+        <mat-icon class="scale-110">devices</mat-icon>
+      </div>
+
+      @if (!isCollapsed) {
+        <div class="flex flex-col min-w-0">
+          <span class="font-bold text-white text-base tracking-tight truncate">
+            JD Inversiones
+          </span>
+          <span class="text-[11px] font-medium text-slate-400 truncate">
+            Panel Administrativo v2.0
+          </span>
+        </div>
+      }
+    </div>
+
+    <!-- Mobile Close Button -->
+    <button
+      mat-icon-button
+      type="button"
+      class="md:hidden text-slate-400 hover:text-white"
+      (click)="closeMobile.emit()"
+      aria-label="Cerrar menú lateral"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Navigation Menu List -->
+  <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1.5 custom-scrollbar">
+    @if (!isCollapsed) {
+      <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">
+        Módulos Principales
+      </p>
+    }
+
+    @for (item of navItems; track item.route) {
+      <ng-container *hasPermission="item.permission">
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active-nav-link"
+          [routerLinkActiveOptions]="{ exact: item.route === '/admin/dashboard' }"
+          (click)="onNavItemClick()"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-all duration-150 min-h-[44px] group"
+          [attr.title]="isCollapsed ? item.label : null"
+        >
+          <mat-icon class="text-slate-400 group-hover:text-primary transition-colors flex-shrink-0 text-xl">
+            {{ item.icon }}
+          </mat-icon>
+
+          @if (!isCollapsed) {
+            <span class="truncate flex-1">{{ item.label }}</span>
+
+            @if (item.badge) {
+              <span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30">
+                {{ item.badge }}
+              </span>
+            }
+          }
+        </a>
+      </ng-container>
+    }
+  </nav>
+
+  <!-- User Profile & Quick Action Footer -->
+  <div class="p-3 border-t border-slate-800 bg-slate-900/90 flex-shrink-0">
+    <div class="flex items-center gap-3 p-2 rounded-xl bg-slate-800/50 border border-slate-700/40">
+      <div class="w-9 h-9 rounded-xl bg-primary/20 text-primary-300 border border-primary/30 flex items-center justify-center font-bold text-xs flex-shrink-0">
+        {{ authState.fullName().substring(0, 2).toUpperCase() || 'JD' }}
+      </div>
+
+      @if (!isCollapsed) {
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-semibold text-white truncate">
+            {{ authState.fullName() || 'Usuario del Sistema' }}
+          </p>
+          <span class="inline-block px-1.5 py-0.2 text-[10px] font-medium text-emerald-400 bg-emerald-500/10 rounded">
+            {{ authState.roles()[0] || 'Personal' }}
+          </span>
+        </div>
+
+        <button
+          mat-icon-button
+          type="button"
+          (click)="onLogout()"
+          class="text-slate-400 hover:text-danger transition-colors flex-shrink-0"
+          aria-label="Cerrar sesión"
+          title="Cerrar sesión"
+        >
+          <mat-icon class="text-lg">logout</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+</aside>

@@ -1,0 +1,76 @@
+:host {
+  display: block;
+}
+
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInCard 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ==========================================================================
+   MDC Mat Form Field Styling for Dark Tech Surface
+   ========================================================================== */
+
+::ng-deep .custom-mat-field .mat-mdc-text-field-wrapper {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  border-radius: 0.75rem !important;
+  transition: all 0.2s ease-in-out;
+}
+
+::ng-deep .custom-mat-field .mdc-notched-outline__leading,
+::ng-deep .custom-mat-field .mdc-notched-outline__notch,
+::ng-deep .custom-mat-field .mdc-notched-outline__trailing {
+  border-color: rgba(71, 85, 105, 0.5) !important;
+  border-width: 1px !important;
+}
+
+::ng-deep .custom-mat-field:hover .mdc-notched-outline__leading,
+::ng-deep .custom-mat-field:hover .mdc-notched-outline__notch,
+::ng-deep .custom-mat-field:hover .mdc-notched-outline__trailing {
+  border-color: rgba(142, 165, 255, 0.6) !important;
+}
+
+::ng-deep .custom-mat-field.mat-focused .mdc-notched-outline__leading,
+::ng-deep .custom-mat-field.mat-focused .mdc-notched-outline__notch,
+::ng-deep .custom-mat-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: #032edd !important;
+  border-width: 2px !important;
+}
+
+::ng-deep .custom-mat-field .mat-mdc-input-element {
+  color: #f8fafc !important;
+  font-size: 0.95rem;
+}
+
+::ng-deep .custom-mat-field .mat-mdc-input-element::placeholder {
+  color: #64748b !important;
+}
+
+::ng-deep .custom-mat-field .mat-mdc-form-field-subscript-wrapper {
+  padding-left: 0.25rem !important;
+  margin-top: 0.25rem !important;
+}
+
+::ng-deep .custom-mat-field .mat-mdc-form-field-error {
+  color: #ef4444 !important;
+  font-size: 0.75rem !important;
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

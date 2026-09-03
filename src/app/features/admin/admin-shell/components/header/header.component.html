@@ -1,0 +1,86 @@
+<header class="h-16 px-4 md:px-6 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md flex items-center justify-between sticky top-0 z-30">
+  <!-- Left Side: Controls & Telemetry -->
+  <div class="flex items-center gap-3">
+    <!-- Mobile Hamburger Toggle -->
+    <button
+      mat-icon-button
+      type="button"
+      class="md:hidden text-slate-300 hover:text-white"
+      (click)="toggleMobileMenu.emit()"
+      aria-label="Abrir menú de navegación"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <!-- Desktop Sidebar Collapse Toggle -->
+    <button
+      mat-icon-button
+      type="button"
+      class="hidden md:inline-flex text-slate-400 hover:text-white transition-colors"
+      (click)="toggleSidebarCollapse.emit()"
+      [attr.aria-label]="isSidebarCollapsed ? 'Expandir barra lateral' : 'Contraer barra lateral'"
+      [title]="isSidebarCollapsed ? 'Expandir barra lateral' : 'Contraer barra lateral'"
+    >
+      <mat-icon>{{ isSidebarCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
+    </button>
+
+    <!-- Telemetry Status Signal (UI/UX Pro Max trust signal) -->
+    <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs font-medium text-slate-300">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      </span>
+      <span>Sistema Operativo • SSL Activo</span>
+    </div>
+  </div>
+
+  <!-- Right Side: Quick Tools & User Menu -->
+  <div class="flex items-center gap-2">
+    <!-- User Menu Button -->
+    <button
+      [matMenuTriggerFor]="userMenu"
+      type="button"
+      class="flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-xl hover:bg-slate-800/80 border border-transparent hover:border-slate-700/60 transition-all duration-150 text-left group"
+      aria-label="Menú de cuenta de usuario"
+    >
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0">
+        {{ authState.fullName().substring(0, 2).toUpperCase() || 'JD' }}
+      </div>
+
+      <div class="hidden md:flex flex-col min-w-0 pr-1">
+        <span class="text-xs font-semibold text-white leading-tight truncate">
+          {{ authState.fullName() || 'Usuario del Sistema' }}
+        </span>
+        <span class="text-[10px] text-slate-400 leading-tight truncate">
+          {{ authState.userEmail() || 'usuario@jdinversiones.hn' }}
+        </span>
+      </div>
+
+      <mat-icon class="text-slate-400 group-hover:text-white transition-colors text-base hidden sm:inline-block">
+        keyboard_arrow_down
+      </mat-icon>
+    </button>
+
+    <!-- User Dropdown Menu -->
+    <mat-menu #userMenu="matMenu" class="custom-user-menu" xPosition="before">
+      <div class="px-4 py-3 border-b border-slate-800">
+        <p class="text-sm font-semibold text-white">
+          {{ authState.fullName() || 'Usuario del Sistema' }}
+        </p>
+        <p class="text-xs text-slate-400 truncate">
+          {{ authState.userEmail() }}
+        </p>
+        <div class="mt-2 flex items-center gap-1.5">
+          <span class="px-2 py-0.5 text-[10px] font-medium bg-primary/20 text-blue-300 border border-primary/30 rounded">
+            Rol: {{ authState.roles()[0] || 'Personal' }}
+          </span>
+        </div>
+      </div>
+
+      <button mat-menu-item (click)="onLogout()" class="text-danger flex items-center gap-2">
+        <mat-icon class="text-danger mr-2">logout</mat-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </mat-menu>
+  </div>
+</header>

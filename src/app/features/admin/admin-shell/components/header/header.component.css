@@ -1,0 +1,29 @@
+:host {
+  display: block;
+}
+
+::ng-deep .custom-user-menu.mat-mdc-menu-panel {
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+  border-radius: 0.75rem !important;
+  min-width: 220px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+::ng-deep .custom-user-menu .mat-mdc-menu-item {
+  color: #cbd5e1 !important;
+  font-size: 0.875rem !important;
+}
+
+::ng-deep .custom-user-menu .mat-mdc-menu-item:hover {
+  background-color: rgba(51, 65, 85, 0.5) !important;
+  color: #ffffff !important;
+}
+
+::ng-deep .custom-user-menu .mat-mdc-menu-item.text-danger {
+  color: #ef4444 !important;
+}
+
+::ng-deep .custom-user-menu .mat-mdc-menu-item.text-danger:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}

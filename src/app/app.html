@@ -1,1 +1,7 @@
+@if (loadingService.isLoading()) {
+  <app-global-skeleton-loader
+    [variant]="loadingService.variant()"
+    [message]="loadingService.message()"
+  />
+}
 <router-outlet />
