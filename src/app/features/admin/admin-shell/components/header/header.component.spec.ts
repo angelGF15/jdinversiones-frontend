@@ -3,6 +3,7 @@ import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { HeaderComponent } from './header.component';
 import { AuthState } from '../../../../../core/auth/auth.state';
+import { ThemeService } from '../../../../../core/services/theme.service';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -50,5 +51,15 @@ describe('HeaderComponent', () => {
     spyOn(component.logoutTriggered, 'emit');
     component.onLogout();
     expect(component.logoutTriggered.emit).toHaveBeenCalled();
+  });
+
+  it('debe alternar el tema al pulsar el botón de cambio de tema', () => {
+    const themeService = TestBed.inject(ThemeService);
+    spyOn(themeService, 'toggleTheme');
+
+    const themeButton = fixture.nativeElement.querySelector('.theme-toggle-btn');
+    themeButton.click();
+
+    expect(themeService.toggleTheme).toHaveBeenCalled();
   });
 });

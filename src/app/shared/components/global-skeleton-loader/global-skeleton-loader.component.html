@@ -8,56 +8,60 @@
 
   <!-- ================= VARIANT: LOGIN ================= -->
   @if (variant === 'login') {
-    <div class="min-h-screen bg-tech-pattern flex flex-col justify-center items-center px-4 py-8 relative overflow-hidden">
-      <!-- Ambient Glow Blobs -->
-      <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="w-full max-w-md bg-slate-900/80 border border-slate-700/50 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl relative z-10 animate-fade-in">
-        <!-- Brand & Header Skeleton -->
-        <div class="flex flex-col items-center text-center mb-8">
-          <div class="w-14 h-14 rounded-2xl skeleton-shimmer mb-4 border border-slate-700/50"></div>
-          <div class="h-6 w-48 rounded-lg skeleton-shimmer mb-2"></div>
-          <div class="h-4 w-64 rounded-md skeleton-shimmer"></div>
-        </div>
-
-        <!-- Form Fields Skeleton -->
-        <div class="space-y-5">
-          <!-- Email input skeleton -->
-          <div>
-            <div class="h-4 w-28 rounded skeleton-shimmer mb-2"></div>
-            <div class="h-12 w-full rounded-xl skeleton-shimmer border border-slate-800"></div>
-          </div>
-
-          <!-- Password input skeleton -->
-          <div>
-            <div class="flex justify-between items-center mb-2">
-              <div class="h-4 w-24 rounded skeleton-shimmer"></div>
-            </div>
-            <div class="h-12 w-full rounded-xl skeleton-shimmer border border-slate-800"></div>
-          </div>
-
-          <!-- Submit Button skeleton -->
-          <div class="pt-2">
-            <div class="h-12 w-full rounded-xl skeleton-shimmer bg-primary/30 border border-primary/40"></div>
+    <div class="skeleton-login-wrapper bg-tech-pattern-light">
+      <!-- Top Header Skeleton -->
+      <div class="skeleton-login-navbar">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full skeleton-shimmer-light"></div>
+          <div class="space-y-1.5">
+            <div class="h-4 w-32 rounded skeleton-shimmer-light"></div>
+            <div class="h-2.5 w-24 rounded skeleton-shimmer-light"></div>
           </div>
         </div>
-
-        <!-- Security Pill Badge skeleton -->
-        <div class="mt-8 flex justify-center">
-          <div class="h-6 w-52 rounded-full skeleton-shimmer border border-slate-800"></div>
-        </div>
+        <div class="h-6 w-32 rounded-full skeleton-shimmer-light"></div>
       </div>
 
-      <!-- Footer system info skeleton -->
-      <div class="mt-6 h-3 w-40 rounded skeleton-shimmer opacity-40"></div>
+      <!-- Main Split Card Skeleton -->
+      <div class="skeleton-login-card-area">
+        <div class="skeleton-login-card max-w-4xl">
+          <!-- Left Panel Skeleton -->
+          <div class="skeleton-login-hero">
+            <div class="w-32 h-32 rounded-full skeleton-shimmer-light"></div>
+            <div class="h-6 w-40 rounded skeleton-shimmer-light"></div>
+            <div class="h-3 w-28 rounded skeleton-shimmer-light"></div>
+            <div class="h-5 w-36 rounded-full skeleton-shimmer-light"></div>
+          </div>
+
+          <!-- Right Panel Skeleton -->
+          <div class="skeleton-login-form">
+            <div class="h-5 w-48 rounded-full skeleton-shimmer-light mb-2"></div>
+            <div class="h-8 w-48 rounded-lg skeleton-shimmer-light"></div>
+            <div class="h-4 w-64 rounded skeleton-shimmer-light mb-4"></div>
+
+            <div class="space-y-4">
+              <div>
+                <div class="h-3.5 w-28 rounded skeleton-shimmer-light mb-2"></div>
+                <div class="h-12 w-full rounded-xl skeleton-shimmer-light"></div>
+              </div>
+              <div>
+                <div class="h-3.5 w-24 rounded skeleton-shimmer-light mb-2"></div>
+                <div class="h-12 w-full rounded-xl skeleton-shimmer-light"></div>
+              </div>
+              <div class="pt-2">
+                <div class="h-12 w-full rounded-xl skeleton-shimmer-light bg-primary/20"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   }
 
   <!-- ================= VARIANT: ADMIN ================= -->
   @else if (variant === 'admin') {
-    <div class="min-h-screen bg-slate-950 flex flex-col md:flex-row animate-fade-in">
+    <div class="skeleton-admin-wrapper">
       <!-- Sidebar Skeleton (desktop) -->
-      <aside class="hidden md:flex flex-col w-64 bg-slate-900 border-r border-slate-800 p-4 space-y-6">
+      <aside class="skeleton-admin-sidebar">
         <div class="flex items-center gap-3 px-2 py-3">
           <div class="w-10 h-10 rounded-xl skeleton-shimmer"></div>
           <div class="h-5 w-32 rounded skeleton-shimmer"></div>
@@ -71,9 +75,9 @@
       </aside>
 
       <!-- Main Shell Skeleton -->
-      <div class="flex-1 flex flex-col">
+      <div class="skeleton-admin-shell">
         <!-- Header Skeleton -->
-        <header class="h-16 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between">
+        <header class="skeleton-admin-header">
           <div class="h-8 w-60 rounded-lg skeleton-shimmer"></div>
           <div class="flex items-center gap-4">
             <div class="w-9 h-9 rounded-full skeleton-shimmer"></div>
@@ -82,7 +86,7 @@
         </header>
 
         <!-- Content Area Skeleton -->
-        <main class="p-6 space-y-6 flex-1">
+        <main class="skeleton-admin-main">
           <!-- Page Title & Actions -->
           <div class="flex justify-between items-center">
             <div class="space-y-2">
@@ -93,9 +97,9 @@
           </div>
 
           <!-- KPI Cards Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="skeleton-admin-kpis">
             @for (card of [1, 2, 3, 4]; track card) {
-              <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+              <div class="skeleton-admin-kpi-card">
                 <div class="flex justify-between items-center">
                   <div class="h-4 w-24 rounded skeleton-shimmer"></div>
                   <div class="w-8 h-8 rounded-lg skeleton-shimmer"></div>
@@ -107,7 +111,7 @@
           </div>
 
           <!-- Main Table / Chart Placeholder -->
-          <div class="p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-4">
+          <div class="skeleton-admin-panel">
             <div class="h-6 w-40 rounded skeleton-shimmer"></div>
             <div class="space-y-3 pt-2">
               @for (row of [1, 2, 3, 4, 5]; track row) {

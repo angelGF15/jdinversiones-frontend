@@ -6,6 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 
 import { AuthState } from '../../../../../core/auth/auth.state';
+import { ThemeService } from '../../../../../core/services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -23,6 +24,7 @@ import { AuthState } from '../../../../../core/auth/auth.state';
 })
 export class HeaderComponent {
   public readonly authState = inject(AuthState);
+  public readonly themeService = inject(ThemeService);
 
   @Input() isSidebarCollapsed = false;
 

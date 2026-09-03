@@ -34,10 +34,10 @@ describe('GlobalSkeletonLoaderComponent', () => {
     fixture.componentRef.setInput('variant', 'login');
     fixture.detectChanges();
 
-    const techPattern = fixture.nativeElement.querySelector('.bg-tech-pattern');
+    const techPattern = fixture.nativeElement.querySelector('.bg-tech-pattern-light');
     expect(techPattern).toBeTruthy();
 
-    const card = fixture.nativeElement.querySelector('.max-w-md');
+    const card = fixture.nativeElement.querySelector('.max-w-4xl');
     expect(card).toBeTruthy();
   });
 

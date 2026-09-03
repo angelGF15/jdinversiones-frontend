@@ -1,163 +1,234 @@
-<div class="min-h-screen bg-tech-pattern flex flex-col justify-center items-center px-4 py-8 relative overflow-hidden select-none">
-  <!-- Dynamic Ambient Lighting Blobs -->
-  <div class="absolute top-1/6 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-gradient-to-br from-primary/25 via-blue-600/15 to-transparent rounded-full blur-3xl pointer-events-none"></div>
-  <div class="absolute bottom-12 right-12 w-80 h-80 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-  <!-- Main Login Card Container -->
-  <div class="w-full max-w-md bg-slate-900/90 border border-slate-700/60 backdrop-blur-2xl rounded-3xl p-6 sm:p-9 shadow-2xl shadow-black/80 relative z-10 animate-fade-in login-card-glow">
-    <!-- Official Brand Header -->
-    <header class="flex flex-col items-center text-center mb-6">
-      <!-- Official SVG Emblem -->
-      <div class="relative group mb-3">
-        <div class="absolute -inset-2 bg-gradient-to-r from-blue-600 to-primary rounded-full blur-lg opacity-40 group-hover:opacity-75 transition duration-500"></div>
-        <img
-          src="logo.png"
-          alt="JD Inversiones — Tienda y Centro Técnico"
-          class="relative w-28 h-28 sm:w-32 sm:h-32 object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300"
-        />
-      </div>
-
-      <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase">
-        JD Inversiones
-      </h1>
-      <p class="text-xs sm:text-sm font-semibold text-blue-400 uppercase tracking-widest mt-0.5">
-        Tienda y Centro Técnico
-      </p>
-
-      <!-- Security Status Pill (Trust Signal) -->
-      <div class="inline-flex items-center gap-2 mt-3.5 px-3.5 py-1 rounded-full bg-slate-800/90 border border-slate-700/80 text-[11px] font-medium text-slate-300 shadow-inner">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+<div class="login-page-container">
+  <!-- Top Institutional Minimalist Navbar -->
+  <header class="login-navbar">
+    <div class="login-navbar-brand">
+      <img
+        src="logo.png"
+        alt="JD Inversiones Logo"
+        class="login-navbar-logo"
+      />
+      <div class="flex flex-col">
+        <span class="login-navbar-title">
+          JD Inversiones
         </span>
-        <span>Acceso Corporativo • SSL • RBAC v2.0</span>
+        <span class="login-navbar-subtitle">
+          Tienda y Centro Técnico
+        </span>
       </div>
-    </header>
-
-    <!-- Error Alert Banner (WCAG Accessible) -->
-    @if (errorMessage()) {
-      <div
-        role="alert"
-        aria-live="assertive"
-        class="mb-5 p-3.5 rounded-xl bg-danger/10 border border-danger/40 text-danger-50 flex items-start gap-3 animate-fade-in"
-      >
-        <mat-icon class="text-danger flex-shrink-0 mt-0.5">
-          @if (errorType() === 'rate-limit') { schedule }
-          @else if (errorType() === 'suspended') { block }
-          @else if (errorType() === 'network') { wifi_off }
-          @else { error_outline }
-        </mat-icon>
-        <div class="text-sm leading-snug">
-          <p class="font-semibold text-white mb-0.5 text-xs">
-            @if (errorType() === 'rate-limit') { Límite de intentos alcanzado }
-            @else if (errorType() === 'suspended') { Cuenta no disponible }
-            @else if (errorType() === 'credentials') { Error de autenticación }
-            @else { Atención }
-          </p>
-          <p class="text-slate-300 text-xs">{{ errorMessage() }}</p>
-        </div>
-      </div>
-    }
-
-    <!-- Reactive Login Form -->
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate class="space-y-4">
-      <!-- Email Field -->
-      <div class="space-y-1">
-        <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
-          Correo Electrónico
-        </label>
-        <mat-form-field appearance="outline" class="w-full custom-mat-field">
-          <mat-icon matPrefix class="text-slate-400 mr-2 text-xl">mail_outline</mat-icon>
-          <input
-            matInput
-            id="email"
-            type="email"
-            formControlName="email"
-            autocomplete="username email"
-            placeholder="usuario@jdinversiones.hn"
-            required
-          />
-          @if (loginForm.controls.email.hasError('required') && loginForm.controls.email.touched) {
-            <mat-error>El correo electrónico es obligatorio.</mat-error>
-          }
-          @if (loginForm.controls.email.hasError('email') && loginForm.controls.email.touched) {
-            <mat-error>Ingresa un correo electrónico válido.</mat-error>
-          }
-        </mat-form-field>
-      </div>
-
-      <!-- Password Field -->
-      <div class="space-y-1">
-        <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
-          Contraseña
-        </label>
-        <mat-form-field appearance="outline" class="w-full custom-mat-field">
-          <mat-icon matPrefix class="text-slate-400 mr-2 text-xl">lock_outline</mat-icon>
-          <input
-            matInput
-            id="password"
-            [type]="hidePassword() ? 'password' : 'text'"
-            formControlName="password"
-            autocomplete="current-password"
-            placeholder="••••••••"
-            required
-          />
-          <button
-            mat-icon-button
-            matSuffix
-            type="button"
-            (click)="togglePasswordVisibility()"
-            [attr.aria-label]="hidePassword() ? 'Mostrar contraseña' : 'Ocultar contraseña'"
-            class="text-slate-400 hover:text-white transition-colors"
-          >
-            <mat-icon class="text-xl">
-              {{ hidePassword() ? 'visibility_off' : 'visibility' }}
-            </mat-icon>
-          </button>
-          @if (loginForm.controls.password.hasError('required') && loginForm.controls.password.touched) {
-            <mat-error>La contraseña es obligatoria.</mat-error>
-          }
-          @if (loginForm.controls.password.hasError('minlength') && loginForm.controls.password.touched) {
-            <mat-error>La contraseña debe tener al menos 8 caracteres.</mat-error>
-          }
-        </mat-form-field>
-      </div>
-
-      <!-- Submit Button -->
-      <div class="pt-2">
-        <button
-          mat-flat-button
-          color="primary"
-          type="submit"
-          [disabled]="isSubmitting() || loginForm.invalid"
-          [attr.aria-busy]="isSubmitting()"
-          class="w-full h-12 rounded-xl text-base font-semibold shadow-lg shadow-primary/30 hover:shadow-primary/50 active:scale-[0.99] transition-all duration-200"
-        >
-          @if (isSubmitting()) {
-            <span class="inline-flex items-center justify-center gap-2">
-              <mat-spinner diameter="20"></mat-spinner>
-              <span>Verificando credenciales...</span>
-            </span>
-          } @else {
-            <span class="inline-flex items-center justify-center gap-2">
-              <mat-icon>login</mat-icon>
-              <span>Ingresar al Panel</span>
-            </span>
-          }
-        </button>
-      </div>
-    </form>
-
-    <!-- Security Footnote -->
-    <div class="mt-7 pt-4 border-t border-slate-800/80 text-center">
-      <p class="text-xs text-slate-500">
-        Acceso restringido únicamente a personal autorizado con permisos RBAC activos.
-      </p>
     </div>
-  </div>
 
-  <!-- Copyright / System Version Footer -->
-  <footer class="mt-6 text-center text-xs text-slate-500 relative z-10">
-    <p>JD Inversiones © 2026 • Tienda y Centro Técnico • Plataforma de Gestión</p>
-  </footer>
+    <!-- Security & Official Portal Indicator -->
+    <div class="login-navbar-status">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      </span>
+      <span class="hidden sm:inline font-semibold text-slate-700">Portal Oficial</span>
+      <span class="text-slate-300 hidden sm:inline">•</span>
+      <span class="text-[11px] text-slate-500">Conexión SSL</span>
+    </div>
+  </header>
+
+  <!-- Main Center Area -->
+  <main class="login-main-area">
+    <!-- Ambient Blue/Cyan Lighting Blobs -->
+    <div class="login-ambient-blob-1"></div>
+    <div class="login-ambient-blob-2"></div>
+
+    <!-- Main Split-Card Container -->
+    <div class="login-split-card">
+      
+      <!-- ============================================== -->
+      <!-- LEFT PANEL: BRAND & HERO TECHNOLOGICAL PANEL   -->
+      <!-- ============================================== -->
+      <aside class="login-hero-panel">
+        <!-- Subtle Circuit Glow Overlay Background -->
+        <div class="login-hero-glow-1"></div>
+        <div class="login-hero-glow-2"></div>
+
+        <!-- Top alignment placeholder -->
+        <div class="hidden md:block"></div>
+
+        <!-- Center Brand Content -->
+        <div class="login-hero-content">
+          <!-- Circular Badge with Official Logo -->
+          <div class="login-logo-badge">
+            <img
+              src="logo.png"
+              alt="JD Inversiones — Tienda y Centro Técnico"
+              class="w-full h-full object-contain rounded-full"
+            />
+          </div>
+
+          <h2 class="login-hero-title">
+            JD Inversiones
+          </h2>
+          <p class="login-hero-subtitle">
+            Tienda y Centro Técnico
+          </p>
+
+          <div class="login-hero-divider"></div>
+
+          <span class="login-hero-tag">
+            #TecnologíaEHonduras
+          </span>
+
+          <!-- Slogan / Description -->
+          <div class="space-y-1 max-w-xs">
+            <p class="font-bold text-sm text-white">Gestión comercial.</p>
+            <p class="text-xs text-blue-100/85 leading-relaxed">
+              Plataforma administrativa integral de inventario, ventas y facturación.
+            </p>
+          </div>
+        </div>
+
+        <div class="login-hero-footer-note">
+          <span>Versión 2.0 • Sistema Seguro</span>
+        </div>
+      </aside>
+
+      <!-- ============================================== -->
+      <!-- RIGHT PANEL: LUMINOUS FORM PANEL               -->
+      <!-- ============================================== -->
+      <section class="login-form-panel">
+        <!-- Form Header -->
+        <div class="mb-6">
+          <div class="login-portal-badge">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+            <span>PORTAL DE GESTIÓN ADMINISTRATIVA</span>
+          </div>
+
+          <h1 class="login-form-title">
+            Iniciar Sesión
+          </h1>
+          <p class="login-form-subtitle">
+            Ingresa tus credenciales para acceder a la plataforma.
+          </p>
+        </div>
+
+        <!-- Error Alert Banner -->
+        @if (errorMessage()) {
+          <div
+            role="alert"
+            aria-live="assertive"
+            class="login-error-alert"
+          >
+            <mat-icon class="text-red-500 flex-shrink-0 mt-0.5">
+              @if (errorType() === 'rate-limit') { schedule }
+              @else if (errorType() === 'suspended') { block }
+              @else if (errorType() === 'network') { wifi_off }
+              @else { error_outline }
+            </mat-icon>
+            <div class="text-sm leading-snug">
+              <p class="font-semibold text-red-900 mb-0.5 text-xs">
+                @if (errorType() === 'rate-limit') { Límite de intentos alcanzado }
+                @else if (errorType() === 'suspended') { Cuenta no disponible }
+                @else if (errorType() === 'credentials') { Error de autenticación }
+                @else { Atención }
+              </p>
+              <p class="text-red-700 text-xs">{{ errorMessage() }}</p>
+            </div>
+          </div>
+        }
+
+        <!-- Reactive Login Form -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate class="space-y-4">
+          <!-- Email Field -->
+          <div class="space-y-1">
+            <label for="email" class="login-field-label">
+              Correo Electrónico
+            </label>
+            <mat-form-field appearance="outline" class="w-full custom-mat-field-light">
+              <mat-icon matPrefix class="text-slate-400 mr-2 text-xl">mail_outline</mat-icon>
+              <input
+                matInput
+                id="email"
+                type="email"
+                formControlName="email"
+                autocomplete="username email"
+                placeholder="usuario@jdinversiones.hn"
+                required
+              />
+              @if (loginForm.controls.email.hasError('required') && loginForm.controls.email.touched) {
+                <mat-error>El correo electrónico es obligatorio.</mat-error>
+              }
+              @if (loginForm.controls.email.hasError('email') && loginForm.controls.email.touched) {
+                <mat-error>Ingresa un correo electrónico válido.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Password Field -->
+          <div class="space-y-1">
+            <label for="password" class="login-field-label">
+              Contraseña
+            </label>
+            <mat-form-field appearance="outline" class="w-full custom-mat-field-light">
+              <mat-icon matPrefix class="text-slate-400 mr-2 text-xl">lock_outline</mat-icon>
+              <input
+                matInput
+                id="password"
+                [type]="hidePassword() ? 'password' : 'text'"
+                formControlName="password"
+                autocomplete="current-password"
+                placeholder="••••••••"
+                required
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="hidePassword() ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+                class="text-slate-400 hover:text-slate-700 transition-colors"
+              >
+                <mat-icon class="text-xl">
+                  {{ hidePassword() ? 'visibility_off' : 'visibility' }}
+                </mat-icon>
+              </button>
+              @if (loginForm.controls.password.hasError('required') && loginForm.controls.password.touched) {
+                <mat-error>La contraseña es obligatoria.</mat-error>
+              }
+              @if (loginForm.controls.password.hasError('minlength') && loginForm.controls.password.touched) {
+                <mat-error>La contraseña debe tener al menos 8 caracteres.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-3">
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="isSubmitting() || loginForm.invalid"
+              [attr.aria-busy]="isSubmitting()"
+              class="login-submit-button"
+            >
+              @if (isSubmitting()) {
+                <span class="inline-flex items-center justify-center gap-2">
+                  <mat-spinner diameter="20"></mat-spinner>
+                  <span>Verificando credenciales...</span>
+                </span>
+              } @else {
+                <span class="inline-flex items-center justify-center gap-2">
+                  <mat-icon>login</mat-icon>
+                  <span>Ingresar al Panel</span>
+                </span>
+              }
+            </button>
+          </div>
+        </form>
+
+        <div class="login-help-footnote">
+          <p>¿Tienes problemas para ingresar? Contacta al administrador del sistema.</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom Page Footer -->
+    <footer class="login-page-footer">
+      <p>JD Inversiones © 2026 • Tienda y Centro Técnico • Plataforma de Gestión Comercial</p>
+    </footer>
+  </main>
 </div>
