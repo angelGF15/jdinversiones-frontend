@@ -21,17 +21,19 @@
   <!-- Brand & Logo Header -->
   <div class="h-16 px-4 flex items-center justify-between border-b border-slate-800 flex-shrink-0">
     <div class="flex items-center gap-3 overflow-hidden">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-blue-600 to-blue-800 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-primary/20 border border-blue-400/30">
-        <mat-icon class="scale-110">devices</mat-icon>
-      </div>
+      <img
+        src="logo.png"
+        alt="Logo JD Inversiones"
+        class="w-10 h-10 object-contain flex-shrink-0 drop-shadow-md rounded-full hover:scale-105 transition-transform"
+      />
 
       @if (!isCollapsed) {
         <div class="flex flex-col min-w-0">
-          <span class="font-bold text-white text-base tracking-tight truncate">
+          <span class="font-black text-white text-sm tracking-tight truncate uppercase">
             JD Inversiones
           </span>
-          <span class="text-[11px] font-medium text-slate-400 truncate">
-            Panel Administrativo v2.0
+          <span class="text-[10px] font-medium text-blue-400 truncate tracking-wide">
+            Tienda y Centro Técnico
           </span>
         </div>
       }

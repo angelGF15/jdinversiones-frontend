@@ -1,30 +1,36 @@
 <div class="min-h-screen bg-tech-pattern flex flex-col justify-center items-center px-4 py-8 relative overflow-hidden select-none">
-  <!-- Radial Ambient Lighting Blobs -->
-  <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
-  <div class="absolute bottom-10 right-10 w-72 h-72 bg-blue-700/10 rounded-full blur-2xl pointer-events-none"></div>
+  <!-- Dynamic Ambient Lighting Blobs -->
+  <div class="absolute top-1/6 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-gradient-to-br from-primary/25 via-blue-600/15 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-12 right-12 w-80 h-80 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
   <!-- Main Login Card Container -->
-  <div class="w-full max-w-md bg-slate-900/85 border border-slate-700/60 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl relative z-10 animate-fade-in">
-    <!-- Brand Header -->
+  <div class="w-full max-w-md bg-slate-900/90 border border-slate-700/60 backdrop-blur-2xl rounded-3xl p-6 sm:p-9 shadow-2xl shadow-black/80 relative z-10 animate-fade-in login-card-glow">
+    <!-- Official Brand Header -->
     <header class="flex flex-col items-center text-center mb-6">
-      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary via-blue-600 to-blue-800 text-white flex items-center justify-center shadow-lg shadow-primary/30 mb-4 border border-blue-400/30">
-        <mat-icon class="text-3xl leading-none scale-125">admin_panel_settings</mat-icon>
+      <!-- Official SVG Emblem -->
+      <div class="relative group mb-3">
+        <div class="absolute -inset-2 bg-gradient-to-r from-blue-600 to-primary rounded-full blur-lg opacity-40 group-hover:opacity-75 transition duration-500"></div>
+        <img
+          src="logo.png"
+          alt="JD Inversiones — Tienda y Centro Técnico"
+          class="relative w-28 h-28 sm:w-32 sm:h-32 object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300"
+        />
       </div>
 
-      <h1 class="text-2xl font-bold tracking-tight text-white mb-1">
-        Panel Administrativo
+      <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase">
+        JD Inversiones
       </h1>
-      <p class="text-sm text-slate-400 max-w-xs">
-        JD Inversiones • Gestión comercial e inventario
+      <p class="text-xs sm:text-sm font-semibold text-blue-400 uppercase tracking-widest mt-0.5">
+        Tienda y Centro Técnico
       </p>
 
-      <!-- Security Status Pill (Live Telemetry & Trust Signal) -->
-      <div class="inline-flex items-center gap-2 mt-3 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/80 text-xs font-medium text-slate-300">
+      <!-- Security Status Pill (Trust Signal) -->
+      <div class="inline-flex items-center gap-2 mt-3.5 px-3.5 py-1 rounded-full bg-slate-800/90 border border-slate-700/80 text-[11px] font-medium text-slate-300 shadow-inner">
         <span class="relative flex h-2 w-2">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
         </span>
-        <span>Conexión Segura SSL • RBAC v2.0</span>
+        <span>Acceso Corporativo • SSL • RBAC v2.0</span>
       </div>
     </header>
 
@@ -33,7 +39,7 @@
       <div
         role="alert"
         aria-live="assertive"
-        class="mb-6 p-4 rounded-xl bg-danger/10 border border-danger/40 text-danger-50 flex items-start gap-3 animate-fade-in"
+        class="mb-5 p-3.5 rounded-xl bg-danger/10 border border-danger/40 text-danger-50 flex items-start gap-3 animate-fade-in"
       >
         <mat-icon class="text-danger flex-shrink-0 mt-0.5">
           @if (errorType() === 'rate-limit') { schedule }
@@ -42,7 +48,7 @@
           @else { error_outline }
         </mat-icon>
         <div class="text-sm leading-snug">
-          <p class="font-semibold text-white mb-0.5">
+          <p class="font-semibold text-white mb-0.5 text-xs">
             @if (errorType() === 'rate-limit') { Límite de intentos alcanzado }
             @else if (errorType() === 'suspended') { Cuenta no disponible }
             @else if (errorType() === 'credentials') { Error de autenticación }
@@ -125,7 +131,7 @@
           type="submit"
           [disabled]="isSubmitting() || loginForm.invalid"
           [attr.aria-busy]="isSubmitting()"
-          class="w-full h-12 rounded-xl text-base font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 active:scale-[0.99] transition-all duration-200"
+          class="w-full h-12 rounded-xl text-base font-semibold shadow-lg shadow-primary/30 hover:shadow-primary/50 active:scale-[0.99] transition-all duration-200"
         >
           @if (isSubmitting()) {
             <span class="inline-flex items-center justify-center gap-2">
@@ -142,8 +148,8 @@
       </div>
     </form>
 
-    <!-- Security & Protection Footnote -->
-    <div class="mt-8 pt-4 border-t border-slate-800/80 text-center">
+    <!-- Security Footnote -->
+    <div class="mt-7 pt-4 border-t border-slate-800/80 text-center">
       <p class="text-xs text-slate-500">
         Acceso restringido únicamente a personal autorizado con permisos RBAC activos.
       </p>
@@ -152,6 +158,6 @@
 
   <!-- Copyright / System Version Footer -->
   <footer class="mt-6 text-center text-xs text-slate-500 relative z-10">
-    <p>JD Inversiones © 2026 • Plataforma de Gestión Comercial</p>
+    <p>JD Inversiones © 2026 • Tienda y Centro Técnico • Plataforma de Gestión</p>
   </footer>
 </div>
