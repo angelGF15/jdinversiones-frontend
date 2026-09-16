@@ -1,0 +1,234 @@
+<!-- Mobile Backdrop Overlay -->
+@if (isOpen) {
+  <div
+    class="sidebar-mobile-backdrop"
+    (click)="closeMobile.emit()"
+    aria-hidden="true"
+  ></div>
+}
+
+<!-- Sidebar Drawer Container -->
+<aside
+  class="sidebar-drawer"
+  [class.translate-x-0]="isOpen"
+  [class.-translate-x-full]="!isOpen"
+  [class.w-64]="!isCollapsed"
+  [class.w-20]="isCollapsed"
+  [class.md:w-64]="!isCollapsed"
+  [class.md:w-20]="isCollapsed"
+  aria-label="Navegación principal"
+>
+  <!-- Brand & Logo Header -->
+  <div class="sidebar-brand-header">
+    <div class="sidebar-brand-group">
+      <img
+        src="logo.png"
+        alt="Logo JD Inversiones"
+        class="sidebar-brand-logo"
+      />
+
+      @if (!isCollapsed) {
+        <div class="flex flex-col min-w-0">
+          <span class="sidebar-brand-name">
+            JD Inversiones
+          </span>
+          <span class="sidebar-brand-subtitle">
+            Tienda y Centro Técnico
+          </span>
+        </div>
+      }
+    </div>
+
+    <!-- Mobile Close Button -->
+    <button
+      mat-icon-button
+      type="button"
+      class="sidebar-close-btn"
+      (click)="closeMobile.emit()"
+      aria-label="Cerrar menú lateral"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Navigation Menu List -->
+  <nav class="sidebar-nav-list" role="navigation">
+    @if (!isCollapsed) {
+      <p class="sidebar-nav-title">
+        Módulos Principales
+      </p>
+    }
+
+    <!-- ================= ESTADO: CARGANDO (SKELETON) ================= -->
+    @if (menuService.isLoading()) {
+      <div class="space-y-2 py-1" aria-busy="true" aria-label="Cargando menú">
+        @for (item of [1, 2, 3, 4, 5]; track item) {
+          <div class="sidebar-skeleton-item">
+            <div class="sidebar-skeleton-icon"></div>
+            @if (!isCollapsed) {
+              <div class="sidebar-skeleton-text"></div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ================= ESTADO: ERROR ================= -->
+    @else if (menuService.error()) {
+      <div class="sidebar-error-box">
+        @if (!isCollapsed) {
+          <p class="sidebar-error-title">No se pudo cargar el menú</p>
+          <p class="sidebar-error-msg">{{ menuService.error() }}</p>
+          <button
+            type="button"
+            class="sidebar-retry-btn"
+            (click)="retryLoad()"
+          >
+            <mat-icon class="text-sm mr-1">refresh</mat-icon>
+            Reintentar
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="sidebar-nav-link text-danger"
+            title="Reintentar cargar menú"
+            (click)="retryLoad()"
+          >
+            <mat-icon>refresh</mat-icon>
+          </button>
+        }
+      </div>
+    }
+
+    <!-- ================= ESTADO: SIN PERMISOS / VACÍO ================= -->
+    @else if (menuService.menu().length === 0) {
+      <div class="sidebar-empty-box">
+        <mat-icon class="sidebar-empty-icon">lock_outline</mat-icon>
+        @if (!isCollapsed) {
+          <p class="sidebar-empty-title">Sin módulos disponibles</p>
+          <p class="sidebar-empty-desc">
+            No tienes permisos o módulos activos asignados a tu cuenta.
+          </p>
+        }
+      </div>
+    }
+
+    <!-- ================= ESTADO: MENÚ DATA-DRIVEN ACTIVO ================= -->
+    @else {
+      @for (item of menuService.menu(); track item.id) {
+        <!-- CASO 1: Grupo con submenús anidados (Acordeón) -->
+        @if (item.children && item.children.length > 0) {
+          <div class="sidebar-group-container">
+            <button
+              type="button"
+              class="sidebar-nav-link sidebar-group-btn"
+              [class.active-group-btn]="isGroupActive(item)"
+              [class.group-expanded]="isGroupExpanded(item.id)"
+              (click)="toggleGroup(item)"
+              [attr.title]="isCollapsed ? item.name : null"
+              [attr.aria-expanded]="isGroupExpanded(item.id)"
+            >
+              <mat-icon class="sidebar-nav-icon">
+                {{ getIcon(item.icon) }}
+              </mat-icon>
+
+              @if (!isCollapsed) {
+                <span class="truncate flex-1 text-left">{{ item.name }}</span>
+                <mat-icon
+                  class="sidebar-group-chevron"
+                  [class.rotate-chevron]="isGroupExpanded(item.id)"
+                >
+                  expand_more
+                </mat-icon>
+              }
+            </button>
+
+            <!-- Submenús hijos cuando el grupo está expandido -->
+            @if (isGroupExpanded(item.id) && !isCollapsed) {
+              <div class="sidebar-submenu-list animate-slide-down">
+                @for (child of item.children; track child.id) {
+                  <a
+                    [routerLink]="child.route"
+                    routerLinkActive="active-sub-nav-link"
+                    [routerLinkActiveOptions]="{ exact: child.route === '/admin/dashboard' }"
+                    (click)="onNavItemClick()"
+                    class="sidebar-nav-link sidebar-sub-link"
+                  >
+                    <mat-icon class="sidebar-sub-icon">
+                      {{ getIcon(child.icon) }}
+                    </mat-icon>
+
+                    <span class="truncate flex-1">{{ child.name }}</span>
+
+                    @if (child.badge) {
+                      <span class="sidebar-nav-badge">
+                        {{ child.badge }}
+                      </span>
+                    }
+                  </a>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- CASO 2: Enlace directo a ruta simple -->
+        @else {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active-nav-link"
+            [routerLinkActiveOptions]="{ exact: item.route === '/admin/dashboard' }"
+            (click)="onNavItemClick()"
+            class="sidebar-nav-link"
+            [attr.title]="isCollapsed ? item.name : null"
+          >
+            <mat-icon class="sidebar-nav-icon">
+              {{ getIcon(item.icon) }}
+            </mat-icon>
+
+            @if (!isCollapsed) {
+              <span class="truncate flex-1">{{ item.name }}</span>
+
+              @if (item.badge) {
+                <span class="sidebar-nav-badge">
+                  {{ item.badge }}
+                </span>
+              }
+            }
+          </a>
+        }
+      }
+    }
+  </nav>
+
+  <!-- User Profile & Quick Action Footer -->
+  <div class="sidebar-user-footer">
+    <div class="sidebar-user-card">
+      <div class="sidebar-user-avatar">
+        {{ authState.fullName().substring(0, 2).toUpperCase() || 'JD' }}
+      </div>
+
+      @if (!isCollapsed) {
+        <div class="flex-1 min-w-0">
+          <p class="sidebar-user-name">
+            {{ authState.fullName() || 'Usuario del Sistema' }}
+          </p>
+          <span class="sidebar-user-role">
+            {{ authState.roles()[0] || 'Personal' }}
+          </span>
+        </div>
+
+        <button
+          mat-icon-button
+          type="button"
+          (click)="onLogout()"
+          class="text-slate-400 hover:text-danger transition-colors flex-shrink-0"
+          aria-label="Cerrar sesión"
+          title="Cerrar sesión"
+        >
+          <mat-icon class="text-lg">logout</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+</aside>

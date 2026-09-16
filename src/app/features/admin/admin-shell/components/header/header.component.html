@@ -1,0 +1,109 @@
+<header class="app-header">
+  <!-- Left Side: Controls & Telemetry -->
+  <div class="header-left-group">
+    <!-- Mobile Hamburger Toggle -->
+    <button
+      mat-icon-button
+      type="button"
+      class="header-mobile-toggle"
+      (click)="toggleMobileMenu.emit()"
+      aria-label="Abrir menú de navegación"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <!-- Desktop Sidebar Collapse Toggle -->
+    <button
+      mat-icon-button
+      type="button"
+      class="header-desktop-toggle"
+      (click)="toggleSidebarCollapse.emit()"
+      [attr.aria-label]="isSidebarCollapsed ? 'Expandir barra lateral' : 'Contraer barra lateral'"
+      [title]="isSidebarCollapsed ? 'Expandir barra lateral' : 'Contraer barra lateral'"
+    >
+      <mat-icon>{{ isSidebarCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
+    </button>
+
+    <!-- Telemetry Status Signal -->
+    <div class="header-telemetry-badge">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      </span>
+      <span>JD Inversiones • En línea</span>
+    </div>
+  </div>
+
+  <!-- Right Side: Theme Toggle & User Menu -->
+  <div class="header-right-group">
+    <!-- Dark / Light Theme Toggle Button -->
+    <button
+      mat-icon-button
+      type="button"
+      (click)="themeService.toggleTheme()"
+      [attr.aria-label]="themeService.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+      [title]="themeService.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+      class="header-theme-toggle theme-toggle-btn"
+    >
+      <mat-icon class="transition-transform duration-300 transform" [class.rotate-90]="themeService.isDark()">
+        {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
+      </mat-icon>
+    </button>
+
+    <!-- User Menu Button -->
+    <button
+      [matMenuTriggerFor]="userMenu"
+      type="button"
+      class="header-user-btn group"
+      aria-label="Menú de cuenta de usuario"
+    >
+      <div class="header-user-avatar">
+        {{ authState.fullName().substring(0, 2).toUpperCase() || 'JD' }}
+      </div>
+
+      <div class="header-user-info">
+        <span class="header-user-name">
+          {{ authState.fullName() || 'Usuario del Sistema' }}
+        </span>
+        <span class="header-user-email">
+          {{ authState.userEmail() || 'usuario@jdinversiones.hn' }}
+        </span>
+      </div>
+
+      <mat-icon class="text-slate-400 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors text-base hidden sm:inline-block">
+        keyboard_arrow_down
+      </mat-icon>
+    </button>
+
+    <!-- User Dropdown Menu -->
+    <mat-menu #userMenu="matMenu" class="custom-user-menu" xPosition="before">
+      <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800">
+        <p class="text-sm font-semibold text-slate-900 dark:text-white">
+          {{ authState.fullName() || 'Usuario del Sistema' }}
+        </p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
+          {{ authState.userEmail() }}
+        </p>
+        <div class="mt-2 flex items-center gap-1.5">
+          <span class="px-2 py-0.5 text-[10px] font-medium bg-primary/10 text-primary dark:bg-primary/20 dark:text-blue-300 border border-primary/20 dark:border-primary/30 rounded">
+            Rol: {{ authState.roles()[0] || 'Personal' }}
+          </span>
+        </div>
+      </div>
+
+      <button mat-menu-item (click)="themeService.toggleTheme()">
+        <mat-icon class="mr-2 text-slate-600 dark:text-slate-300">
+          {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
+        </mat-icon>
+        <span>{{ themeService.isDark() ? 'Tema Claro' : 'Tema Oscuro' }}</span>
+      </button>
+
+      <mat-divider></mat-divider>
+
+      <button mat-menu-item (click)="onLogout()" class="text-danger flex items-center gap-2">
+        <mat-icon class="text-danger mr-2">logout</mat-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </mat-menu>
+  </div>
+</header>

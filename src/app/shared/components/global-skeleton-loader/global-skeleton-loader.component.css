@@ -1,0 +1,100 @@
+:host {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background-color: #010f48;
+}
+
+.global-skeleton-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   Clases Semánticas del Skeleton Loader
+   ========================================================================== */
+
+/* Variante Login */
+.skeleton-login-wrapper {
+  @apply min-h-screen flex flex-col relative overflow-hidden;
+}
+
+.skeleton-login-navbar {
+  @apply w-full bg-white/90 border-b border-slate-200 px-6 py-3.5 flex items-center justify-between;
+}
+
+.skeleton-login-card-area {
+  @apply flex-1 flex flex-col justify-center items-center px-4 py-8 relative;
+}
+
+.skeleton-login-card {
+  @apply w-full max-w-4xl bg-white border border-slate-200 rounded-[2rem] shadow-xl overflow-hidden flex flex-col md:flex-row relative z-10;
+}
+
+.skeleton-login-hero {
+  @apply w-full md:w-5/12 bg-primary/20 p-8 sm:p-10 flex flex-col items-center justify-center space-y-4;
+}
+
+.skeleton-login-form {
+  @apply w-full md:w-7/12 p-8 sm:p-12 space-y-5 bg-white;
+}
+
+/* Variante Admin */
+.skeleton-admin-wrapper {
+  @apply min-h-screen bg-slate-950 flex flex-col md:flex-row animate-fade-in;
+}
+
+.skeleton-admin-sidebar {
+  @apply hidden md:flex flex-col w-64 bg-slate-900 border-r border-slate-800 p-4 space-y-6;
+}
+
+.skeleton-admin-shell {
+  @apply flex-1 flex flex-col;
+}
+
+.skeleton-admin-header {
+  @apply h-16 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between;
+}
+
+.skeleton-admin-main {
+  @apply p-6 space-y-6 flex-1;
+}
+
+.skeleton-admin-kpis {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4;
+}
+
+.skeleton-admin-kpi-card {
+  @apply p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3;
+}
+
+.skeleton-admin-panel {
+  @apply p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-4;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in {
+    animation: none;
+    opacity: 1;
+  }
+}

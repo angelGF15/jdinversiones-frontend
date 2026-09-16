@@ -1,0 +1,158 @@
+<div
+  class="global-skeleton-container"
+  role="status"
+  aria-live="polite"
+  aria-busy="true"
+>
+  <span class="sr-only">Cargando contenido de la aplicación...</span>
+
+  <!-- ================= VARIANT: LOGIN ================= -->
+  @if (variant === 'login') {
+    <div class="skeleton-login-wrapper bg-tech-pattern-light">
+      <!-- Top Header Skeleton -->
+      <div class="skeleton-login-navbar">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full skeleton-shimmer-light"></div>
+          <div class="space-y-1.5">
+            <div class="h-4 w-32 rounded skeleton-shimmer-light"></div>
+            <div class="h-2.5 w-24 rounded skeleton-shimmer-light"></div>
+          </div>
+        </div>
+        <div class="h-6 w-32 rounded-full skeleton-shimmer-light"></div>
+      </div>
+
+      <!-- Main Split Card Skeleton -->
+      <div class="skeleton-login-card-area">
+        <div class="skeleton-login-card max-w-4xl">
+          <!-- Left Panel Skeleton -->
+          <div class="skeleton-login-hero">
+            <div class="w-32 h-32 rounded-full skeleton-shimmer-light"></div>
+            <div class="h-6 w-40 rounded skeleton-shimmer-light"></div>
+            <div class="h-3 w-28 rounded skeleton-shimmer-light"></div>
+            <div class="h-5 w-36 rounded-full skeleton-shimmer-light"></div>
+          </div>
+
+          <!-- Right Panel Skeleton -->
+          <div class="skeleton-login-form">
+            <div class="h-5 w-48 rounded-full skeleton-shimmer-light mb-2"></div>
+            <div class="h-8 w-48 rounded-lg skeleton-shimmer-light"></div>
+            <div class="h-4 w-64 rounded skeleton-shimmer-light mb-4"></div>
+
+            <div class="space-y-4">
+              <div>
+                <div class="h-3.5 w-28 rounded skeleton-shimmer-light mb-2"></div>
+                <div class="h-12 w-full rounded-xl skeleton-shimmer-light"></div>
+              </div>
+              <div>
+                <div class="h-3.5 w-24 rounded skeleton-shimmer-light mb-2"></div>
+                <div class="h-12 w-full rounded-xl skeleton-shimmer-light"></div>
+              </div>
+              <div class="pt-2">
+                <div class="h-12 w-full rounded-xl skeleton-shimmer-light bg-primary/20"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ================= VARIANT: ADMIN ================= -->
+  @else if (variant === 'admin') {
+    <div class="skeleton-admin-wrapper">
+      <!-- Sidebar Skeleton (desktop) -->
+      <aside class="skeleton-admin-sidebar">
+        <div class="flex items-center gap-3 px-2 py-3">
+          <div class="w-10 h-10 rounded-xl skeleton-shimmer"></div>
+          <div class="h-5 w-32 rounded skeleton-shimmer"></div>
+        </div>
+
+        <div class="space-y-3 pt-4">
+          @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+            <div class="h-10 w-full rounded-lg skeleton-shimmer"></div>
+          }
+        </div>
+      </aside>
+
+      <!-- Main Shell Skeleton -->
+      <div class="skeleton-admin-shell">
+        <!-- Header Skeleton -->
+        <header class="skeleton-admin-header">
+          <div class="h-8 w-60 rounded-lg skeleton-shimmer"></div>
+          <div class="flex items-center gap-4">
+            <div class="w-9 h-9 rounded-full skeleton-shimmer"></div>
+            <div class="w-10 h-10 rounded-full skeleton-shimmer"></div>
+          </div>
+        </header>
+
+        <!-- Content Area Skeleton -->
+        <main class="skeleton-admin-main">
+          <!-- Page Title & Actions -->
+          <div class="flex justify-between items-center">
+            <div class="space-y-2">
+              <div class="h-7 w-48 rounded skeleton-shimmer"></div>
+              <div class="h-4 w-72 rounded skeleton-shimmer"></div>
+            </div>
+            <div class="h-10 w-32 rounded-lg skeleton-shimmer"></div>
+          </div>
+
+          <!-- KPI Cards Grid -->
+          <div class="skeleton-admin-kpis">
+            @for (card of [1, 2, 3, 4]; track card) {
+              <div class="skeleton-admin-kpi-card">
+                <div class="flex justify-between items-center">
+                  <div class="h-4 w-24 rounded skeleton-shimmer"></div>
+                  <div class="w-8 h-8 rounded-lg skeleton-shimmer"></div>
+                </div>
+                <div class="h-8 w-32 rounded skeleton-shimmer"></div>
+                <div class="h-3 w-20 rounded skeleton-shimmer"></div>
+              </div>
+            }
+          </div>
+
+          <!-- Main Table / Chart Placeholder -->
+          <div class="skeleton-admin-panel">
+            <div class="h-6 w-40 rounded skeleton-shimmer"></div>
+            <div class="space-y-3 pt-2">
+              @for (row of [1, 2, 3, 4, 5]; track row) {
+                <div class="h-12 w-full rounded-lg skeleton-shimmer"></div>
+              }
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  }
+
+  <!-- ================= VARIANT: FULL / GENERAL ================= -->
+  @else {
+    <div class="min-h-screen bg-slate-950 p-6 space-y-6 animate-fade-in">
+      <!-- Universal Navbar Skeleton -->
+      <div class="h-16 w-full rounded-xl bg-slate-900 border border-slate-800 px-6 flex items-center justify-between">
+        <div class="h-7 w-40 rounded-lg skeleton-shimmer"></div>
+        <div class="flex gap-4">
+          <div class="h-8 w-20 rounded-lg skeleton-shimmer"></div>
+          <div class="h-8 w-24 rounded-lg skeleton-shimmer"></div>
+        </div>
+      </div>
+
+      <!-- Hero / Section Skeleton -->
+      <div class="h-64 w-full rounded-2xl bg-slate-900 border border-slate-800 p-8 flex flex-col justify-center space-y-4">
+        <div class="h-8 w-72 rounded-lg skeleton-shimmer"></div>
+        <div class="h-4 w-96 rounded skeleton-shimmer"></div>
+        <div class="h-10 w-36 rounded-xl skeleton-shimmer mt-2"></div>
+      </div>
+
+      <!-- Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        @for (item of [1, 2, 3]; track item) {
+          <div class="p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-4">
+            <div class="h-40 w-full rounded-lg skeleton-shimmer"></div>
+            <div class="h-5 w-3/4 rounded skeleton-shimmer"></div>
+            <div class="h-4 w-1/2 rounded skeleton-shimmer"></div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

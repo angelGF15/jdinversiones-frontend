@@ -45,3 +45,8 @@ Thumbs.db
 #agents
 .agents
 docs
+.env
+.env.local
+docs/
+
+.agents/

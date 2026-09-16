@@ -1,0 +1,28 @@
+<div class="admin-shell-layout">
+  <!-- Global Sidebar -->
+  <app-sidebar
+    [isOpen]="isMobileOpen()"
+    [isCollapsed]="isSidebarCollapsed()"
+    (closeMobile)="closeMobileMenu()"
+    (logoutTriggered)="handleLogout()"
+    (expandSidebar)="isSidebarCollapsed.set(false)"
+  />
+
+  <!-- Main Work Area Container -->
+  <div class="admin-shell-work-area">
+    <!-- Global Header -->
+    <app-header
+      [isSidebarCollapsed]="isSidebarCollapsed()"
+      (toggleMobileMenu)="toggleMobileMenu()"
+      (toggleSidebarCollapse)="toggleSidebarCollapse()"
+      (logoutTriggered)="handleLogout()"
+    />
+
+    <!-- Routed Main Content with Dedicated Independent Scroll -->
+    <main class="admin-shell-main-scroll">
+      <div class="admin-shell-content-wrapper">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+</div>
