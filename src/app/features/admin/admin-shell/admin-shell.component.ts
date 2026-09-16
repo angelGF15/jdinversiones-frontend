@@ -7,6 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
+import { MenuService } from '../../../core/services/menu.service';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 
@@ -26,6 +27,7 @@ import { HeaderComponent } from './components/header/header.component';
 export class AdminShellComponent {
   private readonly authService = inject(AuthService);
   private readonly authState = inject(AuthState);
+  private readonly menuService = inject(MenuService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -76,6 +78,7 @@ export class AdminShellComponent {
   }
 
   private finalizeLogout(): void {
+    this.menuService.clearMenu();
     this.authState.clearSession();
     this.snackBar.open('Sesión finalizada correctamente.', 'Cerrar', {
       duration: 3000,

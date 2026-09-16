@@ -8,12 +8,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AdminShellComponent } from './admin-shell.component';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
+import { MenuService } from '../../../core/services/menu.service';
 
 describe('AdminShellComponent', () => {
   let component: AdminShellComponent;
   let fixture: ComponentFixture<AdminShellComponent>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
   let authStateSpy: jasmine.SpyObj<AuthState>;
+  let menuServiceSpy: jasmine.SpyObj<MenuService>;
   let router: Router;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
 
@@ -26,7 +28,6 @@ describe('AdminShellComponent', () => {
       'hasPermission',
       'hasAnyPermission',
     ]);
-    // Definir signals para authState
     Object.defineProperty(authStateSpy, 'fullName', { value: signal('Admin Seed') });
     Object.defineProperty(authStateSpy, 'userEmail', { value: signal('admin@jdinversiones.hn') });
     Object.defineProperty(authStateSpy, 'roles', { value: signal(['ADMINISTRADOR']) });
@@ -35,6 +36,17 @@ describe('AdminShellComponent', () => {
     });
     authStateSpy.hasPermission.and.returnValue(true);
     authStateSpy.hasAnyPermission.and.returnValue(true);
+
+    menuServiceSpy = jasmine.createSpyObj('MenuService', [
+      'loadMenu',
+      'clearMenu',
+      'getMaterialIcon',
+    ]);
+    menuServiceSpy.loadMenu.and.returnValue(of([]));
+    menuServiceSpy.getMaterialIcon.and.returnValue('folder');
+    Object.defineProperty(menuServiceSpy, 'menu', { value: signal([]) });
+    Object.defineProperty(menuServiceSpy, 'isLoading', { value: signal(false) });
+    Object.defineProperty(menuServiceSpy, 'error', { value: signal(null) });
 
     snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
 
@@ -46,6 +58,7 @@ describe('AdminShellComponent', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceSpy },
         { provide: AuthState, useValue: authStateSpy },
+        { provide: MenuService, useValue: menuServiceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
       ],
     }).compileComponents();
@@ -82,10 +95,11 @@ describe('AdminShellComponent', () => {
     expect(component.isSidebarCollapsed()).toBeFalse();
   });
 
-  it('debe ejecutar handleLogout(): llamar al servicio, limpiar sesión, notificar y redirigir a /login', () => {
+  it('debe ejecutar handleLogout(): llamar al servicio, limpiar menú y sesión, notificar y redirigir a /login', () => {
     component.handleLogout();
 
     expect(authServiceSpy.logout).toHaveBeenCalled();
+    expect(menuServiceSpy.clearMenu).toHaveBeenCalled();
     expect(authStateSpy.clearSession).toHaveBeenCalled();
     expect(snackBarSpy.open).toHaveBeenCalledWith(
       'Sesión finalizada correctamente.',

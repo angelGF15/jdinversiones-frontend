@@ -52,38 +52,152 @@
   </div>
 
   <!-- Navigation Menu List -->
-  <nav class="sidebar-nav-list">
+  <nav class="sidebar-nav-list" role="navigation">
     @if (!isCollapsed) {
       <p class="sidebar-nav-title">
         Módulos Principales
       </p>
     }
 
-    @for (item of navItems; track item.route) {
-      <ng-container *hasPermission="item.permission">
-        <a
-          [routerLink]="item.route"
-          routerLinkActive="active-nav-link"
-          [routerLinkActiveOptions]="{ exact: item.route === '/admin/dashboard' }"
-          (click)="onNavItemClick()"
-          class="sidebar-nav-link"
-          [attr.title]="isCollapsed ? item.label : null"
-        >
-          <mat-icon class="sidebar-nav-icon">
-            {{ item.icon }}
-          </mat-icon>
-
-          @if (!isCollapsed) {
-            <span class="truncate flex-1">{{ item.label }}</span>
-
-            @if (item.badge) {
-              <span class="sidebar-nav-badge">
-                {{ item.badge }}
-              </span>
+    <!-- ================= ESTADO: CARGANDO (SKELETON) ================= -->
+    @if (menuService.isLoading()) {
+      <div class="space-y-2 py-1" aria-busy="true" aria-label="Cargando menú">
+        @for (item of [1, 2, 3, 4, 5]; track item) {
+          <div class="sidebar-skeleton-item">
+            <div class="sidebar-skeleton-icon"></div>
+            @if (!isCollapsed) {
+              <div class="sidebar-skeleton-text"></div>
             }
-          }
-        </a>
-      </ng-container>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ================= ESTADO: ERROR ================= -->
+    @else if (menuService.error()) {
+      <div class="sidebar-error-box">
+        @if (!isCollapsed) {
+          <p class="sidebar-error-title">No se pudo cargar el menú</p>
+          <p class="sidebar-error-msg">{{ menuService.error() }}</p>
+          <button
+            type="button"
+            class="sidebar-retry-btn"
+            (click)="retryLoad()"
+          >
+            <mat-icon class="text-sm mr-1">refresh</mat-icon>
+            Reintentar
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="sidebar-nav-link text-danger"
+            title="Reintentar cargar menú"
+            (click)="retryLoad()"
+          >
+            <mat-icon>refresh</mat-icon>
+          </button>
+        }
+      </div>
+    }
+
+    <!-- ================= ESTADO: SIN PERMISOS / VACÍO ================= -->
+    @else if (menuService.menu().length === 0) {
+      <div class="sidebar-empty-box">
+        <mat-icon class="sidebar-empty-icon">lock_outline</mat-icon>
+        @if (!isCollapsed) {
+          <p class="sidebar-empty-title">Sin módulos disponibles</p>
+          <p class="sidebar-empty-desc">
+            No tienes permisos o módulos activos asignados a tu cuenta.
+          </p>
+        }
+      </div>
+    }
+
+    <!-- ================= ESTADO: MENÚ DATA-DRIVEN ACTIVO ================= -->
+    @else {
+      @for (item of menuService.menu(); track item.id) {
+        <!-- CASO 1: Grupo con submenús anidados (Acordeón) -->
+        @if (item.children && item.children.length > 0) {
+          <div class="sidebar-group-container">
+            <button
+              type="button"
+              class="sidebar-nav-link sidebar-group-btn"
+              [class.active-group-btn]="isGroupActive(item)"
+              [class.group-expanded]="isGroupExpanded(item.id)"
+              (click)="toggleGroup(item)"
+              [attr.title]="isCollapsed ? item.name : null"
+              [attr.aria-expanded]="isGroupExpanded(item.id)"
+            >
+              <mat-icon class="sidebar-nav-icon">
+                {{ getIcon(item.icon) }}
+              </mat-icon>
+
+              @if (!isCollapsed) {
+                <span class="truncate flex-1 text-left">{{ item.name }}</span>
+                <mat-icon
+                  class="sidebar-group-chevron"
+                  [class.rotate-chevron]="isGroupExpanded(item.id)"
+                >
+                  expand_more
+                </mat-icon>
+              }
+            </button>
+
+            <!-- Submenús hijos cuando el grupo está expandido -->
+            @if (isGroupExpanded(item.id) && !isCollapsed) {
+              <div class="sidebar-submenu-list animate-slide-down">
+                @for (child of item.children; track child.id) {
+                  <a
+                    [routerLink]="child.route"
+                    routerLinkActive="active-sub-nav-link"
+                    [routerLinkActiveOptions]="{ exact: child.route === '/admin/dashboard' }"
+                    (click)="onNavItemClick()"
+                    class="sidebar-nav-link sidebar-sub-link"
+                  >
+                    <mat-icon class="sidebar-sub-icon">
+                      {{ getIcon(child.icon) }}
+                    </mat-icon>
+
+                    <span class="truncate flex-1">{{ child.name }}</span>
+
+                    @if (child.badge) {
+                      <span class="sidebar-nav-badge">
+                        {{ child.badge }}
+                      </span>
+                    }
+                  </a>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- CASO 2: Enlace directo a ruta simple -->
+        @else {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active-nav-link"
+            [routerLinkActiveOptions]="{ exact: item.route === '/admin/dashboard' }"
+            (click)="onNavItemClick()"
+            class="sidebar-nav-link"
+            [attr.title]="isCollapsed ? item.name : null"
+          >
+            <mat-icon class="sidebar-nav-icon">
+              {{ getIcon(item.icon) }}
+            </mat-icon>
+
+            @if (!isCollapsed) {
+              <span class="truncate flex-1">{{ item.name }}</span>
+
+              @if (item.badge) {
+                <span class="sidebar-nav-badge">
+                  {{ item.badge }}
+                </span>
+              }
+            }
+          </a>
+        }
+      }
     }
   </nav>
 
