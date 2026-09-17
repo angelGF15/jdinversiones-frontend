@@ -1,0 +1,67 @@
+/* ==========================================================================
+   DataTable Styles & Sticky Columns
+   ========================================================================== */
+
+.sticky-end-col {
+  position: sticky !important;
+  right: 0;
+  z-index: 10;
+  box-shadow: -6px 0 10px -3px rgba(0, 0, 0, 0.06);
+}
+
+:host-context(.dark) .sticky-end-col {
+  box-shadow: -6px 0 12px -3px rgba(0, 0, 0, 0.45);
+}
+
+/* Fondo sólido de cabecera fija */
+thead th.sticky-end-col {
+  background-color: #f8fafc;
+}
+
+:host-context(.dark) thead th.sticky-end-col {
+  background-color: #1e293b;
+}
+
+/* Fondo sólido de celdas del cuerpo */
+tbody td.sticky-end-col {
+  background-color: #ffffff;
+}
+
+:host-context(.dark) tbody td.sticky-end-col {
+  background-color: #0f172a;
+}
+
+/* Al pasar el cursor por la fila, la celda sticky acompaña el hover */
+tr:hover td.sticky-end-col {
+  background-color: #f8fafc;
+}
+
+:host-context(.dark) tr:hover td.sticky-end-col {
+  background-color: #1e293b;
+}
+
+/* Barra de desplazamiento suave y moderna */
+.table-scroll-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+:host-context(.dark) .table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+:host-context(.dark) .table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

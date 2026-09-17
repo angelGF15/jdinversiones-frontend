@@ -1,0 +1,105 @@
+<div
+  class="pagination-bar flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between w-full px-4 py-3 border-t border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-600 dark:text-slate-400 transition-colors"
+  aria-label="Navegación de paginación"
+>
+  <!-- Texto descriptivo de registros mostrados -->
+  <div class="records-counter-info flex items-center justify-center sm:justify-start">
+    @if (total > 0) {
+      <span>
+        Mostrando
+        <strong class="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{{ fromItem }}</strong>
+        a
+        <strong class="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{{ toItem }}</strong>
+        de
+        <strong class="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{{ total }}</strong>
+        registros
+      </span>
+    } @else {
+      <span>Sin registros para mostrar</span>
+    }
+  </div>
+
+  <!-- Controles de navegación y tamaño de página -->
+  <div class="pagination-controls flex flex-wrap items-center justify-center sm:justify-end gap-3 sm:gap-4">
+    <!-- Selector de registros por página -->
+    <div class="page-size-selector flex items-center gap-2">
+      <label for="page-size-select" class="text-xs text-slate-500 dark:text-slate-400 select-none">
+        Filas:
+      </label>
+      <div class="relative">
+        <select
+          id="page-size-select"
+          [value]="pageSize"
+          (change)="onSizeSelect($any($event.target).value)"
+          aria-label="Cantidad de filas por página"
+          class="appearance-none pl-2.5 pr-7 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer shadow-sm transition-all"
+        >
+          @for (opt of pageSizeOptions; track opt) {
+            <option [value]="opt">{{ opt }}</option>
+          }
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-slate-400">
+          <span class="mat-icon text-sm select-none">expand_more</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de salto y avance/retroceso -->
+    <div class="page-buttons flex items-center gap-1" role="navigation" aria-label="Controles de página">
+      <!-- Ir al inicio -->
+      <button
+        type="button"
+        (click)="onFirst()"
+        [disabled]="!canPrev"
+        aria-label="Primera página"
+        title="Primera página"
+        class="nav-btn w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+      >
+        <span class="mat-icon text-base select-none">first_page</span>
+      </button>
+
+      <!-- Página anterior -->
+      <button
+        type="button"
+        (click)="onPrev()"
+        [disabled]="!canPrev"
+        aria-label="Página anterior"
+        title="Página anterior"
+        class="nav-btn w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+      >
+        <span class="mat-icon text-base select-none">chevron_left</span>
+      </button>
+
+      <!-- Indicador de página activa -->
+      <div class="px-2 text-xs font-medium text-slate-700 dark:text-slate-300 tabular-nums select-none">
+        <span>{{ page }}</span>
+        <span class="text-slate-400 dark:text-slate-600 px-1">/</span>
+        <span>{{ totalPages || 1 }}</span>
+      </div>
+
+      <!-- Página siguiente -->
+      <button
+        type="button"
+        (click)="onNext()"
+        [disabled]="!canNext"
+        aria-label="Página siguiente"
+        title="Página siguiente"
+        class="nav-btn w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+      >
+        <span class="mat-icon text-base select-none">chevron_right</span>
+      </button>
+
+      <!-- Ir al final -->
+      <button
+        type="button"
+        (click)="onLast()"
+        [disabled]="!canNext"
+        aria-label="Última página"
+        title="Última página"
+        class="nav-btn w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+      >
+        <span class="mat-icon text-base select-none">last_page</span>
+      </button>
+    </div>
+  </div>
+</div>

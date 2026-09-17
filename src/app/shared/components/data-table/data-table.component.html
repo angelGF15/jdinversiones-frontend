@@ -1,0 +1,134 @@
+<div class="data-table-container flex flex-col w-full rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition-colors">
+  <!-- Toolbar proyectable para acciones globales (ej. botón "Nuevo Usuario", exportar, etc.) -->
+  <div class="table-toolbar-wrapper border-b border-slate-200/60 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/50 empty:hidden">
+    <ng-content select="[tableToolbar]"></ng-content>
+  </div>
+
+  <!-- Contenedor scrollable horizontal (Mobile-First) -->
+  <div class="table-scroll-wrapper relative w-full overflow-x-auto">
+    <table
+      class="w-full text-left border-collapse min-w-[640px]"
+      [attr.aria-label]="ariaLabel"
+      [attr.aria-busy]="loading"
+    >
+      <!-- Encabezado de la tabla -->
+      <thead>
+        <tr class="bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800/80 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 select-none">
+          @for (col of columns; track col.key ?? col.header) {
+            <th
+              scope="col"
+              class="px-4 py-3.5 transition-colors"
+              [class.sticky-end-col]="col.stickyEnd"
+              [class.text-right]="col.align === 'right'"
+              [class.text-center]="col.align === 'center'"
+              [class.text-left]="!col.align || col.align === 'left'"
+              [style.width]="col.width ?? null"
+            >
+              <div class="inline-flex items-center gap-1.5" [class]="getAlignmentClass(col.align)">
+                <span>{{ col.header }}</span>
+              </div>
+            </th>
+          }
+        </tr>
+      </thead>
+
+      <!-- Cuerpo de la tabla -->
+      <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+        <!-- Estado 1: Skeleton Loading Shimmer -->
+        @if (loading) {
+          @for (rowIndex of skeletonRows; track rowIndex) {
+            <tr class="animate-pulse">
+              @for (col of columns; track col.key ?? col.header) {
+                <td
+                  class="px-4 py-4"
+                  [class.sticky-end-col]="col.stickyEnd"
+                  [style.width]="col.width ?? null"
+                >
+                  <div
+                    class="h-4 rounded-md skeleton-shimmer-light dark:skeleton-shimmer"
+                    [style.width]="col.stickyEnd ? '60%' : (rowIndex % 2 === 0 ? '80%' : '65%')"
+                  ></div>
+                </td>
+              }
+            </tr>
+          }
+        }
+
+        <!-- Estado 2: Filas con datos -->
+        @if (!loading && data.length > 0) {
+          @for (row of data; track defaultTrackBy($index, row)) {
+            <tr
+              class="group hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors duration-150 cursor-default"
+              (click)="onRowClick(row)"
+            >
+              @for (col of columns; track col.key ?? col.header) {
+                <td
+                  class="px-4 py-3.5 text-sm text-slate-700 dark:text-slate-200 transition-colors"
+                  [class.sticky-end-col]="col.stickyEnd"
+                  [class.text-right]="col.align === 'right'"
+                  [class.text-center]="col.align === 'center'"
+                  [class.text-left]="!col.align || col.align === 'left'"
+                  [style.width]="col.width ?? null"
+                >
+                  <!-- Prioridad A: Template inyectado explícito por key o header -->
+                  @if (getTemplate((col.key ?? '').toString()) || getTemplate(col.header)) {
+                    <ng-container
+                      *ngTemplateOutlet="
+                        getTemplate((col.key ?? '').toString()) ?? getTemplate(col.header);
+                        context: { $implicit: row }
+                      "
+                    ></ng-container>
+                  } @else {
+                    <!-- Prioridad B: Formato automático según tipo -->
+                    @switch (col.type) {
+                      @case ('date') {
+                        <span class="font-mono text-xs text-slate-600 dark:text-slate-300">
+                          {{ getCellValue(row, col.key) ? (getCellValue(row, col.key) | date: 'd MMM y, HH:mm') : '—' }}
+                        </span>
+                      }
+                      @case ('currency') {
+                        <span class="font-mono font-medium text-slate-900 dark:text-slate-100">
+                          {{ getCellValue(row, col.key) | currency: 'HNL': 'symbol-narrow': '1.2-2' }}
+                        </span>
+                      }
+                      @default {
+                        <span class="truncate block">
+                          {{ getCellValue(row, col.key) || '—' }}
+                        </span>
+                      }
+                    }
+                  }
+                </td>
+              }
+            </tr>
+          }
+        }
+
+        <!-- Estado 3: Sin datos (Empty State) -->
+        @if (!loading && data.length === 0) {
+          <tr>
+            <td [attr.colspan]="columns.length" class="py-12 px-4 text-center">
+              <div class="flex flex-col items-center justify-center max-w-sm mx-auto space-y-3">
+                <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 shadow-inner">
+                  <span class="mat-icon text-2xl select-none">{{ emptyIcon }}</span>
+                </div>
+                <div class="space-y-1">
+                  <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100 tracking-tight">
+                    {{ emptyTitle }}
+                  </h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                    {{ emptyDescription }}
+                  </p>
+                </div>
+                <!-- Acción proyectable (ej. botón "Crear usuario", "Restablecer filtros") -->
+                <div class="pt-2 empty:hidden">
+                  <ng-content select="[emptyAction]"></ng-content>
+                </div>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

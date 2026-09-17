@@ -1,0 +1,82 @@
+<div class="list-filters-wrapper flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between w-full p-1">
+  <!-- Grupo izquierdo: Búsqueda rápida debounced -->
+  <div class="search-field-container relative flex-1 max-w-md w-full">
+    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+      <span class="mat-icon text-lg select-none">search</span>
+    </div>
+
+    <input
+      type="text"
+      [value]="searchTerm"
+      (input)="onSearchInput($any($event.target).value)"
+      [placeholder]="searchPlaceholder"
+      aria-label="Buscar registros"
+      class="w-full pl-10 pr-9 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all shadow-sm"
+    />
+
+    @if (searchTerm) {
+      <button
+        type="button"
+        (click)="clearSearch()"
+        aria-label="Limpiar búsqueda"
+        class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+      >
+        <span class="mat-icon text-base select-none">close</span>
+      </button>
+    }
+  </div>
+
+  <!-- Grupo derecho: Selects, Toggles y Reset -->
+  <div class="filters-controls-container flex flex-wrap items-center gap-3">
+    <!-- Selectores desplegables dinámicos -->
+    @for (sel of selects; track sel.key) {
+      <div class="relative min-w-[140px] sm:min-w-[160px]">
+        <select
+          [id]="'filter-select-' + sel.key"
+          [value]="selectValues[sel.key] ?? ''"
+          (change)="onSelectChange(sel.key, $any($event.target).value)"
+          [attr.aria-label]="sel.label"
+          class="w-full appearance-none pl-3 pr-8 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all shadow-sm cursor-pointer"
+        >
+          <option value="">{{ sel.label }}: Todos</option>
+          @for (opt of sel.options; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+        <!-- Chevron personalizado -->
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+          <span class="mat-icon text-lg select-none">expand_more</span>
+        </div>
+      </div>
+    }
+
+    <!-- Toggles / Switches booleanos dinámicos -->
+    @for (tog of toggles; track tog.key) {
+      <label
+        class="inline-flex items-center gap-2 cursor-pointer select-none text-sm text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-xl border border-slate-200/80 dark:border-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+      >
+        <input
+          type="checkbox"
+          [checked]="!!toggleValues[tog.key]"
+          (change)="onToggleChange(tog.key, $any($event.target).checked)"
+          class="w-4 h-4 rounded text-primary-500 border-slate-300 dark:border-slate-700 focus:ring-primary-500/20 focus:ring-offset-0 cursor-pointer"
+        />
+        <span>{{ tog.label }}</span>
+      </label>
+    }
+
+    <!-- Botón de Limpieza / Restablecer filtros -->
+    @if (showReset) {
+      <button
+        type="button"
+        (click)="resetFilters()"
+        [disabled]="!hasActiveFilters()"
+        class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-danger-500 dark:hover:text-danger-400 hover:border-danger-200 dark:hover:border-danger-800/60 hover:bg-danger-50/50 dark:hover:bg-danger-900/20 transition-all disabled:opacity-40 disabled:pointer-events-none disabled:hover:text-slate-600"
+        title="Restablecer todos los filtros"
+      >
+        <span class="mat-icon text-sm select-none">filter_alt_off</span>
+        <span>Limpiar</span>
+      </button>
+    }
+  </div>
+</div>
