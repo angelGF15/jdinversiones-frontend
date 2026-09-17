@@ -1,0 +1,215 @@
+<div class="users-page-container flex flex-col gap-5 p-4 sm:p-6 max-w-7xl mx-auto w-full">
+  <!-- Cabecera de la Pantalla -->
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="space-y-1">
+      <div class="flex items-center gap-2.5">
+        <div
+          aria-hidden="true"
+          class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm"
+        >
+          <span class="mat-icon text-xl select-none">people</span>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Usuarios del Sistema
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            Control de cuentas, roles de acceso y credenciales de personal interno.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón Nuevo Usuario con protección RBAC USER_CREATE -->
+    <div *hasPermission="'USER_CREATE'" class="flex items-center">
+      <a
+        routerLink="/admin/users/new"
+        class="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-primary hover:bg-primary-700 text-white font-medium text-sm shadow-sm hover:shadow-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+      >
+        <span class="mat-icon text-lg select-none" aria-hidden="true">person_add</span>
+        <span>Nuevo Usuario</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Banner de error si falla la comunicación con la API -->
+  @if (errorMessage() && !isLoading()) {
+    <div
+      role="alert"
+      aria-live="assertive"
+      class="flex items-center justify-between p-4 rounded-xl bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800/40 text-danger-700 dark:text-danger-300 text-sm"
+    >
+      <div class="flex items-center gap-3">
+        <span class="mat-icon text-xl text-danger-500 select-none" aria-hidden="true">error_outline</span>
+        <span class="font-medium">{{ errorMessage() }}</span>
+      </div>
+      <button
+        type="button"
+        (click)="retry()"
+        class="px-3 py-1.5 min-h-[36px] rounded-lg text-xs font-semibold bg-white dark:bg-slate-900 text-danger-700 dark:text-danger-300 border border-danger-300 dark:border-danger-700 hover:bg-danger-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
+      >
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- Barra de Filtros Integrada -->
+  <section
+    aria-label="Filtros de búsqueda de usuarios"
+    class="filters-card p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm"
+  >
+    <app-list-filters
+      [searchPlaceholder]="'Buscar por nombre o correo...'"
+      [selects]="roleFilters()"
+      [toggles]="toggleFilters"
+      [initialValues]="queryState.filters()"
+      (filterChange)="onFilterChange($event)"
+    />
+  </section>
+
+  <!-- Tabla de Datos y Paginador -->
+  <section class="table-section flex flex-col w-full" aria-label="Tabla de usuarios">
+    <app-data-table
+      [columns]="columns"
+      [data]="items()"
+      [loading]="isLoading()"
+      emptyTitle="No se encontraron usuarios"
+      emptyDescription="No hay registros que coincidan con los filtros aplicados o aún no se han registrado cuentas."
+      emptyIcon="people_outline"
+    >
+      <!-- Template Celda: Usuario (Avatar + Nombre + Email) -->
+      <ng-template [dataTableColumn]="'fullName'" let-user>
+        <div class="flex items-center gap-3 py-1">
+          <!-- Avatar con iniciales corporativas -->
+          <div
+            aria-hidden="true"
+            class="w-9 h-9 rounded-xl bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300 border border-primary/20 dark:border-primary/30 flex items-center justify-center font-bold text-xs flex-shrink-0 select-none"
+          >
+            {{ getUserInitials(user) }}
+          </div>
+          <div class="flex flex-col min-w-0">
+            <span class="text-sm font-semibold text-slate-900 dark:text-white truncate">
+              {{ user.fullName }}
+            </span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 truncate font-mono">
+              {{ user.email }}
+            </span>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Template Celda: Roles (Chips con estilo corporativo) -->
+      <ng-template [dataTableColumn]="'roles'" let-user>
+        <div class="flex flex-wrap items-center gap-1.5 py-1" role="list" aria-label="Roles asignados">
+          @if (user.roles && user.roles.length > 0) {
+            @for (role of user.roles; track role.id) {
+              <span
+                role="listitem"
+                class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium bg-primary-50 text-primary-700 border border-primary-100 dark:bg-primary-950/40 dark:text-primary-300 dark:border-primary-800/40"
+              >
+                {{ role.name }}
+              </span>
+            }
+          } @else {
+            <span class="text-xs text-slate-400 dark:text-slate-500 italic">Sin roles</span>
+          }
+        </div>
+      </ng-template>
+
+      <!-- Template Celda: Estado (Activo / Inactivo con badge contrastado) -->
+      <ng-template [dataTableColumn]="'isActive'" let-user>
+        <div class="flex justify-center py-1">
+          @if (user.isActive) {
+            <span
+              role="status"
+              aria-label="Estado: Activo"
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-transparent"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true"></span>
+              <span>Activo</span>
+            </span>
+          } @else {
+            <span
+              role="status"
+              aria-label="Estado: Inactivo"
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-transparent"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-400" aria-hidden="true"></span>
+              <span>Inactivo</span>
+            </span>
+          }
+        </div>
+      </ng-template>
+
+      <!-- Template Celda: Acciones (Fija a la derecha stickyEnd con permiso USER_EDIT) -->
+      <ng-template [dataTableColumn]="'Acciones'" let-user>
+        <div class="flex items-center justify-end gap-1">
+          <!-- 1. Editar usuario -->
+          <button
+            *hasPermission="'USER_EDIT'"
+            type="button"
+            (click)="onEditUser(user)"
+            matTooltip="Editar usuario"
+            class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-primary-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-primary-300 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+            [attr.aria-label]="'Editar datos de ' + user.fullName"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">edit</span>
+          </button>
+
+          <!-- 2. Regenerar contraseña temporal -->
+          <button
+            *hasPermission="'USER_EDIT'"
+            type="button"
+            (click)="onGenerateTemporaryPassword(user)"
+            matTooltip="Regenerar contraseña temporal"
+            class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 dark:text-slate-400 dark:hover:text-amber-400 dark:hover:bg-amber-950/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-amber-500 dark:focus-visible:ring-offset-slate-900"
+            [attr.aria-label]="'Regenerar contraseña temporal para ' + user.fullName"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">lock_reset</span>
+          </button>
+
+          <!-- 3. Activar / Desactivar estado -->
+          <button
+            *hasPermission="'USER_EDIT'"
+            type="button"
+            (click)="onToggleStatus(user)"
+            [disabled]="isSelfUser(user)"
+            [matTooltip]="isSelfUser(user) ? 'No puedes desactivar tu propia cuenta' : (user.isActive ? 'Desactivar usuario' : 'Activar usuario')"
+            [ngClass]="{
+              'opacity-30 cursor-not-allowed text-slate-400': isSelfUser(user),
+              'text-slate-500 hover:text-danger-600 hover:bg-danger-50 dark:text-slate-400 dark:hover:text-danger-400 dark:hover:bg-danger-950/30': !isSelfUser(user) && user.isActive,
+              'text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 dark:text-slate-400 dark:hover:text-emerald-400 dark:hover:bg-emerald-950/30': !isSelfUser(user) && !user.isActive
+            }"
+            class="w-9 h-9 flex items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-danger-500 dark:focus-visible:ring-offset-slate-900"
+            [attr.aria-label]="isSelfUser(user) ? 'No puedes desactivar tu propia cuenta' : ((user.isActive ? 'Desactivar cuenta de ' : 'Activar cuenta de ') + user.fullName)"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">
+              {{ user.isActive ? 'block' : 'check_circle' }}
+            </span>
+          </button>
+        </div>
+      </ng-template>
+
+      <!-- Acción en Empty State -->
+      <div emptyAction *hasPermission="'USER_CREATE'">
+        <a
+          routerLink="/admin/users/new"
+          class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl bg-primary text-white hover:bg-primary-700 transition-colors shadow-sm"
+        >
+          <span class="mat-icon text-base select-none">person_add</span>
+          <span>Crear Usuario</span>
+        </a>
+      </div>
+    </app-data-table>
+
+    <!-- Barra de Paginación 1-based -->
+    <app-pagination
+      [page]="queryState.page()"
+      [pageSize]="queryState.pageSize()"
+      [total]="total()"
+      [totalPages]="totalPages()"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    />
+  </section>
+</div>

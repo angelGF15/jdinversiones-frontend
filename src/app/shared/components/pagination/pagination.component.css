@@ -14,7 +14,15 @@
 
 @media (max-width: 640px) {
   .nav-btn {
-    min-width: 36px;
-    min-height: 36px;
+    min-width: 38px;
+    min-height: 38px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-btn,
+  #page-size-select {
+    transition: none !important;
+    transform: none !important;
   }
 }

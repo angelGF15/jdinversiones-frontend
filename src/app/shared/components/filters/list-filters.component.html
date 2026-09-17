@@ -2,7 +2,7 @@
   <!-- Grupo izquierdo: Búsqueda rápida debounced -->
   <div class="search-field-container relative flex-1 max-w-md w-full">
     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-      <span class="mat-icon text-lg select-none">search</span>
+      <span class="mat-icon text-lg select-none" aria-hidden="true">search</span>
     </div>
 
     <input
@@ -19,9 +19,9 @@
         type="button"
         (click)="clearSearch()"
         aria-label="Limpiar búsqueda"
-        class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+        class="absolute inset-y-0 right-1.5 my-auto w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all"
       >
-        <span class="mat-icon text-base select-none">close</span>
+        <span class="mat-icon text-base select-none" aria-hidden="true">close</span>
       </button>
     }
   </div>
@@ -45,7 +45,7 @@
         </select>
         <!-- Chevron personalizado -->
         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
-          <span class="mat-icon text-lg select-none">expand_more</span>
+          <span class="mat-icon text-lg select-none" aria-hidden="true">expand_more</span>
         </div>
       </div>
     }
@@ -53,7 +53,7 @@
     <!-- Toggles / Switches booleanos dinámicos -->
     @for (tog of toggles; track tog.key) {
       <label
-        class="inline-flex items-center gap-2 cursor-pointer select-none text-sm text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-xl border border-slate-200/80 dark:border-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+        class="inline-flex items-center gap-2 cursor-pointer select-none text-sm text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-xl border border-slate-200/80 dark:border-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800/50 focus-within:ring-2 focus-within:ring-primary-500/30 transition-colors"
       >
         <input
           type="checkbox"
@@ -71,10 +71,11 @@
         type="button"
         (click)="resetFilters()"
         [disabled]="!hasActiveFilters()"
-        class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-danger-500 dark:hover:text-danger-400 hover:border-danger-200 dark:hover:border-danger-800/60 hover:bg-danger-50/50 dark:hover:bg-danger-900/20 transition-all disabled:opacity-40 disabled:pointer-events-none disabled:hover:text-slate-600"
+        aria-label="Restablecer todos los filtros"
+        class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-danger-500 dark:hover:text-danger-400 hover:border-danger-200 dark:hover:border-danger-800/60 hover:bg-danger-50/50 dark:hover:bg-danger-900/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none disabled:hover:text-slate-600"
         title="Restablecer todos los filtros"
       >
-        <span class="mat-icon text-sm select-none">filter_alt_off</span>
+        <span class="mat-icon text-sm select-none" aria-hidden="true">filter_alt_off</span>
         <span>Limpiar</span>
       </button>
     }

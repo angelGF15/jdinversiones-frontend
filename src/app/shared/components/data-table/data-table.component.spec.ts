@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { DataTableComponent } from './data-table.component';
 import { DataTableColumnDirective } from './data-table-column.directive';
@@ -15,12 +16,12 @@ interface TestRow {
 
 @Component({
   standalone: true,
-  imports: [DataTableComponent, DataTableColumnDirective],
+  imports: [CommonModule, DataTableComponent, DataTableColumnDirective],
   template: `
     <app-data-table
       [columns]="columns"
-      [data]="data"
-      [loading]="loading"
+      [data]="data()"
+      [loading]="loading()"
       (rowClick)="onRowClicked($event)"
     >
       <ng-template [dataTableColumn]="'status'" let-row>
@@ -38,7 +39,7 @@ class TestHostComponent {
     { header: 'Acciones', stickyEnd: true },
   ];
 
-  data: TestRow[] = [
+  data = signal<TestRow[]>([
     {
       id: '1',
       name: 'Producto A',
@@ -46,9 +47,9 @@ class TestHostComponent {
       amount: 1500,
       status: 'activo',
     },
-  ];
+  ]);
 
-  loading = false;
+  loading = signal<boolean>(false);
   clickedRow: TestRow | null = null;
 
   onRowClicked(row: TestRow) {
@@ -98,7 +99,7 @@ describe('DataTableComponent', () => {
   it('debe emitir rowClick cuando se hace clic en una fila', () => {
     const row = fixture.nativeElement.querySelector('tbody tr');
     row.click();
-    expect(host.clickedRow).toEqual(host.data[0]);
+    expect(host.clickedRow).toEqual(host.data()[0]);
   });
 
   it('debe aplicar la clase sticky-end-col en encabezado y celda con stickyEnd=true', () => {
@@ -110,7 +111,7 @@ describe('DataTableComponent', () => {
   });
 
   it('debe mostrar skeleton shimmer animado cuando loading=true', () => {
-    host.loading = true;
+    host.loading.set(true);
     fixture.detectChanges();
 
     const skeletonDivs = fixture.nativeElement.querySelectorAll('.skeleton-shimmer-light');
@@ -118,8 +119,8 @@ describe('DataTableComponent', () => {
   });
 
   it('debe mostrar empty state cuando data=[] y loading=false', () => {
-    host.data = [];
-    host.loading = false;
+    host.data.set([]);
+    host.loading.set(false);
     fixture.detectChanges();
 
     const emptyTitle = fixture.nativeElement.querySelector('h3');

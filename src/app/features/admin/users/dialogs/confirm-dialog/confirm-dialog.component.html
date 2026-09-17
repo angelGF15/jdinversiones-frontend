@@ -1,0 +1,61 @@
+<div
+  role="alertdialog"
+  aria-modal="true"
+  aria-labelledby="confirm-dialog-title"
+  aria-describedby="confirm-dialog-message"
+  class="confirm-dialog-container p-6 bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full"
+>
+  <div class="flex items-start gap-4">
+    <!-- Icono de advertencia o confirmación -->
+    <div
+      aria-hidden="true"
+      class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm"
+      [class.bg-danger-50]="data.isDestructive"
+      [class.text-danger-600]="data.isDestructive"
+      [class.dark:bg-danger-950/40]="data.isDestructive"
+      [class.dark:text-danger-400]="data.isDestructive"
+      [class.bg-primary-50]="!data.isDestructive"
+      [class.text-primary-600]="!data.isDestructive"
+      [class.dark:bg-primary-950/40]="!data.isDestructive"
+      [class.dark:text-primary-400]="!data.isDestructive"
+    >
+      <span class="mat-icon text-2xl select-none">
+        {{ data.icon ?? (data.isDestructive ? 'warning' : 'help_outline') }}
+      </span>
+    </div>
+
+    <!-- Título y Mensaje -->
+    <div class="flex-1 space-y-1.5 pt-0.5">
+      <h2 id="confirm-dialog-title" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">
+        {{ data.title }}
+      </h2>
+      <p id="confirm-dialog-message" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+        {{ data.message }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Botones de Acción -->
+  <div class="mt-6 flex items-center justify-end gap-3 pt-2">
+    <button
+      type="button"
+      (click)="onCancel()"
+      class="inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-900"
+    >
+      {{ data.cancelText ?? 'Cancelar' }}
+    </button>
+    <button
+      type="button"
+      (click)="onConfirm()"
+      class="inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] text-xs sm:text-sm font-semibold rounded-xl text-white shadow-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+      [class.bg-danger]="data.isDestructive"
+      [class.hover:bg-danger-700]="data.isDestructive"
+      [class.focus-visible:ring-danger-500]="data.isDestructive"
+      [class.bg-primary]="!data.isDestructive"
+      [class.hover:bg-primary-700]="!data.isDestructive"
+      [class.focus-visible:ring-primary-500]="!data.isDestructive"
+    >
+      {{ data.confirmText ?? 'Confirmar' }}
+    </button>
+  </div>
+</div>

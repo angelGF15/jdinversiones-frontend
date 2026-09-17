@@ -65,3 +65,15 @@ tr:hover td.sticky-end-col {
 :host-context(.dark) .table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  tr,
+  td,
+  th {
+    transition: none !important;
+  }
+  .animate-pulse {
+    animation: none !important;
+  }
+}
+

@@ -10,3 +10,14 @@
 select {
   background-image: none;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  input,
+  select,
+  button,
+  label {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+

@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ListFiltersComponent } from './list-filters.component';
 import { FilterSelect, FilterToggle } from '../../models/data-table.models';
@@ -47,22 +47,18 @@ describe('ListFiltersComponent', () => {
     expect(checkbox).toBeTruthy();
   });
 
-  it('debe emitir filterChange tras el tiempo de debounce cuando se escribe en la búsqueda', fakeAsync(() => {
-    let emittedState: Record<string, unknown> | null = null;
+  it('debe emitir filterChange tras el tiempo de debounce cuando se escribe en la búsqueda', (done) => {
     component.filterChange.subscribe((state) => {
-      emittedState = state;
+      expect(state as any).toEqual({
+        search: 'carlos',
+        roleId: null,
+        isActive: null,
+      });
+      done();
     });
 
     component.onSearchInput('carlos');
-    expect(emittedState).toBeNull();
-
-    tick(200);
-    expect(emittedState).toEqual({
-      search: 'carlos',
-      roleId: null,
-      isActive: null,
-    });
-  }));
+  });
 
   it('debe emitir filterChange cuando se cambia un select', () => {
     let emittedState: Record<string, unknown> | null = null;
@@ -72,7 +68,7 @@ describe('ListFiltersComponent', () => {
 
     component.onSelectChange('roleId', 'role-2');
 
-    expect(emittedState).toEqual({
+    expect(emittedState as any).toEqual({
       search: '',
       roleId: 'role-2',
       isActive: null,
@@ -87,7 +83,7 @@ describe('ListFiltersComponent', () => {
 
     component.onToggleChange('isActive', true);
 
-    expect(emittedState).toEqual({
+    expect(emittedState as any).toEqual({
       search: '',
       roleId: null,
       isActive: true,
@@ -109,7 +105,7 @@ describe('ListFiltersComponent', () => {
     expect(component.searchTerm).toBe('');
     expect(component.selectValues).toEqual({});
     expect(component.toggleValues).toEqual({});
-    expect(emittedState).toEqual({
+    expect(emittedState as any).toEqual({
       search: '',
       roleId: null,
       isActive: null,

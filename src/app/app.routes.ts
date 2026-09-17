@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, loggedInGuard } from './core/guards';
+import { authGuard, loggedInGuard, permissionGuard } from './core/guards';
 
 export const routes: Routes = [
   {
@@ -31,6 +31,33 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/dashboard/dashboard.component').then(
             (m) => m.DashboardComponent
+          ),
+      },
+      {
+        path: 'users',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'USER_VIEW' },
+        loadComponent: () =>
+          import('./features/admin/users/users-list/users-list.component').then(
+            (m) => m.UsersListComponent
+          ),
+      },
+      {
+        path: 'users/new',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'USER_CREATE' },
+        loadComponent: () =>
+          import('./features/admin/users/user-form/user-form.component').then(
+            (m) => m.UserFormComponent
+          ),
+      },
+      {
+        path: 'users/:id/edit',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'USER_EDIT' },
+        loadComponent: () =>
+          import('./features/admin/users/user-form/user-form.component').then(
+            (m) => m.UserFormComponent
           ),
       },
     ],

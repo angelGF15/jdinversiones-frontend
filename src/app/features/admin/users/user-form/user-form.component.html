@@ -1,0 +1,298 @@
+<div class="user-form-container p-4 sm:p-6 max-w-4xl mx-auto w-full space-y-6">
+  <!-- Cabecera con botón de retroceso -->
+  <header class="space-y-2">
+    <a
+      routerLink="/admin/users"
+      class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary-300 transition-colors rounded-lg px-2 py-1.5 -ml-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+    >
+      <span class="mat-icon text-base select-none" aria-hidden="true">arrow_back</span>
+      <span>Volver al listado de usuarios</span>
+    </a>
+
+    <div class="flex items-center gap-3">
+      <div
+        aria-hidden="true"
+        class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm"
+      >
+        <span class="mat-icon text-xl select-none">
+          {{ isEditMode() ? 'manage_accounts' : 'person_add' }}
+        </span>
+      </div>
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+          {{ isEditMode() ? 'Editar Usuario' : 'Nuevo Usuario' }}
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+          {{ isEditMode() ? 'Actualiza la información personal y roles asignados a la cuenta.' : 'Crea una cuenta interna de acceso y genera sus credenciales temporales.' }}
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banner de error si la API retorna una excepción (ej. 409 email duplicado) -->
+  @if (errorMessage()) {
+    <div
+      role="alert"
+      aria-live="assertive"
+      class="flex items-center justify-between p-4 rounded-xl bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800/40 text-danger-700 dark:text-danger-300 text-sm animate-shake"
+    >
+      <div class="flex items-center gap-3">
+        <span class="mat-icon text-xl text-danger-500 select-none" aria-hidden="true">error_outline</span>
+        <span class="font-medium">{{ errorMessage() }}</span>
+      </div>
+      <button
+        type="button"
+        (click)="errorMessage.set(null)"
+        class="text-danger-500 hover:text-danger-700 dark:hover:text-danger-300 transition-colors p-1 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
+        aria-label="Cerrar alerta"
+      >
+        <span class="mat-icon text-base select-none" aria-hidden="true">close</span>
+      </button>
+    </div>
+  }
+
+  <!-- Formulario Reactivo -->
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6" novalidate>
+    <!-- Tarjeta 1: Datos de Acceso e Identificación -->
+    <div class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+        1. Datos de Contacto y Acceso
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <!-- Campo: Correo Electrónico -->
+        <div class="space-y-1.5">
+          <label for="email" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+            Correo Electrónico <span class="text-danger-500" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="usuario@jdinversiones.com"
+            aria-required="true"
+            [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+            [attr.aria-describedby]="form.controls.email.invalid && form.controls.email.touched ? 'email-error' : (isEditMode() ? 'email-hint' : null)"
+            class="w-full px-3.5 py-2.5 text-sm rounded-xl border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus:border-primary-500 disabled:opacity-60 disabled:bg-slate-100 dark:disabled:bg-slate-800/60 disabled:cursor-not-allowed"
+            [class.border-danger-300]="form.controls.email.invalid && form.controls.email.touched"
+            [class.border-slate-200]="!(form.controls.email.invalid && form.controls.email.touched)"
+            [class.dark:border-slate-800]="!(form.controls.email.invalid && form.controls.email.touched)"
+            [class.bg-white]="!isEditMode()"
+            [class.dark:bg-slate-900]="!isEditMode()"
+            [class.text-slate-800]="true"
+            [class.dark:text-slate-100]="true"
+          />
+
+          @if (isEditMode()) {
+            <p id="email-hint" class="text-[11px] text-slate-400 dark:text-slate-500 italic">
+              * El correo electrónico no se puede modificar una vez creada la cuenta.
+            </p>
+          }
+
+          @if (form.controls.email.invalid && form.controls.email.touched) {
+            <p id="email-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400">
+              @if (form.controls.email.errors?.['required']) {
+                El correo electrónico es obligatorio.
+              } @else if (form.controls.email.errors?.['email']) {
+                Ingresa un formato de correo válido.
+              } @else if (form.controls.email.errors?.['maxlength']) {
+                Máximo 255 caracteres permitidos.
+              }
+            </p>
+          }
+        </div>
+
+        <!-- Campo: Teléfono -->
+        <div class="space-y-1.5">
+          <label for="phone" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+            Teléfono <span class="text-slate-400 text-[11px] font-normal">(Opcional)</span>
+          </label>
+          <input
+            id="phone"
+            type="tel"
+            formControlName="phone"
+            placeholder="+504 9999-9999"
+            [attr.aria-invalid]="form.controls.phone.invalid && form.controls.phone.touched"
+            [attr.aria-describedby]="form.controls.phone.invalid && form.controls.phone.touched ? 'phone-error' : null"
+            class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus:border-primary-500 transition-all"
+            [class.border-danger-300]="form.controls.phone.invalid && form.controls.phone.touched"
+          />
+
+          @if (form.controls.phone.invalid && form.controls.phone.touched) {
+            <p id="phone-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400">
+              Máximo 30 caracteres permitidos.
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta 2: Información Personal -->
+    <div class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+        2. Información Personal
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <!-- Campo: Nombre -->
+        <div class="space-y-1.5">
+          <label for="firstName" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+            Nombres <span class="text-danger-500" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            placeholder="Ej. Juan Carlos"
+            aria-required="true"
+            [attr.aria-invalid]="form.controls.firstName.invalid && form.controls.firstName.touched"
+            [attr.aria-describedby]="form.controls.firstName.invalid && form.controls.firstName.touched ? 'firstName-error' : null"
+            class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus:border-primary-500 transition-all"
+            [class.border-danger-300]="form.controls.firstName.invalid && form.controls.firstName.touched"
+          />
+
+          @if (form.controls.firstName.invalid && form.controls.firstName.touched) {
+            <p id="firstName-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400">
+              @if (form.controls.firstName.errors?.['required']) {
+                El nombre es obligatorio.
+              } @else if (form.controls.firstName.errors?.['minlength']) {
+                Mínimo 2 caracteres requeridos.
+              } @else if (form.controls.firstName.errors?.['maxlength']) {
+                Máximo 80 caracteres permitidos.
+              }
+            </p>
+          }
+        </div>
+
+        <!-- Campo: Apellido -->
+        <div class="space-y-1.5">
+          <label for="lastName" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+            Apellidos <span class="text-danger-500" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            placeholder="Ej. Pérez Martínez"
+            aria-required="true"
+            [attr.aria-invalid]="form.controls.lastName.invalid && form.controls.lastName.touched"
+            [attr.aria-describedby]="form.controls.lastName.invalid && form.controls.lastName.touched ? 'lastName-error' : null"
+            class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus:border-primary-500 transition-all"
+            [class.border-danger-300]="form.controls.lastName.invalid && form.controls.lastName.touched"
+          />
+
+          @if (form.controls.lastName.invalid && form.controls.lastName.touched) {
+            <p id="lastName-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400">
+              @if (form.controls.lastName.errors?.['required']) {
+                El apellido es obligatorio.
+              } @else if (form.controls.lastName.errors?.['minlength']) {
+                Mínimo 2 caracteres requeridos.
+              } @else if (form.controls.lastName.errors?.['maxlength']) {
+                Máximo 80 caracteres permitidos.
+              }
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta 3: Selección de Roles de Acceso (Regla de negocio: Mínimo 1 rol) -->
+    <div
+      class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4"
+      role="group"
+      aria-labelledby="roles-heading"
+    >
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+        <div>
+          <h2 id="roles-heading" class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
+            3. Asignación de Roles de Acceso <span class="text-danger-500" aria-hidden="true">*</span>
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Selecciona al menos un rol de acceso.
+            @if (isEditMode()) {
+              <span class="text-amber-600 dark:text-amber-400 font-medium">Nota: Guardar reemplazará todos los roles asignados.</span>
+            }
+          </p>
+        </div>
+      </div>
+
+      <!-- Cuadrícula interactiva de roles con accesibilidad por teclado -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        @for (role of availableRoles(); track role.roleId) {
+          <button
+            type="button"
+            role="checkbox"
+            [attr.aria-checked]="isRoleSelected(role.roleId)"
+            [attr.aria-label]="'Rol ' + role.name"
+            (click)="toggleRole(role.roleId)"
+            class="role-card p-3.5 rounded-xl border text-left cursor-pointer select-none transition-all flex items-center justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+            [class.border-primary-500]="isRoleSelected(role.roleId)"
+            [class.bg-primary-50/60]="isRoleSelected(role.roleId)"
+            [class.dark:bg-primary-950/30]="isRoleSelected(role.roleId)"
+            [class.border-slate-200]="!isRoleSelected(role.roleId)"
+            [class.dark:border-slate-800]="!isRoleSelected(role.roleId)"
+            [class.hover:border-slate-300]="!isRoleSelected(role.roleId)"
+            [class.dark:hover:border-slate-700]="!isRoleSelected(role.roleId)"
+          >
+            <div class="flex items-center gap-2.5">
+              <div
+                aria-hidden="true"
+                class="w-5 h-5 rounded-md flex items-center justify-center border transition-colors text-xs"
+                [class.bg-primary]="isRoleSelected(role.roleId)"
+                [class.border-primary]="isRoleSelected(role.roleId)"
+                [class.text-white]="isRoleSelected(role.roleId)"
+                [class.border-slate-300]="!isRoleSelected(role.roleId)"
+                [class.dark:border-slate-600]="!isRoleSelected(role.roleId)"
+              >
+                @if (isRoleSelected(role.roleId)) {
+                  <span class="mat-icon text-xs select-none">check</span>
+                }
+              </div>
+              <span
+                class="text-sm font-semibold capitalize"
+                [class.text-primary-700]="isRoleSelected(role.roleId)"
+                [class.dark:text-primary-300]="isRoleSelected(role.roleId)"
+                [class.text-slate-700]="!isRoleSelected(role.roleId)"
+                [class.dark:text-slate-300]="!isRoleSelected(role.roleId)"
+              >
+                {{ role.name }}
+              </span>
+            </div>
+          </button>
+        }
+      </div>
+
+      @if (form.controls.roleIds.invalid && form.controls.roleIds.touched) {
+        <p id="roles-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 font-medium">
+          Debes asignar al menos un rol al usuario.
+        </p>
+      }
+    </div>
+
+    <!-- Botones de Acción / Guardar -->
+    <div class="flex items-center justify-end gap-3 pt-2">
+      <a
+        routerLink="/admin/users"
+        class="inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-900"
+      >
+        Cancelar
+      </a>
+
+      <button
+        type="submit"
+        [disabled]="isSubmitting() || isLoading()"
+        class="inline-flex items-center justify-center gap-2 px-6 py-2.5 min-h-[44px] text-xs sm:text-sm font-semibold rounded-xl bg-primary hover:bg-primary-700 text-white shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+      >
+        @if (isSubmitting()) {
+          <span class="mat-icon text-sm animate-spin select-none" aria-hidden="true">refresh</span>
+          <span>Guardando...</span>
+        } @else {
+          <span class="mat-icon text-sm select-none" aria-hidden="true">
+            {{ isEditMode() ? 'save' : 'person_add' }}
+          </span>
+          <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Usuario' }}</span>
+        }
+      </button>
+    </div>
+  </form>
+</div>
