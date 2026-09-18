@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Pagination Styles
+   Pagination Component Styles (Pastilla / Cápsula Minimalista)
    ========================================================================== */
 
 :host {
@@ -7,21 +7,53 @@
   width: 100%;
 }
 
-.nav-btn:focus-visible {
-  outline: 2px solid #032edd;
+/* Pastilla de navegación */
+.pagination-pill {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pagination-pill:hover {
+  border-color: #cbd5e1;
+}
+
+:host-context(.dark) .pagination-pill:hover {
+  border-color: #475569;
+}
+
+.pagination-pill:focus-visible {
+  outline: 2px solid var(--color-primary, #032edd);
   outline-offset: 2px;
 }
 
-@media (max-width: 640px) {
-  .nav-btn {
-    min-width: 38px;
-    min-height: 38px;
-  }
+/* Botones dentro de la pastilla */
+.pill-nav-btn {
+  touch-action: manipulation;
+  user-select: none;
 }
 
+.pill-nav-btn:focus-visible {
+  outline: 2px solid var(--color-primary, #032edd);
+  outline-offset: -2px;
+}
+
+/* Selector de filas */
+#page-size-select:focus-visible {
+  outline: 2px solid var(--color-primary, #032edd);
+  outline-offset: 2px;
+}
+
+/* Botones de salto (primera / última página) */
+.pill-nav-jump-btn:focus-visible {
+  outline: 2px solid var(--color-primary, #032edd);
+  outline-offset: 2px;
+}
+
+/* Reducción de movimiento */
 @media (prefers-reduced-motion: reduce) {
-  .nav-btn,
-  #page-size-select {
+  .pagination-pill,
+  .pill-nav-btn,
+  #page-size-select,
+  .pill-nav-btn svg {
     transition: none !important;
     transform: none !important;
   }

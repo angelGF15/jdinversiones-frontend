@@ -32,6 +32,9 @@ export class PaginationComponent {
   /** Opciones disponibles para el tamaño de página. */
   @Input() pageSizeOptions: number[] = [10, 20, 50];
 
+  /** Texto del separador central (por defecto 'DE', p. ej. '3 DE 10' o '3 OF 10'). */
+  @Input() separator = 'de';
+
   /** Evento emitido al cambiar de página (1-based). */
   @Output() pageChange = new EventEmitter<number>();
 

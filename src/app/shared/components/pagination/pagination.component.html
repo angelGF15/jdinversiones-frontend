@@ -1,105 +1,139 @@
 <div
-  class="pagination-bar flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between w-full px-4 py-3 border-t border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-600 dark:text-slate-400 transition-colors"
+  class="pagination-bar flex flex-col md:grid md:grid-cols-3 items-center justify-between gap-4 w-full px-5 py-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-sm overflow-hidden text-xs sm:text-sm text-slate-600 dark:text-slate-400 transition-colors"
   aria-label="Navegación de paginación"
 >
-  <!-- Texto descriptivo de registros mostrados -->
-  <div class="records-counter-info flex items-center justify-center sm:justify-start">
+  <!-- Columna 1 (Izquierda): Resumen de registros con badge estilizado -->
+  <div class="records-counter-info flex items-center justify-center md:justify-start gap-2.5 w-full md:w-auto">
+    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700/70 select-none">
+      <span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+      <span>Total:</span>
+      <strong class="font-bold text-slate-900 dark:text-white tabular-nums">{{ total }}</strong>
+    </div>
+
     @if (total > 0) {
-      <span>
-        Mostrando
-        <strong class="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{{ fromItem }}</strong>
-        a
-        <strong class="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{{ toItem }}</strong>
-        de
-        <strong class="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{{ total }}</strong>
-        registros
+      <span class="text-xs text-slate-500 dark:text-slate-400 select-none hidden sm:inline">
+        (Mostrando
+        <strong class="font-semibold text-slate-700 dark:text-slate-200 tabular-nums">{{ fromItem }}</strong>
+        –
+        <strong class="font-semibold text-slate-700 dark:text-slate-200 tabular-nums">{{ toItem }}</strong>)
       </span>
-    } @else {
-      <span>Sin registros para mostrar</span>
     }
   </div>
 
-  <!-- Controles de navegación y tamaño de página -->
-  <div class="pagination-controls flex flex-wrap items-center justify-center sm:justify-end gap-3 sm:gap-4">
-    <!-- Selector de registros por página -->
-    <div class="page-size-selector flex items-center gap-2">
-      <label for="page-size-select" class="text-xs text-slate-500 dark:text-slate-400 select-none">
-        Filas:
-      </label>
-      <div class="relative">
-        <select
-          id="page-size-select"
-          [value]="pageSize"
-          (change)="onSizeSelect($any($event.target).value)"
-          aria-label="Cantidad de filas por página"
-          class="appearance-none pl-2.5 pr-7 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer shadow-sm transition-all"
-        >
-          @for (opt of pageSizeOptions; track opt) {
-            <option [value]="opt">{{ opt }}</option>
-          }
-        </select>
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-slate-400">
-          <span class="mat-icon text-sm select-none">expand_more</span>
-        </div>
-      </div>
-    </div>
+  <!-- Columna 2 (Centro): Pastilla de navegación principal < 1 DE 1 > perfectamente centrada -->
+  <div class="flex items-center justify-center gap-1.5 w-full md:w-auto">
+    <!-- Botón salto primera página («) -->
+    <button
+      type="button"
+      (click)="onFirst()"
+      [disabled]="!canPrev"
+      aria-label="Primera página"
+      title="Primera página (Inicio)"
+      class="pill-nav-jump-btn w-8 h-8 rounded-full flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-20 disabled:pointer-events-none transition-all active:scale-95"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m11 17-5-5 5-5m7 10-5-5 5-5" />
+      </svg>
+    </button>
 
-    <!-- Botones de salto y avance/retroceso -->
-    <div class="page-buttons flex items-center gap-1" role="navigation" aria-label="Controles de página">
-      <!-- Ir al inicio -->
-      <button
-        type="button"
-        (click)="onFirst()"
-        [disabled]="!canPrev"
-        aria-label="Primera página"
-        title="Primera página"
-        class="nav-btn w-9 h-9 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-95"
-      >
-        <span class="mat-icon text-base select-none" aria-hidden="true">first_page</span>
-      </button>
-
-      <!-- Página anterior -->
+    <!-- Cápsula Central (< | 1 DE 1 | >) -->
+    <div
+      class="pagination-pill inline-flex items-stretch h-9 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xs select-none transition-colors"
+      role="navigation"
+      aria-label="Controles de página"
+      tabindex="0"
+      (keydown.ArrowLeft)="onPrev()"
+      (keydown.ArrowRight)="onNext()"
+      (keydown.Home)="onFirst()"
+      (keydown.End)="onLast()"
+    >
+      <!-- Botón Anterior (<) -->
       <button
         type="button"
         (click)="onPrev()"
         [disabled]="!canPrev"
         aria-label="Página anterior"
         title="Página anterior"
-        class="nav-btn w-9 h-9 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-95"
+        class="pill-nav-btn flex items-center justify-center w-9 sm:w-10 rounded-l-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/80 active:bg-slate-200/60 dark:active:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-inset disabled:opacity-30 disabled:pointer-events-none disabled:hover:bg-transparent transition-all"
       >
-        <span class="mat-icon text-base select-none" aria-hidden="true">chevron_left</span>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 19l-7-7 7-7" />
+        </svg>
       </button>
 
-      <!-- Indicador de página activa -->
-      <div class="px-2 text-xs font-medium text-slate-700 dark:text-slate-300 tabular-nums select-none">
+      <!-- Divisor vertical -->
+      <div class="w-px self-stretch bg-slate-200 dark:bg-slate-750" aria-hidden="true"></div>
+
+      <!-- Texto Central: 1 DE 1 -->
+      <div
+        class="page-indicator flex items-center justify-center px-4 text-xs font-semibold tracking-wider text-slate-700 dark:text-slate-200 uppercase tabular-nums select-none whitespace-nowrap"
+        [attr.aria-label]="'Página ' + page + ' de ' + (totalPages || 1)"
+      >
         <span>{{ page }}</span>
-        <span class="text-slate-400 dark:text-slate-600 px-1">/</span>
+        <span class="mx-1.5 text-slate-400 dark:text-slate-500 font-medium">{{ separator }}</span>
         <span>{{ totalPages || 1 }}</span>
       </div>
 
-      <!-- Página siguiente -->
+      <!-- Divisor vertical -->
+      <div class="w-px self-stretch bg-slate-200 dark:bg-slate-750" aria-hidden="true"></div>
+
+      <!-- Botón Siguiente (>) -->
       <button
         type="button"
         (click)="onNext()"
         [disabled]="!canNext"
         aria-label="Página siguiente"
         title="Página siguiente"
-        class="nav-btn w-9 h-9 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-95"
+        class="pill-nav-btn flex items-center justify-center w-9 sm:w-10 rounded-r-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/80 active:bg-slate-200/60 dark:active:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-inset disabled:opacity-30 disabled:pointer-events-none disabled:hover:bg-transparent transition-all"
       >
-        <span class="mat-icon text-base select-none" aria-hidden="true">chevron_right</span>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 5l7 7-7 7" />
+        </svg>
       </button>
+    </div>
 
-      <!-- Ir al final -->
-      <button
-        type="button"
-        (click)="onLast()"
-        [disabled]="!canNext"
-        aria-label="Última página"
-        title="Última página"
-        class="nav-btn w-9 h-9 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-95"
-      >
-        <span class="mat-icon text-base select-none" aria-hidden="true">last_page</span>
-      </button>
+    <!-- Botón salto última página (») -->
+    <button
+      type="button"
+      (click)="onLast()"
+      [disabled]="!canNext"
+      aria-label="Última página"
+      title="Última página (Fin)"
+      class="pill-nav-jump-btn w-8 h-8 rounded-full flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-20 disabled:pointer-events-none transition-all active:scale-95"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m13 17 5-5-5-5M7 17l5-5-5-5" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Columna 3 (Derecha): Selector de filas por página interactivo en pastilla -->
+  <div class="page-size-selector flex items-center justify-center md:justify-end gap-2.5 w-full md:w-auto">
+    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium select-none whitespace-nowrap">
+      Filas por pág:
+    </span>
+
+    <!-- Selector de pastillas segmentadas (Sleek Segmented Pill) -->
+    <div
+      class="inline-flex p-0.5 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 select-none"
+      role="radiogroup"
+      aria-label="Seleccionar filas por página"
+    >
+      @for (opt of pageSizeOptions; track opt) {
+        <button
+          type="button"
+          (click)="onSizeSelect(opt)"
+          role="radio"
+          [attr.aria-checked]="opt === pageSize"
+          [attr.aria-label]="opt + ' filas por página'"
+          [class]="opt === pageSize
+            ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-300 font-bold shadow-xs'
+            : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium'"
+          class="px-3 py-1 text-xs rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary active:scale-95 cursor-pointer"
+        >
+          {{ opt }}
+        </button>
+      }
     </div>
   </div>
 </div>

@@ -21,7 +21,7 @@
 }
 
 .admin-shell-content-wrapper {
-  @apply max-w-7xl mx-auto;
+  @apply w-full;
 }
 
 /* Custom Scrollbar */

@@ -71,4 +71,6 @@ describe('PaginationComponent', () => {
     component.onSizeSelect(50);
     expect(component.pageSizeChange.emit).toHaveBeenCalledWith(50);
   });
+
+
 });
