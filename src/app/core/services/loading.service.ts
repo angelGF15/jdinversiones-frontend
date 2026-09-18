@@ -26,6 +26,7 @@ export class LoadingService {
   private isNavigating = false;
   private activeRequests = 0;
   private hideTimeout: ReturnType<typeof setTimeout> | null = null;
+  private showTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     this.setupRouterListener();
@@ -41,38 +42,71 @@ export class LoadingService {
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
-        this.isNavigating = true;
         if (this.hideTimeout) {
           clearTimeout(this.hideTimeout);
           this.hideTimeout = null;
         }
+        if (this.showTimeout) {
+          clearTimeout(this.showTimeout);
+          this.showTimeout = null;
+        }
 
-        const targetUrl = event.url.toLowerCase();
+        const currentUrl = (this.router?.url || '').toLowerCase();
+        const targetUrl = (event.url || '').toLowerCase();
+
+        const currentPath = currentUrl.split('?')[0].split('#')[0];
+        const targetPath = targetUrl.split('?')[0].split('#')[0];
+
+        // 1. Si es la misma ruta base (ej. cambio de queryParams en paginación o filtros de búsqueda),
+        // nunca activar el skeleton loader global de pantalla completa.
+        if (currentPath === targetPath && currentPath !== '') {
+          return;
+        }
+
+        // 2. Si es navegación interna dentro del mismo shell administrativo (/admin/* -> /admin/*),
+        // preservar el layout del shell real y no taparlo con un esqueleto genérico.
+        if (currentPath.startsWith('/admin') && targetPath.startsWith('/admin')) {
+          return;
+        }
+
+        // 3. Para transiciones de layout raíz (ej. /login <-> /admin), usar un umbral de 150ms
+        // para no mostrar destellos si la navegación ocurre instantáneamente en memoria.
         let targetVariant: SkeletonVariant = 'full';
-
         if (targetUrl === '/login' || targetUrl.startsWith('/login')) {
           targetVariant = 'login';
         } else if (targetUrl === '/admin' || targetUrl.startsWith('/admin')) {
           targetVariant = 'admin';
         }
 
-        this._variant.set(targetVariant);
-        this._isLoading.set(true);
+        this.isNavigating = true;
+        this.showTimeout = setTimeout(() => {
+          this._variant.set(targetVariant);
+          this._isLoading.set(true);
+        }, 150);
       } else if (
         event instanceof NavigationEnd ||
         event instanceof NavigationCancel ||
         event instanceof NavigationError
       ) {
         this.isNavigating = false;
+        if (this.showTimeout) {
+          clearTimeout(this.showTimeout);
+          this.showTimeout = null;
+        }
         if (this.hideTimeout) {
           clearTimeout(this.hideTimeout);
+          this.hideTimeout = null;
         }
-        // Micro-retraso suave para permitir que el DOM del nuevo componente se monte sin parpadeo brusco
-        this.hideTimeout = setTimeout(() => {
-          this.activeRequests = 0; // Garantiza que no queden peticiones colgadas de redirecciones
-          this._isLoading.set(false);
-          this._message.set(null);
-        }, 80);
+
+        if (this._isLoading()) {
+          this.hideTimeout = setTimeout(() => {
+            this.activeRequests = 0;
+            this._isLoading.set(false);
+            this._message.set(null);
+          }, 60);
+        } else {
+          this.activeRequests = 0;
+        }
       }
     });
   }
