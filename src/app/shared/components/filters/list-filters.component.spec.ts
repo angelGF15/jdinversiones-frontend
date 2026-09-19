@@ -129,4 +129,27 @@ describe('ListFiltersComponent', () => {
     component.toggleValues = { isActive: false };
     expect(component.hasActiveFilters()).toBeFalse();
   });
+
+  it('activeFiltersCount debe calcular correctamente la cantidad de filtros activos', () => {
+    expect(component.activeFiltersCount).toBe(0);
+
+    component.searchTerm = 'admin';
+    expect(component.activeFiltersCount).toBe(1);
+
+    component.selectValues = { roleId: 'role-1' };
+    expect(component.activeFiltersCount).toBe(2);
+
+    component.toggleValues = { isActive: true };
+    expect(component.activeFiltersCount).toBe(3);
+  });
+
+  it('isSelectActive() debe indicar si un select tiene un valor asignado válido', () => {
+    expect(component.isSelectActive('roleId')).toBeFalse();
+
+    component.selectValues = { roleId: 'role-2' };
+    expect(component.isSelectActive('roleId')).toBeTrue();
+
+    component.selectValues = { roleId: '' };
+    expect(component.isSelectActive('roleId')).toBeFalse();
+  });
 });

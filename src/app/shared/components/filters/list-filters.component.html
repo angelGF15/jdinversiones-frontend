@@ -1,82 +1,109 @@
-<div class="list-filters-wrapper flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between w-full p-1">
+<div class="list-filters-wrapper flex flex-col gap-3.5 lg:flex-row lg:items-center lg:justify-between w-full">
   <!-- Grupo izquierdo: Búsqueda rápida debounced -->
-  <div class="search-field-container relative flex-1 max-w-lg xl:max-w-xl w-full">
-    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-      <span class="mat-icon text-lg select-none" aria-hidden="true">search</span>
+  <div class="search-field-container relative flex-1 max-w-md lg:max-w-lg xl:max-w-xl w-full group">
+    <!-- Icono de búsqueda SVG -->
+    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+      </svg>
     </div>
 
+    <!-- Input de búsqueda -->
     <input
       type="text"
       [value]="searchTerm"
       (input)="onSearchInput($any($event.target).value)"
       [placeholder]="searchPlaceholder"
       aria-label="Buscar registros"
-      class="w-full pl-10 pr-9 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all shadow-sm"
+      class="w-full h-10 pl-10 pr-9 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary transition-all shadow-2xs"
     />
 
+    <!-- Botón de limpiar búsqueda activa -->
     @if (searchTerm) {
       <button
         type="button"
         (click)="clearSearch()"
         aria-label="Limpiar búsqueda"
-        class="absolute inset-y-0 right-1.5 my-auto w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all"
+        title="Limpiar búsqueda"
+        class="absolute inset-y-0 right-2 my-auto w-6 h-6 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
       >
-        <span class="mat-icon text-base select-none" aria-hidden="true">close</span>
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </button>
     }
   </div>
 
   <!-- Grupo derecho: Selects, Toggles y Reset -->
-  <div class="filters-controls-container flex flex-wrap items-center gap-3">
-    <!-- Selectores desplegables dinámicos -->
+  <div class="filters-controls-container flex flex-wrap items-center gap-2.5 sm:gap-3">
+    <!-- Selectores desplegables dinámicos con feedback de filtro activo -->
     @for (sel of selects; track sel.key) {
-      <div class="relative min-w-[140px] sm:min-w-[160px]">
+      <div class="relative min-w-[140px] sm:min-w-[165px]">
         <select
           [id]="'filter-select-' + sel.key"
           [value]="selectValues[sel.key] ?? ''"
           (change)="onSelectChange(sel.key, $any($event.target).value)"
           [attr.aria-label]="sel.label"
-          class="w-full appearance-none pl-3 pr-8 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all shadow-sm cursor-pointer"
+          [class]="isSelectActive(sel.key)
+            ? 'border-primary-400 dark:border-primary-500/70 bg-primary-50/50 dark:bg-primary-950/30 text-primary-900 dark:text-primary-100 font-semibold ring-1 ring-primary-500/20'
+            : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'"
+          class="w-full h-10 appearance-none pl-3 pr-8 text-xs sm:text-sm rounded-xl border focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary transition-all shadow-2xs cursor-pointer"
         >
           <option value="">{{ sel.label }}: Todos</option>
           @for (opt of sel.options; track opt.value) {
             <option [value]="opt.value">{{ opt.label }}</option>
           }
         </select>
-        <!-- Chevron personalizado -->
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
-          <span class="mat-icon text-lg select-none" aria-hidden="true">expand_more</span>
+        <!-- Chevron SVG moderno -->
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400 dark:text-slate-500">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m19 9-7 7-7-7" />
+          </svg>
         </div>
       </div>
     }
 
-    <!-- Toggles / Switches booleanos dinámicos -->
+    <!-- Toggles / Switches booleanos dinámicos con feedback de estado -->
     @for (tog of toggles; track tog.key) {
       <label
-        class="inline-flex items-center gap-2 cursor-pointer select-none text-sm text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-xl border border-slate-200/80 dark:border-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800/50 focus-within:ring-2 focus-within:ring-primary-500/30 transition-colors"
+        [class]="toggleValues[tog.key]
+          ? 'border-primary-400 dark:border-primary-500/70 bg-primary-50/50 dark:bg-primary-950/30 text-primary-900 dark:text-primary-100 font-semibold ring-1 ring-primary-500/20 shadow-2xs'
+          : 'border-slate-200/90 dark:border-slate-800/90 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700 shadow-2xs'"
+        class="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl border cursor-pointer select-none text-xs sm:text-sm focus-within:ring-2 focus-within:ring-primary-500/30 transition-all active:scale-98"
       >
         <input
           type="checkbox"
           [checked]="!!toggleValues[tog.key]"
           (change)="onToggleChange(tog.key, $any($event.target).checked)"
-          class="w-4 h-4 rounded text-primary-500 border-slate-300 dark:border-slate-700 focus:ring-primary-500/20 focus:ring-offset-0 cursor-pointer"
+          class="w-4 h-4 rounded text-primary focus:ring-primary-500/20 focus:ring-offset-0 border-slate-300 dark:border-slate-700 cursor-pointer accent-primary"
         />
+        <span class="w-1.5 h-1.5 rounded-full transition-colors" [class]="toggleValues[tog.key] ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'"></span>
         <span>{{ tog.label }}</span>
       </label>
     }
 
-    <!-- Botón de Limpieza / Restablecer filtros -->
+    <!-- Botón de Limpieza / Restablecer filtros con contador de filtros activos -->
     @if (showReset) {
       <button
         type="button"
         (click)="resetFilters()"
         [disabled]="!hasActiveFilters()"
         aria-label="Restablecer todos los filtros"
-        class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-danger-500 dark:hover:text-danger-400 hover:border-danger-200 dark:hover:border-danger-800/60 hover:bg-danger-50/50 dark:hover:bg-danger-900/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none disabled:hover:text-slate-600"
+        [class]="hasActiveFilters()
+          ? 'border-danger-200 dark:border-danger-800/60 bg-danger-50/60 dark:bg-danger-950/30 text-danger-700 dark:text-danger-300 hover:bg-danger-100/70 hover:border-danger-300 dark:hover:bg-danger-900/40 shadow-2xs active:scale-95 cursor-pointer'
+          : 'opacity-40 pointer-events-none border-slate-200 dark:border-slate-800 bg-transparent text-slate-400 dark:text-slate-600'"
+        class="inline-flex items-center gap-1.5 h-10 px-3.5 text-xs font-semibold rounded-xl border focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 transition-all"
         title="Restablecer todos los filtros"
       >
-        <span class="mat-icon text-sm select-none" aria-hidden="true">filter_alt_off</span>
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 18L18 6M6 6l12 12" />
+        </svg>
         <span>Limpiar</span>
+        @if (activeFiltersCount > 0) {
+          <span class="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-danger-200/80 dark:bg-danger-900/60 text-danger-800 dark:text-danger-200 tabular-nums">
+            {{ activeFiltersCount }}
+          </span>
+        }
       </button>
     }
   </div>

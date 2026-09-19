@@ -147,6 +147,27 @@ export class ListFiltersComponent implements OnInit, OnChanges {
     return false;
   }
 
+  /** Retorna el número total de filtros actualmente activos. */
+  public get activeFiltersCount(): number {
+    let count = 0;
+    if (this.searchTerm && this.searchTerm.trim().length > 0) count++;
+    for (const key of Object.keys(this.selectValues)) {
+      if (this.selectValues[key] !== null && this.selectValues[key] !== undefined && this.selectValues[key] !== '') {
+        count++;
+      }
+    }
+    for (const key of Object.keys(this.toggleValues)) {
+      if (this.toggleValues[key] === true) count++;
+    }
+    return count;
+  }
+
+  /** Determina si un selector específico tiene un valor seleccionado diferente al default. */
+  public isSelectActive(key: string): boolean {
+    const val = this.selectValues[key];
+    return val !== null && val !== undefined && val !== '';
+  }
+
   private emitFilterState(): void {
     const state: Record<string, unknown> = {};
 

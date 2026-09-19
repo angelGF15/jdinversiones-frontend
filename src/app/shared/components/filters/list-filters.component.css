@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ListFilters Styles
+   ListFilters Styles — UI/UX Pro Max Polished
    ========================================================================== */
 
 :host {
@@ -11,13 +11,32 @@ select {
   background-image: none;
 }
 
+/* Transición suave para todos los estados interactivos */
+input,
+select,
+button,
+label {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Enfoque accesible visible */
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-primary, #032edd);
+  outline-offset: 1px;
+}
+
+/* Respeta la preferencia de reducción de movimiento */
 @media (prefers-reduced-motion: reduce) {
   input,
   select,
   button,
-  label {
+  label,
+  span,
+  svg {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition: none !important;
     transform: none !important;
   }
 }
-
