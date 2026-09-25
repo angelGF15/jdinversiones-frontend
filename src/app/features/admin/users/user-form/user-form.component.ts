@@ -323,8 +323,9 @@ export class UserFormComponent implements OnInit {
         userId: currentId,
         userName: this.fullName(),
       },
+      panelClass: 'avatar-dialog-panel',
       autoFocus: false,
-      maxWidth: '480px',
+      maxWidth: '460px',
       width: '100%',
     });
 

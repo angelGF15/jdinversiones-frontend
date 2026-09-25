@@ -59,8 +59,9 @@ export class HeaderComponent {
         avatarUrl: this.authState.avatarUrl(),
         userName: this.authState.fullName(),
       },
+      panelClass: 'avatar-dialog-panel',
       autoFocus: false,
-      maxWidth: '480px',
+      maxWidth: '460px',
       width: '100%',
     });
 

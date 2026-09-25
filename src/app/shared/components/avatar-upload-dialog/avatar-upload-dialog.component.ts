@@ -2,6 +2,7 @@ import {
   Component,
   inject,
   signal,
+  computed,
   OnDestroy,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -11,6 +12,7 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
@@ -18,8 +20,13 @@ import { UsersService } from '../../../core/services/users.service';
 
 export interface AvatarUploadDialogData {
   avatarUrl?: string | null;
-  userId?: string | null; // Si es null/undefined, opera sobre el usuario logueado ('me')
+  userId?: string | null; // Si es null/undefined, opera sobre la sesión del usuario actual ('me')
   userName?: string;
+}
+
+export interface ImageDimensions {
+  width: number;
+  height: number;
 }
 
 const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
@@ -34,6 +41,7 @@ const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
+    MatTooltipModule,
   ],
   templateUrl: './avatar-upload-dialog.component.html',
   styleUrls: ['./avatar-upload-dialog.component.css'],
@@ -46,13 +54,31 @@ export class AvatarUploadDialogComponent implements OnDestroy {
   private readonly authState = inject(AuthState);
   private readonly usersService = inject(UsersService);
 
-  // --- Signals de Estado ---
+  // --- Signals de Estado Primario ---
   public readonly currentAvatarUrl = signal<string | null>(this.data?.avatarUrl ?? null);
   public readonly previewUrl = signal<string | null>(null);
   public readonly selectedFile = signal<File | null>(null);
+  public readonly imageDimensions = signal<ImageDimensions | null>(null);
   public readonly isDragging = signal<boolean>(false);
   public readonly isUploading = signal<boolean>(false);
   public readonly errorMessage = signal<string | null>(null);
+
+  // --- Signals Computados (UI/UX Pro Max) ---
+  public readonly hasNewSelection = computed(() => !!this.selectedFile() && !!this.previewUrl());
+
+  public readonly targetUserName = computed(() => {
+    return this.data?.userName || this.authState.fullName() || 'Usuario del Sistema';
+  });
+
+  public readonly userInitials = computed(() => {
+    const name = this.targetUserName().trim();
+    if (!name) return 'JD';
+    const parts = name.split(/\s+/);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  });
+
+  public readonly isSelfMode = computed(() => !this.data?.userId);
 
   private objectUrlToRevoke: string | null = null;
 
@@ -68,17 +94,16 @@ export class AvatarUploadDialogComponent implements OnDestroy {
     if (!input.files || input.files.length === 0) return;
 
     this.processFile(input.files[0]);
-    // Limpia el value para permitir volver a seleccionar el mismo archivo si se desea
     input.value = '';
   }
 
   /**
-   * Manejadores de eventos Drag & Drop.
+   * Manejadores de eventos Drag & Drop accesibles.
    */
   public onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (!this.isUploading()) {
+    if (!this.isUploading() && !this.isDragging()) {
       this.isDragging.set(true);
     }
   }
@@ -103,31 +128,51 @@ export class AvatarUploadDialogComponent implements OnDestroy {
   }
 
   /**
-   * Valida tipo y tamaño del archivo y genera la URL de vista previa local.
+   * Valida tipo, tamaño y decodificabilidad de la imagen para asegurar integridad total.
    */
   private processFile(file: File): void {
     this.errorMessage.set(null);
 
-    // Validación de tipo MIME
+    // 1. Validación de tipo MIME
     if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-      this.errorMessage.set('El archivo debe ser una imagen válida (PNG, JPG o WebP).');
+      this.errorMessage.set('Formato de imagen no permitido. Solo se aceptan archivos PNG, JPG o WebP.');
       return;
     }
 
-    // Validación de tamaño (2 MB)
+    // 2. Validación de tamaño (2 MB)
     if (file.size > MAX_FILE_SIZE_BYTES) {
-      this.errorMessage.set('La imagen supera el tamaño máximo permitido (2 MB).');
+      this.errorMessage.set('La imagen supera el límite de 2 MB. Elige una imagen más liviana.');
       return;
     }
 
     this.cleanUpObjectUrl();
 
+    // 3. Crear ObjectURL y validar que sea una imagen decodificable
     if (typeof URL !== 'undefined' && URL.createObjectURL) {
-      this.objectUrlToRevoke = URL.createObjectURL(file);
-      this.previewUrl.set(this.objectUrlToRevoke);
-    }
+      const tempUrl = URL.createObjectURL(file);
+      this.objectUrlToRevoke = tempUrl;
 
-    this.selectedFile.set(file);
+      // Verificación en memoria de decodificación real
+      if (typeof Image !== 'undefined') {
+        const testImg = new Image();
+        testImg.onload = () => {
+          this.imageDimensions.set({
+            width: testImg.naturalWidth,
+            height: testImg.naturalHeight,
+          });
+          this.previewUrl.set(tempUrl);
+          this.selectedFile.set(file);
+        };
+        testImg.onerror = () => {
+          this.cleanUpObjectUrl();
+          this.errorMessage.set('El archivo seleccionado está dañado o no es una imagen gráfica válida.');
+        };
+        testImg.src = tempUrl;
+      } else {
+        this.previewUrl.set(tempUrl);
+        this.selectedFile.set(file);
+      }
+    }
   }
 
   /**
@@ -138,6 +183,7 @@ export class AvatarUploadDialogComponent implements OnDestroy {
     this.cleanUpObjectUrl();
     this.previewUrl.set(null);
     this.selectedFile.set(null);
+    this.imageDimensions.set(null);
     this.errorMessage.set(null);
   }
 
@@ -151,9 +197,9 @@ export class AvatarUploadDialogComponent implements OnDestroy {
     this.isUploading.set(true);
     this.errorMessage.set(null);
 
-    const isSelfMode = !this.data?.userId;
+    const isSelf = this.isSelfMode();
 
-    const upload$ = isSelfMode
+    const upload$ = isSelf
       ? this.authService.uploadMyAvatar(file)
       : this.usersService.uploadAvatar(this.data.userId!, file);
 
@@ -161,9 +207,9 @@ export class AvatarUploadDialogComponent implements OnDestroy {
       next: (updatedUser) => {
         this.isUploading.set(false);
 
-        // Si se actualizó el avatar del usuario en sesión, actualizamos el AuthState
+        // Actualización instantánea de sesión en memoria y localStorage si aplica
         const currentProfile = this.authState.profile();
-        if (isSelfMode && currentProfile) {
+        if (isSelf && currentProfile) {
           this.authState.setProfile({
             ...currentProfile,
             avatarUrl: updatedUser.avatarUrl,
@@ -191,7 +237,7 @@ export class AvatarUploadDialogComponent implements OnDestroy {
   }
 
   /**
-   * Formatea el tamaño del archivo en KB o MB para feedback visual.
+   * Formatea el tamaño del archivo en KB o MB.
    */
   public formatFileSize(bytes: number): string {
     if (bytes < 1024) return `${bytes} B`;
@@ -201,11 +247,11 @@ export class AvatarUploadDialogComponent implements OnDestroy {
 
   private handleUploadError(err: HttpErrorResponse): void {
     if (err.status === 400) {
-      this.errorMessage.set('El archivo debe ser una imagen válida (PNG, JPG o WebP).');
+      this.errorMessage.set('El archivo enviado no es válido. Debe ser PNG, JPG o WebP.');
     } else if (err.status === 413) {
-      this.errorMessage.set('La imagen supera el tamaño máximo permitido en el servidor (2 MB).');
+      this.errorMessage.set('La imagen supera el tamaño máximo permitido por el servidor (2 MB).');
     } else if (err.status === 502) {
-      this.errorMessage.set('El servicio de almacenamiento de imágenes no está disponible. Por favor, intente más tarde.');
+      this.errorMessage.set('El servicio de almacenamiento en la nube (Cloudinary) no está disponible temporalmente.');
     } else if (err.error?.message) {
       const msg = Array.isArray(err.error.message) ? err.error.message[0] : err.error.message;
       this.errorMessage.set(msg);

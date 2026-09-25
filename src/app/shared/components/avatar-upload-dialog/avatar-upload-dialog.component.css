@@ -1,11 +1,37 @@
 /* ==========================================================================
-   AvatarUploadDialog Component Styles
+   AvatarUploadDialog Component Styles — UI/UX Pro Max
    ========================================================================== */
 
 :host {
   display: block;
+  width: 100%;
 }
 
+::ng-deep .avatar-dialog-panel .mdc-dialog__surface,
+::ng-deep .mat-mdc-dialog-container:has(app-avatar-upload-dialog) .mdc-dialog__surface {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 1.5rem !important;
+  overflow: visible !important;
+}
+
+/* Animación de entrada suave del diálogo */
+.avatar-dialog-card {
+  animation: dialogFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes dialogFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Animación para sacudida de alerta de error */
 @keyframes shake {
   0%, 100% {
     transform: translateX(0);
@@ -22,6 +48,23 @@
   animation: shake 0.35s ease-in-out;
 }
 
+/* Animación de zoom suave para la imagen cargada */
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-zoom-in {
+  animation: zoomIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Efecto de borde y resplandor al arrastrar archivos */
 .upload-dropzone:hover {
   border-color: #2563eb;
 }
@@ -29,4 +72,27 @@
 :host-context(.dark) .upload-dropzone:hover,
 .dark .upload-dropzone:hover {
   border-color: #3b82f6;
+}
+
+/* Estilo accesible de foco para la zona de arrastre */
+.upload-dropzone:focus-visible {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
+:host-context(.dark) .upload-dropzone:focus-visible,
+.dark .upload-dropzone:focus-visible {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Desactivar animaciones si el usuario prefiere movimiento reducido (WCAG 2.2 AA) */
+@media (prefers-reduced-motion: reduce) {
+  .avatar-dialog-card,
+  .animate-shake,
+  .animate-zoom-in {
+    animation: none !important;
+    transition: none !important;
+  }
 }

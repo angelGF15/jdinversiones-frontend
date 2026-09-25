@@ -139,3 +139,24 @@ html, body {
   }
 }
 
+/* ==========================================================================
+   Estilos de Contenedor de Diálogos Personalizados (Material Dialog Fix)
+   Elimina la superficie y sombras duplicadas de MDC en el diálogo de avatar
+   ========================================================================== */
+.avatar-dialog-panel .mat-mdc-dialog-surface,
+.avatar-dialog-panel .mdc-dialog__surface,
+.mat-mdc-dialog-container:has(app-avatar-upload-dialog) .mat-mdc-dialog-surface,
+.mat-mdc-dialog-container:has(app-avatar-upload-dialog) .mdc-dialog__surface {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: 1.5rem !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.avatar-dialog-panel .mat-mdc-dialog-container,
+.avatar-dialog-panel .mdc-dialog__container {
+  padding: 0 !important;
+  background: transparent !important;
+}
+
