@@ -1,31 +1,75 @@
-<div class="user-form-container p-4 sm:p-6 max-w-4xl mx-auto w-full space-y-6">
-  <!-- Cabecera con botón de retroceso -->
-  <header class="space-y-2">
+<div class="user-form-page flex flex-col gap-6 w-full mx-auto">
+  <!-- Navegación Superior / Breadcrumbs -->
+  <nav aria-label="Ruta de navegación" class="flex items-center gap-2 text-xs font-medium">
     <a
       routerLink="/admin/users"
-      class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary-300 transition-colors rounded-lg px-2 py-1.5 -ml-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary-300 hover:bg-white dark:hover:bg-slate-900 border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
-      <span class="mat-icon text-base select-none" aria-hidden="true">arrow_back</span>
-      <span>Volver al listado de usuarios</span>
+      <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">arrow_back</span>
+      <span>Usuarios</span>
     </a>
+    <span class="text-slate-300 dark:text-slate-700 select-none" aria-hidden="true">/</span>
+    <span class="text-slate-800 dark:text-slate-200 font-semibold truncate">
+      {{ isEditMode() ? (fullName() || 'Editar Usuario') : 'Nuevo Usuario' }}
+    </span>
+  </nav>
 
+  <!-- Cabecera de la Pantalla (espejo estilístico de users-list) -->
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-200/60 dark:border-slate-800/60">
     <div class="flex items-center gap-3">
       <div
         aria-hidden="true"
-        class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm"
+        class="w-11 h-11 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm flex-shrink-0"
       >
-        <span class="mat-icon text-xl select-none">
+        <span class="mat-icon text-2xl select-none leading-none">
           {{ isEditMode() ? 'manage_accounts' : 'person_add' }}
         </span>
       </div>
       <div>
-        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-          {{ isEditMode() ? 'Editar Usuario' : 'Nuevo Usuario' }}
-        </h1>
-        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-          {{ isEditMode() ? 'Actualiza la información personal y roles asignados a la cuenta.' : 'Crea una cuenta interna de acceso y genera sus credenciales temporales.' }}
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            {{ isEditMode() ? 'Editar Usuario' : 'Nuevo Usuario' }}
+          </h1>
+          @if (isEditMode() && user()) {
+            <span
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
+              [ngClass]="user()?.isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-transparent' : 'bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-transparent'"
+            >
+              <span class="w-1.5 h-1.5 rounded-full" [ngClass]="user()?.isActive ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+              <span>{{ user()?.isActive ? 'Cuenta Activa' : 'Cuenta Inactiva' }}</span>
+            </span>
+          }
+        </div>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+          {{ isEditMode() ? 'Actualiza los datos personales, correo y roles asignados a esta cuenta.' : 'Registra una cuenta de usuario interno y genera sus credenciales temporales.' }}
         </p>
       </div>
+    </div>
+
+    <!-- Botones de Acción Superiores -->
+    <div class="flex items-center gap-2.5 self-end sm:self-auto">
+      <a
+        routerLink="/admin/users"
+        class="inline-flex items-center justify-center px-4 py-2 min-h-[42px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 shadow-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        Cancelar
+      </a>
+      <button
+        type="button"
+        (click)="onSubmit()"
+        [disabled]="isSubmitting() || isLoading()"
+        class="inline-flex items-center justify-center gap-2 px-5 py-2 min-h-[42px] text-xs sm:text-sm font-semibold rounded-xl bg-primary hover:bg-primary-700 text-white shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+      >
+        @if (isSubmitting()) {
+          <span class="mat-icon text-base animate-spin select-none flex-shrink-0" aria-hidden="true">refresh</span>
+          <span>Guardando...</span>
+        } @else {
+          <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">
+            {{ isEditMode() ? 'save' : 'person_add' }}
+          </span>
+          <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Usuario' }}</span>
+        }
+      </button>
     </div>
   </header>
 
@@ -37,305 +81,615 @@
       class="flex items-center justify-between p-4 rounded-xl bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800/40 text-danger-700 dark:text-danger-300 text-sm animate-shake"
     >
       <div class="flex items-center gap-3">
-        <span class="mat-icon text-xl text-danger-500 select-none" aria-hidden="true">error_outline</span>
+        <span class="mat-icon text-xl text-danger-500 select-none flex-shrink-0" aria-hidden="true">error_outline</span>
         <span class="font-medium">{{ errorMessage() }}</span>
       </div>
       <button
         type="button"
         (click)="errorMessage.set(null)"
-        class="text-danger-500 hover:text-danger-700 dark:hover:text-danger-300 transition-colors p-1 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
+        class="text-danger-500 hover:text-danger-700 dark:hover:text-danger-300 transition-colors p-1.5 rounded-lg flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
         aria-label="Cerrar alerta"
       >
-        <span class="mat-icon text-base select-none" aria-hidden="true">close</span>
+        <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">close</span>
       </button>
     </div>
   }
 
-  <!-- Formulario Reactivo -->
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6" novalidate>
-    <!-- Tarjeta Especial: Avatar de Acceso (Solo en Modo Edición) -->
-    @if (isEditMode()) {
-      <div class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-          <!-- Vista previa del Avatar -->
-          <div class="relative w-16 h-16 rounded-2xl flex-shrink-0 overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700">
-            @if (avatarUrl()) {
-              <img
-                [src]="avatarUrl()"
-                [alt]="fullName() || 'Avatar de usuario'"
-                class="w-full h-full object-cover"
-              />
-            } @else {
-              <div
-                class="w-full h-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300 flex items-center justify-center font-bold text-base select-none"
-              >
-                {{ getUserInitials() }}
-              </div>
-            }
-          </div>
-
-          <div class="space-y-1 text-left">
-            <h3 class="text-sm font-bold text-slate-900 dark:text-white">
-              Avatar de la Cuenta
-            </h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-              {{ avatarUrl() ? 'Imagen personalizada sincronizada con Cloudinary.' : 'Este usuario aún no tiene un avatar personalizado y utiliza sus iniciales corporativas.' }}
-            </p>
+  <!-- Vista Esqueleto durante la carga de datos del usuario -->
+  @if (isLoading()) {
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-pulse">
+      <div class="lg:col-span-8 flex flex-col gap-6">
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
+          <div class="h-5 w-48 rounded bg-slate-200 dark:bg-slate-800"></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
+            <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
           </div>
         </div>
-
-        <button
-          *hasPermission="'USER_EDIT'"
-          type="button"
-          (click)="openAvatarDialog()"
-          class="inline-flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-        >
-          <span class="mat-icon text-base select-none" aria-hidden="true">photo_camera</span>
-          <span>{{ avatarUrl() ? 'Cambiar Avatar' : 'Subir Avatar' }}</span>
-        </button>
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
+          <div class="h-5 w-44 rounded bg-slate-200 dark:bg-slate-800"></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
+            <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
+          </div>
+        </div>
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
+          <div class="h-5 w-52 rounded bg-slate-200 dark:bg-slate-800"></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <div class="h-20 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
+            <div class="h-20 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
+          </div>
+        </div>
       </div>
-    }
-
-    <!-- Tarjeta 1: Datos de Acceso e Identificación -->
-    <div class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
-      <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-2.5">
-        1. Datos de Contacto y Acceso
-      </h2>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-        <!-- Campo: Correo Electrónico -->
-        <div class="space-y-1.5">
-          <label for="email" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-            Correo Electrónico <span class="text-danger-500" aria-hidden="true">*</span>
-          </label>
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            placeholder="usuario@jdinversiones.com"
-            aria-required="true"
-            [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
-            [attr.aria-describedby]="form.controls.email.invalid && form.controls.email.touched ? 'email-error' : (isEditMode() ? 'email-hint' : null)"
-            class="w-full px-3.5 py-2.5 text-sm rounded-xl border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus:border-primary-500 disabled:opacity-60 disabled:bg-slate-100 dark:disabled:bg-slate-800/60 disabled:cursor-not-allowed"
-            [class.border-danger-300]="form.controls.email.invalid && form.controls.email.touched"
-            [class.border-slate-200]="!(form.controls.email.invalid && form.controls.email.touched)"
-            [class.dark:border-slate-800]="!(form.controls.email.invalid && form.controls.email.touched)"
-            [class.bg-white]="!isEditMode()"
-            [class.dark:bg-slate-900]="!isEditMode()"
-            [class.text-slate-800]="true"
-            [class.dark:text-slate-100]="true"
-          />
-
-          @if (isEditMode()) {
-            <p id="email-hint" class="text-[11px] text-slate-400 dark:text-slate-500 italic">
-              * El correo electrónico no se puede modificar una vez creada la cuenta.
-            </p>
-          }
-
-          @if (form.controls.email.invalid && form.controls.email.touched) {
-            <p id="email-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400">
-              @if (form.controls.email.errors?.['required']) {
-                El correo electrónico es obligatorio.
-              } @else if (form.controls.email.errors?.['email']) {
-                Ingresa un formato de correo válido.
-              } @else if (form.controls.email.errors?.['maxlength']) {
-                Máximo 255 caracteres permitidos.
-              }
-            </p>
-          }
-        </div>
-
-        <!-- Campo: Teléfono -->
-        <div class="space-y-1.5">
-          <label for="phone" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-            Teléfono <span class="text-slate-400 text-[11px] font-normal">(Opcional)</span>
-          </label>
-          <input
-            id="phone"
-            type="tel"
-            formControlName="phone"
-            placeholder="+504 9999-9999"
-            [attr.aria-invalid]="form.controls.phone.invalid && form.controls.phone.touched"
-            [attr.aria-describedby]="form.controls.phone.invalid && form.controls.phone.touched ? 'phone-error' : null"
-            class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus:border-primary-500 transition-all"
-            [class.border-danger-300]="form.controls.phone.invalid && form.controls.phone.touched"
-          />
-
-          @if (form.controls.phone.invalid && form.controls.phone.touched) {
-            <p id="phone-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400">
-              Máximo 30 caracteres permitidos.
-            </p>
-          }
+      <div class="lg:col-span-4 flex flex-col gap-6">
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 flex flex-col items-center space-y-4">
+          <div class="w-20 h-20 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
+          <div class="h-4 w-32 rounded bg-slate-200 dark:bg-slate-800"></div>
+          <div class="h-3 w-48 rounded bg-slate-100 dark:bg-slate-800/60"></div>
         </div>
       </div>
     </div>
+  } @else {
+    <!-- Formulario Principal -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="w-full" novalidate>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- ==================== COLUMNA PRINCIPAL (8 columnas) ==================== -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
 
-    <!-- Tarjeta 2: Información Personal -->
-    <div class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
-      <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-2.5">
-        2. Información Personal
-      </h2>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-        <!-- Campo: Nombre -->
-        <div class="space-y-1.5">
-          <label for="firstName" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-            Nombres <span class="text-danger-500" aria-hidden="true">*</span>
-          </label>
-          <input
-            id="firstName"
-            type="text"
-            formControlName="firstName"
-            placeholder="Ej. Juan Carlos"
-            aria-required="true"
-            [attr.aria-invalid]="form.controls.firstName.invalid && form.controls.firstName.touched"
-            [attr.aria-describedby]="form.controls.firstName.invalid && form.controls.firstName.touched ? 'firstName-error' : null"
-            class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus:border-primary-500 transition-all"
-            [class.border-danger-300]="form.controls.firstName.invalid && form.controls.firstName.touched"
-          />
-
-          @if (form.controls.firstName.invalid && form.controls.firstName.touched) {
-            <p id="firstName-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400">
-              @if (form.controls.firstName.errors?.['required']) {
-                El nombre es obligatorio.
-              } @else if (form.controls.firstName.errors?.['minlength']) {
-                Mínimo 2 caracteres requeridos.
-              } @else if (form.controls.firstName.errors?.['maxlength']) {
-                Máximo 80 caracteres permitidos.
-              }
-            </p>
-          }
-        </div>
-
-        <!-- Campo: Apellido -->
-        <div class="space-y-1.5">
-          <label for="lastName" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-            Apellidos <span class="text-danger-500" aria-hidden="true">*</span>
-          </label>
-          <input
-            id="lastName"
-            type="text"
-            formControlName="lastName"
-            placeholder="Ej. Pérez Martínez"
-            aria-required="true"
-            [attr.aria-invalid]="form.controls.lastName.invalid && form.controls.lastName.touched"
-            [attr.aria-describedby]="form.controls.lastName.invalid && form.controls.lastName.touched ? 'lastName-error' : null"
-            class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/20 focus:border-primary-500 transition-all"
-            [class.border-danger-300]="form.controls.lastName.invalid && form.controls.lastName.touched"
-          />
-
-          @if (form.controls.lastName.invalid && form.controls.lastName.touched) {
-            <p id="lastName-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400">
-              @if (form.controls.lastName.errors?.['required']) {
-                El apellido es obligatorio.
-              } @else if (form.controls.lastName.errors?.['minlength']) {
-                Mínimo 2 caracteres requeridos.
-              } @else if (form.controls.lastName.errors?.['maxlength']) {
-                Máximo 80 caracteres permitidos.
-              }
-            </p>
-          }
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta 3: Selección de Roles de Acceso (Regla de negocio: Mínimo 1 rol) -->
-    <div
-      class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4"
-      role="group"
-      aria-labelledby="roles-heading"
-    >
-      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
-        <div>
-          <h2 id="roles-heading" class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
-            3. Asignación de Roles de Acceso <span class="text-danger-500" aria-hidden="true">*</span>
-          </h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Selecciona al menos un rol de acceso.
-            @if (isEditMode()) {
-              <span class="text-amber-600 dark:text-amber-400 font-medium">Nota: Guardar reemplazará todos los roles asignados.</span>
-            }
-          </p>
-        </div>
-      </div>
-
-      <!-- Cuadrícula interactiva de roles con accesibilidad por teclado -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-        @for (role of availableRoles(); track role.roleId) {
-          <button
-            type="button"
-            role="checkbox"
-            [attr.aria-checked]="isRoleSelected(role.roleId)"
-            [attr.aria-label]="'Rol ' + role.name"
-            (click)="toggleRole(role.roleId)"
-            class="role-card p-3.5 rounded-xl border text-left cursor-pointer select-none transition-all flex items-center justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
-            [class.border-primary-500]="isRoleSelected(role.roleId)"
-            [class.bg-primary-50/60]="isRoleSelected(role.roleId)"
-            [class.dark:bg-primary-950/30]="isRoleSelected(role.roleId)"
-            [class.border-slate-200]="!isRoleSelected(role.roleId)"
-            [class.dark:border-slate-800]="!isRoleSelected(role.roleId)"
-            [class.hover:border-slate-300]="!isRoleSelected(role.roleId)"
-            [class.dark:hover:border-slate-700]="!isRoleSelected(role.roleId)"
-          >
-            <div class="flex items-center gap-2.5">
+          <!-- Tarjeta 1: Información de Contacto y Acceso -->
+          <section class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
+            <div class="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
               <div
                 aria-hidden="true"
-                class="w-5 h-5 rounded-md flex items-center justify-center border transition-colors text-xs"
-                [class.bg-primary]="isRoleSelected(role.roleId)"
-                [class.border-primary]="isRoleSelected(role.roleId)"
-                [class.text-white]="isRoleSelected(role.roleId)"
-                [class.border-slate-300]="!isRoleSelected(role.roleId)"
-                [class.dark:border-slate-600]="!isRoleSelected(role.roleId)"
+                class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-100 dark:border-blue-900/50 flex-shrink-0"
               >
-                @if (isRoleSelected(role.roleId)) {
-                  <span class="mat-icon text-xs select-none">check</span>
+                <span class="mat-icon text-lg select-none leading-none">alternate_email</span>
+              </div>
+              <div>
+                <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                  Acceso y Contacto
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  Credenciales de acceso al portal y canales oficiales de comunicación.
+                </p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <!-- Campo: Correo Electrónico -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label for="email" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Correo Electrónico <span class="text-danger-500" aria-hidden="true">*</span>
+                  </label>
+                  @if (isEditMode()) {
+                    <span class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                      <span class="mat-icon text-xs select-none flex-shrink-0">lock</span>
+                      <span>No editable</span>
+                    </span>
+                  }
+                </div>
+
+                <div class="relative">
+                  <!-- Contenedor de Icono con centrado vertical absoluto -->
+                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
+                    <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">
+                      alternate_email
+                    </span>
+                  </div>
+                  <input
+                    id="email"
+                    type="email"
+                    formControlName="email"
+                    placeholder="usuario@jdinversiones.com"
+                    autocomplete="email"
+                    aria-required="true"
+                    [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+                    [attr.aria-describedby]="form.controls.email.invalid && form.controls.email.touched ? 'email-error' : (isEditMode() ? 'email-hint' : null)"
+                    class="input-field w-full pl-10 pr-3.5 py-2.5 text-sm rounded-xl border transition-all disabled:opacity-75 disabled:bg-slate-100/70 dark:disabled:bg-slate-800/50 disabled:cursor-not-allowed"
+                    [class.border-danger-300]="form.controls.email.invalid && form.controls.email.touched"
+                    [class.border-slate-200]="!(form.controls.email.invalid && form.controls.email.touched)"
+                    [class.dark:border-slate-800]="!(form.controls.email.invalid && form.controls.email.touched)"
+                    [class.bg-white]="!isEditMode()"
+                    [class.dark:bg-slate-900]="!isEditMode()"
+                    [class.text-slate-900]="true"
+                    [class.dark:text-slate-100]="true"
+                  />
+                </div>
+
+                @if (isEditMode()) {
+                  <p id="email-hint" class="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1.5 pt-0.5">
+                    <span class="mat-icon text-xs select-none text-slate-400 flex-shrink-0">info</span>
+                    <span>El correo está vinculado a la identidad del colaborador y no puede modificarse.</span>
+                  </p>
+                }
+
+                @if (form.controls.email.invalid && form.controls.email.touched) {
+                  <p id="email-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                    @if (form.controls.email.errors?.['required']) {
+                      <span>El correo electrónico es obligatorio.</span>
+                    } @else if (form.controls.email.errors?.['email']) {
+                      <span>Ingresa un formato de correo electrónico válido.</span>
+                    } @else if (form.controls.email.errors?.['maxlength']) {
+                      <span>Máximo 255 caracteres permitidos.</span>
+                    }
+                  </p>
                 }
               </div>
-              <span
-                class="text-sm font-semibold capitalize"
-                [class.text-primary-700]="isRoleSelected(role.roleId)"
-                [class.dark:text-primary-300]="isRoleSelected(role.roleId)"
-                [class.text-slate-700]="!isRoleSelected(role.roleId)"
-                [class.dark:text-slate-300]="!isRoleSelected(role.roleId)"
+
+              <!-- Campo: Teléfono -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label for="phone" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Teléfono de Contacto
+                  </label>
+                  <span class="text-[11px] text-slate-400 dark:text-slate-500">Opcional</span>
+                </div>
+
+                <div class="relative">
+                  <!-- Contenedor de Icono con centrado vertical absoluto -->
+                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
+                    <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">
+                      call
+                    </span>
+                  </div>
+                  <input
+                    id="phone"
+                    type="tel"
+                    formControlName="phone"
+                    placeholder="+504 9999-9999"
+                    autocomplete="tel"
+                    [attr.aria-invalid]="form.controls.phone.invalid && form.controls.phone.touched"
+                    [attr.aria-describedby]="form.controls.phone.invalid && form.controls.phone.touched ? 'phone-error' : null"
+                    class="input-field w-full pl-10 pr-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all"
+                    [class.border-danger-300]="form.controls.phone.invalid && form.controls.phone.touched"
+                  />
+                </div>
+
+                @if (form.controls.phone.invalid && form.controls.phone.touched) {
+                  <p id="phone-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                    <span>Máximo 30 caracteres permitidos.</span>
+                  </p>
+                }
+              </div>
+            </div>
+          </section>
+
+          <!-- Tarjeta 2: Información Personal -->
+          <section class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
+            <div class="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div
+                aria-hidden="true"
+                class="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 flex-shrink-0"
               >
-                {{ role.name }}
+                <span class="mat-icon text-lg select-none leading-none">badge</span>
+              </div>
+              <div>
+                <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                  Información Personal
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  Nombres y apellidos para identificación en los módulos y registros de actividad.
+                </p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <!-- Campo: Nombres -->
+              <div class="space-y-1.5">
+                <label for="firstName" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Nombres <span class="text-danger-500" aria-hidden="true">*</span>
+                </label>
+
+                <div class="relative">
+                  <!-- Contenedor de Icono con centrado vertical absoluto -->
+                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
+                    <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">
+                      person
+                    </span>
+                  </div>
+                  <input
+                    id="firstName"
+                    type="text"
+                    formControlName="firstName"
+                    placeholder="Ej. Juan Carlos"
+                    autocomplete="given-name"
+                    aria-required="true"
+                    [attr.aria-invalid]="form.controls.firstName.invalid && form.controls.firstName.touched"
+                    [attr.aria-describedby]="form.controls.firstName.invalid && form.controls.firstName.touched ? 'firstName-error' : null"
+                    class="input-field w-full pl-10 pr-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all"
+                    [class.border-danger-300]="form.controls.firstName.invalid && form.controls.firstName.touched"
+                  />
+                </div>
+
+                @if (form.controls.firstName.invalid && form.controls.firstName.touched) {
+                  <p id="firstName-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                    @if (form.controls.firstName.errors?.['required']) {
+                      <span>El nombre es obligatorio.</span>
+                    } @else if (form.controls.firstName.errors?.['minlength']) {
+                      <span>Mínimo 2 caracteres requeridos.</span>
+                    } @else if (form.controls.firstName.errors?.['maxlength']) {
+                      <span>Máximo 80 caracteres permitidos.</span>
+                    }
+                  </p>
+                }
+              </div>
+
+              <!-- Campo: Apellidos -->
+              <div class="space-y-1.5">
+                <label for="lastName" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Apellidos <span class="text-danger-500" aria-hidden="true">*</span>
+                </label>
+
+                <div class="relative">
+                  <!-- Contenedor de Icono con centrado vertical absoluto -->
+                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
+                    <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">
+                      person_outline
+                    </span>
+                  </div>
+                  <input
+                    id="lastName"
+                    type="text"
+                    formControlName="lastName"
+                    placeholder="Ej. Pérez Martínez"
+                    autocomplete="family-name"
+                    aria-required="true"
+                    [attr.aria-invalid]="form.controls.lastName.invalid && form.controls.lastName.touched"
+                    [attr.aria-describedby]="form.controls.lastName.invalid && form.controls.lastName.touched ? 'lastName-error' : null"
+                    class="input-field w-full pl-10 pr-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all"
+                    [class.border-danger-300]="form.controls.lastName.invalid && form.controls.lastName.touched"
+                  />
+                </div>
+
+                @if (form.controls.lastName.invalid && form.controls.lastName.touched) {
+                  <p id="lastName-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                    @if (form.controls.lastName.errors?.['required']) {
+                      <span>El apellido es obligatorio.</span>
+                    } @else if (form.controls.lastName.errors?.['minlength']) {
+                      <span>Mínimo 2 caracteres requeridos.</span>
+                    } @else if (form.controls.lastName.errors?.['maxlength']) {
+                      <span>Máximo 80 caracteres permitidos.</span>
+                    }
+                  </p>
+                }
+              </div>
+            </div>
+          </section>
+
+          <!-- Tarjeta 3: Asignación de Roles de Acceso -->
+          <section
+            class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5"
+            role="group"
+            aria-labelledby="roles-group-title"
+          >
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div class="flex items-center gap-3">
+                <div
+                  aria-hidden="true"
+                  class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-100 dark:border-purple-900/50 flex-shrink-0"
+                >
+                  <span class="mat-icon text-lg select-none leading-none">admin_panel_settings</span>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h2 id="roles-group-title" class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                      Roles y Permisos
+                    </h2>
+                    <span class="text-danger-500" aria-hidden="true">*</span>
+                  </div>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">
+                    Define las responsabilidades y privilegios operativos del usuario.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Indicador de cantidad de roles seleccionados -->
+              <span
+                class="self-start sm:self-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
+                [ngClass]="selectedRolesCount > 0 ? 'bg-primary-50 text-primary-700 dark:bg-primary-950/50 dark:text-primary-300 border border-primary-200 dark:border-primary-800/50' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'"
+              >
+                <span class="mat-icon text-xs select-none flex-shrink-0">
+                  {{ selectedRolesCount > 0 ? 'check_circle' : 'pending' }}
+                </span>
+                <span>{{ selectedRolesCount }} seleccionado{{ selectedRolesCount === 1 ? '' : 's' }}</span>
               </span>
             </div>
-          </button>
-        }
+
+            @if (isEditMode()) {
+              <div class="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/40 text-xs text-amber-800 dark:text-amber-300">
+                <span class="mat-icon text-base text-amber-600 dark:text-amber-400 select-none flex-shrink-0 mt-0.5" aria-hidden="true">
+                  info
+                </span>
+                <span>
+                  Al guardar, se sincronizarán los roles seleccionados y se reemplazarán los accesos asignados previamente.
+                </span>
+              </div>
+            }
+
+            <!-- Cuadrícula interactiva de roles -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              @for (role of availableRoles(); track role.roleId) {
+                <div
+                  role="checkbox"
+                  tabindex="0"
+                  [attr.aria-checked]="isRoleSelected(role.roleId)"
+                  [attr.aria-label]="'Asignar rol ' + role.name"
+                  (click)="toggleRole(role.roleId)"
+                  (keydown)="onKeyDownRole($event, role.roleId)"
+                  class="role-card group p-3.5 sm:p-4 rounded-xl border text-left cursor-pointer select-none transition-all flex items-center gap-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  [class.is-selected]="isRoleSelected(role.roleId)"
+                >
+                  <!-- Checkbox Visual con icono check 100% centrado -->
+                  <div
+                    aria-hidden="true"
+                    class="checkbox-box w-5 h-5 rounded-md flex items-center justify-center border transition-all flex-shrink-0"
+                    [class.bg-primary]="isRoleSelected(role.roleId)"
+                    [class.border-primary]="isRoleSelected(role.roleId)"
+                    [class.text-white]="isRoleSelected(role.roleId)"
+                    [class.border-slate-300]="!isRoleSelected(role.roleId)"
+                    [class.dark:border-slate-600]="!isRoleSelected(role.roleId)"
+                    [class.group-hover:border-slate-400]="!isRoleSelected(role.roleId)"
+                  >
+                    @if (isRoleSelected(role.roleId)) {
+                      <span class="mat-icon text-xs select-none leading-none">check</span>
+                    }
+                  </div>
+
+                  <!-- Detalle del Rol -->
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span
+                        class="mat-icon text-lg select-none transition-colors flex-shrink-0"
+                        [class.text-primary]="isRoleSelected(role.roleId)"
+                        [class.dark:text-primary-300]="isRoleSelected(role.roleId)"
+                        [class.text-slate-400]="!isRoleSelected(role.roleId)"
+                        [class.dark:text-slate-500]="!isRoleSelected(role.roleId)"
+                        aria-hidden="true"
+                      >
+                        {{ getRoleIcon(role.name) }}
+                      </span>
+                      <span
+                        class="text-sm font-semibold capitalize transition-colors"
+                        [class.text-primary-700]="isRoleSelected(role.roleId)"
+                        [class.dark:text-primary-300]="isRoleSelected(role.roleId)"
+                        [class.text-slate-800]="!isRoleSelected(role.roleId)"
+                        [class.dark:text-slate-200]="!isRoleSelected(role.roleId)"
+                      >
+                        {{ role.name }}
+                      </span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
+                      {{ getRoleDescription(role.name) }}
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+
+            @if (form.controls.roleIds.invalid && form.controls.roleIds.touched) {
+              <p id="roles-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 font-medium flex items-center gap-1.5 pt-1">
+                <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                <span>Debes asignar al menos un rol de acceso al usuario.</span>
+              </p>
+            }
+          </section>
+        </div>
+
+        <!-- ==================== COLUMNA LATERAL (4 columnas) ==================== -->
+        <aside class="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-4">
+          
+          <!-- Modo Edición: Tarjeta de Identidad y Avatar -->
+          @if (isEditMode()) {
+            <section
+              aria-label="Perfil y avatar del usuario"
+              class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col items-center text-center space-y-4"
+            >
+              <!-- Avatar con anillo de contraste y botón de acción -->
+              <div class="relative group">
+                <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-sm border-2 border-primary/20 dark:border-primary/40 p-0.5 bg-white dark:bg-slate-800">
+                  @if (avatarUrl() && !isAvatarBroken()) {
+                    <img
+                      [src]="avatarUrl()"
+                      [alt]="fullName() || 'Avatar de usuario'"
+                      (error)="onAvatarImgError()"
+                      class="w-full h-full object-cover rounded-xl"
+                    />
+                  } @else {
+                    <div
+                      aria-hidden="true"
+                      class="w-full h-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300 flex items-center justify-center font-bold text-xl select-none rounded-xl"
+                    >
+                      {{ getUserInitials() }}
+                    </div>
+                  }
+                </div>
+
+                <!-- Botón flotante para cambiar avatar con permiso USER_EDIT -->
+                <button
+                  *hasPermission="'USER_EDIT'"
+                  type="button"
+                  (click)="openAvatarDialog()"
+                  matTooltip="Cambiar foto de perfil"
+                  class="absolute -bottom-1 -right-1 w-8 h-8 rounded-xl bg-primary text-white hover:bg-primary-700 shadow flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  aria-label="Cambiar foto de avatar"
+                >
+                  <span class="mat-icon text-base select-none leading-none">photo_camera</span>
+                </button>
+              </div>
+
+              <!-- Nombre y Correo en tiempo real -->
+              <div class="space-y-1 w-full overflow-hidden px-2">
+                <h3 class="text-base font-bold text-slate-900 dark:text-white truncate">
+                  {{ (form.controls.firstName.value || form.controls.lastName.value) ? (form.controls.firstName.value + ' ' + form.controls.lastName.value) : (fullName() || 'Usuario') }}
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-mono truncate">
+                  {{ form.controls.email.value || 'Sin correo asignado' }}
+                </p>
+              </div>
+
+              <!-- Botón Cambiar Avatar completo -->
+              <div *hasPermission="'USER_EDIT'" class="w-full pt-1">
+                <button
+                  type="button"
+                  (click)="openAvatarDialog()"
+                  class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary-300 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <span class="mat-icon text-base select-none text-primary flex-shrink-0" aria-hidden="true">add_a_photo</span>
+                  <span>{{ avatarUrl() ? 'Modificar Avatar' : 'Subir Avatar' }}</span>
+                </button>
+              </div>
+
+              <!-- Metadatos de la cuenta -->
+              <div class="w-full pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5 text-left text-xs">
+                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                  <span class="text-slate-400 dark:text-slate-500">Estado</span>
+                  <span
+                    class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium"
+                    [ngClass]="user()?.isActive ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'"
+                  >
+                    <span class="w-1.5 h-1.5 rounded-full" [ngClass]="user()?.isActive ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                    <span>{{ user()?.isActive ? 'Activo' : 'Inactivo' }}</span>
+                  </span>
+                </div>
+
+                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                  <span class="text-slate-400 dark:text-slate-500">Registrado</span>
+                  <span class="font-medium text-slate-700 dark:text-slate-300">{{ formattedCreatedAt }}</span>
+                </div>
+
+                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
+                  <span class="text-slate-400 dark:text-slate-500">ID de Cuenta</span>
+                  <button
+                    type="button"
+                    (click)="copyUserId()"
+                    matTooltip="Copiar UUID"
+                    class="font-mono text-[11px] text-primary hover:underline inline-flex items-center gap-1.5 cursor-pointer focus:outline-none"
+                  >
+                    <span>{{ userId() ? (userId()!.substring(0, 8) + '...') : '---' }}</span>
+                    <span class="mat-icon text-xs select-none flex-shrink-0">content_copy</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+          }
+
+          <!-- Modo Creación: Guía de Onboarding -->
+          @if (!isEditMode()) {
+            <section
+              aria-label="Guía de creación de cuenta"
+              class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4"
+            >
+              <div class="flex items-center gap-2.5 text-primary dark:text-primary-300">
+                <span class="mat-icon text-xl select-none flex-shrink-0" aria-hidden="true">help_outline</span>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+                  Guía de Alta de Usuario
+                </h3>
+              </div>
+
+              <div class="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+                <div class="flex items-start gap-2.5">
+                  <div class="w-5 h-5 rounded-full bg-primary-50 dark:bg-primary-950/50 text-primary dark:text-primary-300 flex items-center justify-center font-bold text-[11px] flex-shrink-0 mt-0.5 leading-none">
+                    1
+                  </div>
+                  <div>
+                    <strong class="font-semibold text-slate-800 dark:text-slate-200">Credenciales automáticas:</strong>
+                    <p class="text-slate-500 dark:text-slate-400 mt-0.5">
+                      Al crear la cuenta, el sistema generará una contraseña temporal de un solo uso que podrás copiar en pantalla.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-2.5">
+                  <div class="w-5 h-5 rounded-full bg-primary-50 dark:bg-primary-950/50 text-primary dark:text-primary-300 flex items-center justify-center font-bold text-[11px] flex-shrink-0 mt-0.5 leading-none">
+                    2
+                  </div>
+                  <div>
+                    <strong class="font-semibold text-slate-800 dark:text-slate-200">Primer inicio de sesión:</strong>
+                    <p class="text-slate-500 dark:text-slate-400 mt-0.5">
+                      El usuario deberá cambiar obligatoriamente su clave temporal en su primer ingreso al sistema.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-2.5">
+                  <div class="w-5 h-5 rounded-full bg-primary-50 dark:bg-primary-950/50 text-primary dark:text-primary-300 flex items-center justify-center font-bold text-[11px] flex-shrink-0 mt-0.5 leading-none">
+                    3
+                  </div>
+                  <div>
+                    <strong class="font-semibold text-slate-800 dark:text-slate-200">Asignación de roles:</strong>
+                    <p class="text-slate-500 dark:text-slate-400 mt-0.5">
+                      Los módulos habilitados dependerán de los roles asignados en este formulario.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Caja informativa de seguridad -->
+              <div class="p-3 rounded-xl bg-blue-50/70 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40 text-[11px] text-blue-700 dark:text-blue-300 flex items-start gap-2">
+                <span class="mat-icon text-base text-blue-500 select-none flex-shrink-0 mt-0.5" aria-hidden="true">security</span>
+                <span>Todas las cuentas creadas quedan bajo auditoría y trazabilidad en el registro del sistema.</span>
+              </div>
+            </section>
+          }
+
+          <!-- Tarjeta de Guardado y Acciones -->
+          <section
+            aria-label="Panel de acciones del formulario"
+            class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4"
+          >
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+              <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                Estado del Formulario
+              </span>
+              @if (form.valid) {
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  <span class="mat-icon text-sm select-none flex-shrink-0">check_circle</span>
+                  <span>Listo</span>
+                </span>
+              } @else {
+                <span class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+                  <span class="mat-icon text-sm select-none flex-shrink-0">pending</span>
+                  <span>Pendiente</span>
+                </span>
+              }
+            </div>
+
+            <div class="space-y-2.5 pt-1">
+              <!-- Botón Principal Guardar -->
+              <button
+                type="submit"
+                [disabled]="isSubmitting() || isLoading()"
+                class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[46px] text-sm font-semibold rounded-xl bg-primary hover:bg-primary-700 text-white shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+              >
+                @if (isSubmitting()) {
+                  <span class="mat-icon text-base animate-spin select-none flex-shrink-0" aria-hidden="true">refresh</span>
+                  <span>Guardando...</span>
+                } @else {
+                  <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">
+                    {{ isEditMode() ? 'save' : 'person_add' }}
+                  </span>
+                  <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Usuario' }}</span>
+                }
+              </button>
+
+              <!-- Botón Secundario Cancelar -->
+              <a
+                routerLink="/admin/users"
+                class="w-full inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-900"
+              >
+                Cancelar y Volver
+              </a>
+            </div>
+          </section>
+        </aside>
+
       </div>
-
-      @if (form.controls.roleIds.invalid && form.controls.roleIds.touched) {
-        <p id="roles-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 font-medium">
-          Debes asignar al menos un rol al usuario.
-        </p>
-      }
-    </div>
-
-    <!-- Botones de Acción / Guardar -->
-    <div class="flex items-center justify-end gap-3 pt-2">
-      <a
-        routerLink="/admin/users"
-        class="inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-900"
-      >
-        Cancelar
-      </a>
-
-      <button
-        type="submit"
-        [disabled]="isSubmitting() || isLoading()"
-        class="inline-flex items-center justify-center gap-2 px-6 py-2.5 min-h-[44px] text-xs sm:text-sm font-semibold rounded-xl bg-primary hover:bg-primary-700 text-white shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
-      >
-        @if (isSubmitting()) {
-          <span class="mat-icon text-sm animate-spin select-none" aria-hidden="true">refresh</span>
-          <span>Guardando...</span>
-        } @else {
-          <span class="mat-icon text-sm select-none" aria-hidden="true">
-            {{ isEditMode() ? 'save' : 'person_add' }}
-          </span>
-          <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Usuario' }}</span>
-        }
-      </button>
-    </div>
-  </form>
+    </form>
+  }
 </div>

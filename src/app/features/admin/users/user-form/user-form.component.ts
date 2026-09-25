@@ -19,6 +19,7 @@ import {
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { UsersService } from '../../../../core/services/users.service';
@@ -40,6 +41,7 @@ import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
+    MatTooltipModule,
     HasPermissionDirective,
   ],
   templateUrl: './user-form.component.html',
@@ -58,11 +60,13 @@ export class UserFormComponent implements OnInit {
   // --- Signals de Estado ---
   public readonly isEditMode = signal<boolean>(false);
   public readonly userId = signal<string | null>(null);
+  public readonly user = signal<User | null>(null);
   public readonly isLoading = signal<boolean>(false);
   public readonly isSubmitting = signal<boolean>(false);
   public readonly errorMessage = signal<string | null>(null);
   public readonly availableRoles = signal<ActiveRole[]>([]);
   public readonly avatarUrl = signal<string | null>(null);
+  public readonly isAvatarBroken = signal<boolean>(false);
   public readonly fullName = signal<string>('');
 
   private initialRoleIds: string[] = [];
@@ -116,12 +120,14 @@ export class UserFormComponent implements OnInit {
 
   private loadUserDetail(id: string): void {
     this.isLoading.set(true);
+    this.isAvatarBroken.set(false);
     this.usersService
       .getById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (user: User) => {
           this.isLoading.set(false);
+          this.user.set(user);
           this.avatarUrl.set(user.avatarUrl);
           this.fullName.set(user.fullName || `${user.firstName} ${user.lastName}`.trim());
           const roleIds = user.roles ? user.roles.map((r) => r.id) : [];
@@ -306,11 +312,75 @@ export class UserFormComponent implements OnInit {
   }
 
   public getUserInitials(): string {
-    const name = this.fullName() || this.form.controls.firstName.value || '';
+    const fName = this.form.controls.firstName.value || '';
+    const lName = this.form.controls.lastName.value || '';
+    const name = (this.fullName() || `${fName} ${lName}`).trim();
     if (!name) return 'U';
-    const parts = name.trim().split(/\s+/);
+    const parts = name.split(/\s+/);
     if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
     return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
+  public onAvatarImgError(): void {
+    this.isAvatarBroken.set(true);
+  }
+
+  public getRoleIcon(roleName: string): string {
+    const lower = roleName.toLowerCase();
+    if (lower.includes('admin')) return 'admin_panel_settings';
+    if (lower.includes('vendedor') || lower.includes('seller') || lower.includes('venta')) return 'point_of_sale';
+    if (lower.includes('cajer') || lower.includes('cashier') || lower.includes('caja')) return 'payments';
+    if (lower.includes('almacen') || lower.includes('bodega') || lower.includes('inventario') || lower.includes('stock')) return 'inventory_2';
+    if (lower.includes('supervisor') || lower.includes('auditor') || lower.includes('manager')) return 'verified_user';
+    if (lower.includes('soporte') || lower.includes('support')) return 'support_agent';
+    return 'security';
+  }
+
+  public getRoleDescription(roleName: string): string {
+    const lower = roleName.toLowerCase();
+    if (lower.includes('admin')) return 'Acceso total y configuración del sistema';
+    if (lower.includes('vendedor') || lower.includes('seller') || lower.includes('venta')) return 'Gestión de cotizaciones, pedidos y clientes';
+    if (lower.includes('cajer') || lower.includes('cashier') || lower.includes('caja')) return 'Cobros, arqueos y comprobantes de pago';
+    if (lower.includes('almacen') || lower.includes('bodega') || lower.includes('inventario')) return 'Control de stock, despachos e ingresos';
+    if (lower.includes('supervisor') || lower.includes('auditor')) return 'Supervisión y reportes de auditoría';
+    return 'Permisos y operaciones asignadas a esta categoría';
+  }
+
+  public get selectedRolesCount(): number {
+    return this.form.controls.roleIds.value?.length ?? 0;
+  }
+
+  public get formattedCreatedAt(): string {
+    const d = this.user()?.createdAt;
+    if (!d) return 'No disponible';
+    try {
+      return new Date(d).toLocaleDateString('es-HN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+    } catch {
+      return d;
+    }
+  }
+
+  public copyUserId(): void {
+    const id = this.userId();
+    if (!id) return;
+    navigator.clipboard.writeText(id).then(() => {
+      this.snackBar.open('ID copiado al portapapeles', 'Cerrar', {
+        duration: 2500,
+        horizontalPosition: 'end',
+        verticalPosition: 'bottom',
+      });
+    });
+  }
+
+  public onKeyDownRole(event: KeyboardEvent, roleId: string): void {
+    if (event.key === ' ' || event.key === 'Enter') {
+      event.preventDefault();
+      this.toggleRole(roleId);
+    }
   }
 
   public openAvatarDialog(): void {
@@ -336,6 +406,7 @@ export class UserFormComponent implements OnInit {
           horizontalPosition: 'end',
           verticalPosition: 'bottom',
         });
+        this.isAvatarBroken.set(false);
         this.loadUserDetail(currentId);
       }
     });

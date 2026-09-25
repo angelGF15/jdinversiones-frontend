@@ -7,6 +7,18 @@
   width: 100%;
 }
 
+/* Centrado geométrico estricto para iconos Material */
+.mat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  line-height: 1;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-4px); }
@@ -17,21 +29,57 @@
   animation: shake 0.4s ease-in-out;
 }
 
+/* Transiciones suaves de elevación de tarjetas */
 .form-section-card {
   transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.role-card {
-  transition: transform 0.15s ease,
-              border-color 0.15s ease,
+.form-section-card:hover {
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+/* Estilizado e interactividad de campos de entrada */
+.input-field {
+  transition: border-color 0.15s ease,
+              box-shadow 0.15s ease,
               background-color 0.15s ease;
 }
 
-.role-card:active {
-  transform: scale(0.98);
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-primary, #032edd);
+  box-shadow: 0 0 0 3px rgba(3, 46, 221, 0.12);
 }
 
+/* Tarjetas interactivas de selección de rol */
+.role-card {
+  transition: transform 0.15s ease,
+              border-color 0.15s ease,
+              background-color 0.15s ease,
+              box-shadow 0.15s ease;
+}
+
+.role-card:hover {
+  border-color: rgba(148, 163, 184, 0.5);
+}
+
+.role-card:active {
+  transform: scale(0.985);
+}
+
+.role-card.is-selected {
+  border-color: var(--color-primary, #032edd);
+  background-color: rgba(3, 46, 221, 0.04);
+  box-shadow: 0 0 0 1px var(--color-primary, #032edd), 0 2px 8px rgba(3, 46, 221, 0.08);
+}
+
+:host-context(.dark) .role-card.is-selected {
+  background-color: rgba(3, 46, 221, 0.12);
+  box-shadow: 0 0 0 1px rgba(3, 46, 221, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Respeto estricto a accesibilidad para usuarios con sensibilidad al movimiento */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
