@@ -57,9 +57,18 @@
       class="header-user-btn group"
       aria-label="Menú de cuenta de usuario"
     >
-      <div class="header-user-avatar">
-        {{ authState.fullName().substring(0, 2).toUpperCase() || 'JD' }}
-      </div>
+      @if (authState.avatarUrl() && !avatarImgError()) {
+        <img
+          class="header-user-avatar"
+          [src]="authState.avatarUrl()"
+          alt="Avatar de usuario"
+          (error)="avatarImgError.set(true)"
+        />
+      } @else {
+        <div class="header-user-avatar">
+          {{ authState.fullName().substring(0, 2).toUpperCase() || 'JD' }}
+        </div>
+      }
 
       <div class="header-user-info">
         <span class="header-user-name">
@@ -96,6 +105,11 @@
           {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
         </mat-icon>
         <span>{{ themeService.isDark() ? 'Tema Claro' : 'Tema Oscuro' }}</span>
+      </button>
+
+      <button mat-menu-item (click)="openAvatarDialog()">
+        <mat-icon class="mr-2 text-slate-600 dark:text-slate-300">photo_camera</mat-icon>
+        <span>Cambiar mi avatar</span>
       </button>
 
       <mat-divider></mat-divider>

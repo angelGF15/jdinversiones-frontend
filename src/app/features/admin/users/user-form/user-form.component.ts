@@ -28,13 +28,20 @@ import {
   UpdateUserRequest,
   User,
 } from '../../../../core/models/user.models';
+import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
+import { AvatarUploadDialogComponent } from '../../../../shared/components/avatar-upload-dialog/avatar-upload-dialog.component';
 import { CredentialsDialogComponent } from '../dialogs/credentials-dialog/credentials-dialog.component';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    HasPermissionDirective,
+  ],
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,6 +62,8 @@ export class UserFormComponent implements OnInit {
   public readonly isSubmitting = signal<boolean>(false);
   public readonly errorMessage = signal<string | null>(null);
   public readonly availableRoles = signal<ActiveRole[]>([]);
+  public readonly avatarUrl = signal<string | null>(null);
+  public readonly fullName = signal<string>('');
 
   private initialRoleIds: string[] = [];
 
@@ -113,6 +122,8 @@ export class UserFormComponent implements OnInit {
       .subscribe({
         next: (user: User) => {
           this.isLoading.set(false);
+          this.avatarUrl.set(user.avatarUrl);
+          this.fullName.set(user.fullName || `${user.firstName} ${user.lastName}`.trim());
           const roleIds = user.roles ? user.roles.map((r) => r.id) : [];
           this.initialRoleIds = [...roleIds];
 
@@ -292,5 +303,40 @@ export class UserFormComponent implements OnInit {
       }
       return null;
     };
+  }
+
+  public getUserInitials(): string {
+    const name = this.fullName() || this.form.controls.firstName.value || '';
+    if (!name) return 'U';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
+  public openAvatarDialog(): void {
+    const currentId = this.userId();
+    if (!currentId) return;
+
+    const dialogRef = this.dialog.open(AvatarUploadDialogComponent, {
+      data: {
+        avatarUrl: this.avatarUrl(),
+        userId: currentId,
+        userName: this.fullName(),
+      },
+      autoFocus: false,
+      maxWidth: '480px',
+      width: '100%',
+    });
+
+    dialogRef.afterClosed().subscribe((saved: boolean) => {
+      if (saved) {
+        this.snackBar.open('Avatar del usuario actualizado correctamente.', 'Entendido', {
+          duration: 3500,
+          horizontalPosition: 'end',
+          verticalPosition: 'bottom',
+        });
+        this.loadUserDetail(currentId);
+      }
+    });
   }
 }

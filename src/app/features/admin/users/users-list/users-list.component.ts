@@ -74,6 +74,7 @@ export class UsersListComponent implements OnInit {
   public readonly totalPages = signal<number>(1);
   public readonly isLoading = signal<boolean>(false);
   public readonly errorMessage = signal<string | null>(null);
+  private readonly brokenAvatarIds = signal<Set<string>>(new Set<string>());
 
   // --- Opciones de Filtros ---
   public readonly roleFilters = signal<FilterSelect[]>([]);
@@ -171,6 +172,18 @@ export class UsersListComponent implements OnInit {
     const parts = user.fullName.trim().split(/\s+/);
     if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
     return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
+  public isAvatarBroken(userId: string): boolean {
+    return this.brokenAvatarIds().has(userId);
+  }
+
+  public onAvatarImgError(userId: string): void {
+    this.brokenAvatarIds.update((set) => {
+      const updated = new Set(set);
+      updated.add(userId);
+      return updated;
+    });
   }
 
   public onEditUser(user: User): void {

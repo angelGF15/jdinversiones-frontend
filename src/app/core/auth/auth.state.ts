@@ -39,6 +39,10 @@ export class AuthState {
     return this._profile()?.email ?? '';
   });
 
+  public readonly avatarUrl = computed(() => {
+    return this._profile()?.avatarUrl ?? null;
+  });
+
   constructor() {
     this.hydrateFromStorage();
   }

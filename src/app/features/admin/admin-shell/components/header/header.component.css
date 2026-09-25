@@ -57,7 +57,7 @@
 }
 
 .header-user-avatar {
-  @apply w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0;
+  @apply w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0 object-cover;
 }
 
 .header-user-info {

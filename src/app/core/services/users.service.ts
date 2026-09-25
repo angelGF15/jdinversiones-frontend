@@ -98,6 +98,16 @@ export class UsersService {
   }
 
   /**
+   * Sube o actualiza la foto de avatar de un usuario específico.
+   * Requiere permiso USER_EDIT.
+   */
+  public uploadAvatar(userId: string, file: File): Observable<User> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.http.post<User>(`${this.baseUrl}/${userId}/avatar`, formData);
+  }
+
+  /**
    * Construye los HttpParams de consulta omitiendo valores nulos o indefinidos,
    * y garantizando que `page` y `limit` tengan valores por defecto válidos.
    */

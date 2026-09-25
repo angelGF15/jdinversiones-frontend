@@ -8,6 +8,7 @@ import {
   Profile,
   RefreshRequest,
 } from './models/auth.models';
+import { User } from '../models/user.models';
 
 @Injectable({
   providedIn: 'root',
@@ -51,5 +52,15 @@ export class AuthService {
    */
   public me(): Observable<Profile> {
     return this.http.get<Profile>(`${this.apiUrl}/auth/me`);
+  }
+
+  /**
+   * Sube o actualiza la imagen de avatar del usuario actualmente autenticado.
+   * Endpoint protegido: POST /users/me/avatar
+   */
+  public uploadMyAvatar(file: File): Observable<User> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.http.post<User>(`${this.apiUrl}/users/me/avatar`, formData);
   }
 }

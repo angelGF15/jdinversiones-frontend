@@ -5,6 +5,7 @@ import {
   EventEmitter,
   inject,
   signal,
+  effect,
   OnInit,
   DestroyRef,
   ChangeDetectionStrategy,
@@ -51,6 +52,15 @@ export class SidebarComponent implements OnInit {
 
   // Guarda los IDs de los grupos que se encuentran expandidos en el acordeón
   public readonly expandedGroups = signal<Set<string>>(new Set<string>());
+
+  public readonly avatarImgError = signal(false);
+
+  constructor() {
+    effect(() => {
+      this.authState.avatarUrl();
+      this.avatarImgError.set(false);
+    });
+  }
 
   public ngOnInit(): void {
     // Carga las opciones de navegación data-driven desde el backend

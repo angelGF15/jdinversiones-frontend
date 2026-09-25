@@ -80,13 +80,21 @@
       <!-- Template Celda: Usuario (Avatar + Nombre + Email) -->
       <ng-template [dataTableColumn]="'fullName'" let-user>
         <div class="flex items-center gap-3 py-1">
-          <!-- Avatar con iniciales corporativas -->
-          <div
-            aria-hidden="true"
-            class="w-9 h-9 rounded-xl bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300 border border-primary/20 dark:border-primary/30 flex items-center justify-center font-bold text-xs flex-shrink-0 select-none"
-          >
-            {{ getUserInitials(user) }}
-          </div>
+          @if (user.avatarUrl && !isAvatarBroken(user.userId)) {
+            <img
+              [src]="user.avatarUrl"
+              [alt]="user.fullName"
+              class="w-9 h-9 rounded-xl object-cover border border-primary/20 dark:border-primary/30 flex-shrink-0"
+              (error)="onAvatarImgError(user.userId)"
+            />
+          } @else {
+            <div
+              aria-hidden="true"
+              class="w-9 h-9 rounded-xl bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300 border border-primary/20 dark:border-primary/30 flex items-center justify-center font-bold text-xs flex-shrink-0 select-none"
+            >
+              {{ getUserInitials(user) }}
+            </div>
+          }
           <div class="flex flex-col min-w-0">
             <span class="text-sm font-semibold text-slate-900 dark:text-white truncate">
               {{ user.fullName }}

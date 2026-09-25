@@ -204,9 +204,18 @@
   <!-- User Profile & Quick Action Footer -->
   <div class="sidebar-user-footer">
     <div class="sidebar-user-card">
-      <div class="sidebar-user-avatar">
-        {{ authState.fullName().substring(0, 2).toUpperCase() || 'JD' }}
-      </div>
+      @if (authState.avatarUrl() && !avatarImgError()) {
+        <img
+          class="sidebar-user-avatar"
+          [src]="authState.avatarUrl()"
+          alt="Avatar de usuario"
+          (error)="avatarImgError.set(true)"
+        />
+      } @else {
+        <div class="sidebar-user-avatar">
+          {{ authState.fullName().substring(0, 2).toUpperCase() || 'JD' }}
+        </div>
+      }
 
       @if (!isCollapsed) {
         <div class="flex-1 min-w-0">
