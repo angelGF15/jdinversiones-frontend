@@ -1,5 +1,6 @@
 :host {
   display: block;
+  width: 100%;
 }
 
 /* ==========================================================================
@@ -7,15 +8,41 @@
    ========================================================================== */
 
 .app-header {
-  @apply h-16 px-4 md:px-6 bg-white/95 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-800 backdrop-blur-md flex items-center justify-between sticky top-0 z-30 transition-colors duration-200;
+  @apply h-16 pl-0 pr-4 sm:pr-6 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800/80 backdrop-blur-md flex items-center justify-between sticky top-0 z-30 transition-colors duration-200;
 }
 
 .header-left-group {
-  @apply flex items-center gap-3;
+  @apply flex items-center h-full;
+}
+
+.header-toggle-container {
+  @apply w-16 h-16 flex items-center justify-center flex-shrink-0;
+}
+
+.header-mobile-toggle,
+.header-desktop-toggle {
+  @apply w-10 h-10 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all duration-150;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.header-mobile-toggle mat-icon,
+.header-desktop-toggle mat-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
 }
 
 .header-mobile-toggle {
-  @apply text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white;
   display: inline-flex !important;
 }
 
@@ -26,7 +53,6 @@
 }
 
 .header-desktop-toggle {
-  @apply text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors;
   display: none !important;
 }
 
@@ -36,8 +62,20 @@
   }
 }
 
-.header-telemetry-badge {
-  @apply hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-inner;
+.header-brand-group {
+  @apply flex items-center gap-2.5 sm:gap-3 select-none pl-3 sm:pl-4 transition-all duration-200;
+}
+
+.header-brand-logo {
+  @apply w-9 h-9 sm:w-10 sm:h-10 object-contain flex-shrink-0 drop-shadow-sm rounded-full transition-transform hover:scale-105;
+}
+
+.header-brand-name {
+  @apply font-black text-slate-900 dark:text-white text-xs sm:text-sm tracking-tight truncate uppercase leading-tight;
+}
+
+.header-brand-subtitle {
+  @apply text-[9px] sm:text-[10px] font-semibold text-primary dark:text-blue-400 truncate tracking-wide leading-tight hidden sm:block;
 }
 
 .header-right-group {
@@ -46,6 +84,16 @@
 
 .header-theme-toggle {
   @apply text-slate-600 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all duration-200;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.header-theme-toggle mat-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
 }
 
 .theme-toggle-btn:hover mat-icon {

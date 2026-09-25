@@ -18,28 +18,14 @@
   [class.md:w-20]="isCollapsed"
   aria-label="Navegación principal"
 >
-  <!-- Brand & Logo Header -->
-  <div class="sidebar-brand-header">
-    <div class="sidebar-brand-group">
-      <img
-        src="logo.png"
-        alt="Logo JD Inversiones"
-        class="sidebar-brand-logo"
-      />
-
-      @if (!isCollapsed) {
-        <div class="flex flex-col min-w-0">
-          <span class="sidebar-brand-name">
-            JD Inversiones
-          </span>
-          <span class="sidebar-brand-subtitle">
-            Tienda y Centro Técnico
-          </span>
-        </div>
-      }
+  <!-- Mobile Drawer Header (Solo en móvil para cerrar el drawer) -->
+  <div class="sidebar-mobile-header md:hidden">
+    <div class="flex items-center gap-2.5">
+      <img src="logo.png" alt="Logo JD Inversiones" class="w-7 h-7 object-contain rounded-full drop-shadow-sm" />
+      <span class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-white">
+        Menú
+      </span>
     </div>
-
-    <!-- Mobile Close Button -->
     <button
       mat-icon-button
       type="button"

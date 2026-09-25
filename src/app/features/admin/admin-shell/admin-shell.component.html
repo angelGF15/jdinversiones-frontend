@@ -1,21 +1,21 @@
 <div class="admin-shell-layout">
-  <!-- Global Sidebar -->
-  <app-sidebar
-    [isOpen]="isMobileOpen()"
-    [isCollapsed]="isSidebarCollapsed()"
-    (closeMobile)="closeMobileMenu()"
+  <!-- Global Header (Full Width on Top) -->
+  <app-header
+    [isSidebarCollapsed]="isSidebarCollapsed()"
+    (toggleMobileMenu)="toggleMobileMenu()"
+    (toggleSidebarCollapse)="toggleSidebarCollapse()"
     (logoutTriggered)="handleLogout()"
-    (expandSidebar)="isSidebarCollapsed.set(false)"
   />
 
-  <!-- Main Work Area Container -->
-  <div class="admin-shell-work-area">
-    <!-- Global Header -->
-    <app-header
-      [isSidebarCollapsed]="isSidebarCollapsed()"
-      (toggleMobileMenu)="toggleMobileMenu()"
-      (toggleSidebarCollapse)="toggleSidebarCollapse()"
+  <!-- Body: Sidebar Under the Header + Main Content Area -->
+  <div class="admin-shell-body">
+    <!-- Global Sidebar (Under the Header) -->
+    <app-sidebar
+      [isOpen]="isMobileOpen()"
+      [isCollapsed]="isSidebarCollapsed()"
+      (closeMobile)="closeMobileMenu()"
       (logoutTriggered)="handleLogout()"
+      (expandSidebar)="isSidebarCollapsed.set(false)"
     />
 
     <!-- Routed Main Content with Dedicated Independent Scroll -->

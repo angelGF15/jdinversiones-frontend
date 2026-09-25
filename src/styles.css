@@ -41,10 +41,7 @@ html, body {
   line-height: 1;
   letter-spacing: normal;
   text-transform: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
+  display: inline-block;
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;

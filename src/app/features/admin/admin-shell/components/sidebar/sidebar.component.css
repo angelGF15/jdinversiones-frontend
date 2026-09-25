@@ -11,27 +11,17 @@
 }
 
 .sidebar-drawer {
-  @apply fixed inset-y-0 left-0 z-50 flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out md:static md:translate-x-0;
+  @apply fixed inset-y-0 left-0 z-50 flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800/80 transition-all duration-300 ease-in-out md:static md:translate-x-0 md:h-full flex-shrink-0;
 }
 
-.sidebar-brand-header {
-  @apply h-16 px-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 flex-shrink-0;
+.sidebar-mobile-header {
+  @apply h-14 px-4 flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800/80 flex-shrink-0;
 }
 
-.sidebar-brand-group {
-  @apply flex items-center gap-3 overflow-hidden;
-}
-
-.sidebar-brand-logo {
-  @apply w-10 h-10 object-contain flex-shrink-0 drop-shadow-md rounded-full hover:scale-105 transition-transform;
-}
-
-.sidebar-brand-name {
-  @apply font-black text-slate-900 dark:text-white text-sm tracking-tight truncate uppercase;
-}
-
-.sidebar-brand-subtitle {
-  @apply text-[10px] font-semibold text-blue-600 dark:text-blue-400 truncate tracking-wide;
+@media (min-width: 768px) {
+  .sidebar-mobile-header {
+    display: none !important;
+  }
 }
 
 .sidebar-close-btn {
