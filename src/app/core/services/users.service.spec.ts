@@ -28,6 +28,7 @@ describe('UsersService', () => {
     lastName: 'Pérez',
     fullName: 'Juan Pérez',
     email: 'juan.perez@jdinversiones.com',
+    avatarUrl: null,
     phone: '+50499887766',
     isActive: true,
     themePreference: 'light',

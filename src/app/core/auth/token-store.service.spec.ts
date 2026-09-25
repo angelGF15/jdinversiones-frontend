@@ -13,6 +13,7 @@ describe('TokenStoreService', () => {
     lastName: 'Pérez',
     businessName: null,
     email: 'admin@jdinversiones.com',
+    avatarUrl: null,
     themePreference: 'light',
     lastLoginAt: '2026-09-02T12:00:00.000Z',
     roles: ['ADMINISTRADOR'],

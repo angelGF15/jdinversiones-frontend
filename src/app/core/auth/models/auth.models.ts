@@ -10,6 +10,7 @@ export interface Profile {
   lastName: string;
   businessName: string | null;
   email: string;
+  avatarUrl: string | null;
   themePreference: 'light' | 'dark' | null;
   lastLoginAt: Date | string | null;
   roles: string[];

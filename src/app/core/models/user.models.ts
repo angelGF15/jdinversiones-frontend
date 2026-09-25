@@ -16,6 +16,7 @@ export interface User {
   lastName: string;
   fullName: string;
   email: string;
+  avatarUrl: string | null;
   phone: string | null;
   isActive: boolean;
   themePreference: 'light' | 'dark' | 'system' | null;

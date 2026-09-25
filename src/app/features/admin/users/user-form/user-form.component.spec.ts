@@ -31,6 +31,7 @@ describe('UserFormComponent', () => {
     lastName: 'López',
     fullName: 'Ana López',
     email: 'ana@jdinversiones.com',
+    avatarUrl: null,
     phone: '+50499001122',
     isActive: true,
     themePreference: 'light',

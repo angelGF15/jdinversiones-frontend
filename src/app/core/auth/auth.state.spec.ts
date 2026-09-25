@@ -15,6 +15,7 @@ describe('AuthState', () => {
     lastName: 'Gómez',
     businessName: 'JD Inversiones S.A.',
     email: 'carlos@jdinversiones.com',
+    avatarUrl: null,
     themePreference: 'dark',
     lastLoginAt: '2026-09-02T10:00:00.000Z',
     roles: ['ADMINISTRADOR', 'VENDEDOR'],
