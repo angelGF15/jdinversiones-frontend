@@ -1,0 +1,251 @@
+<div class="roles-page-container flex flex-col gap-5 w-full">
+  <!-- Cabecera de la Pantalla -->
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="space-y-1">
+      <div class="flex items-center gap-2.5">
+        <div
+          aria-hidden="true"
+          class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm"
+        >
+          <span class="mat-icon text-xl select-none">admin_panel_settings</span>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Roles del Sistema
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            Definición de perfiles de acceso y sus privilegios en la plataforma.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón Nuevo Rol con protección RBAC ROLE_CREATE -->
+    <div *hasPermission="'ROLE_CREATE'" class="flex items-center">
+      <a
+        routerLink="/admin/roles/new"
+        class="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-primary hover:bg-primary-700 text-white font-medium text-sm shadow-sm hover:shadow-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+      >
+        <span class="mat-icon text-lg select-none" aria-hidden="true">add</span>
+        <span>Nuevo Rol</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Banner de error si falla la comunicación con la API -->
+  @if (errorMessage() && !isLoading()) {
+    <div
+      role="alert"
+      aria-live="assertive"
+      class="flex items-center justify-between p-4 rounded-xl bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800/40 text-danger-700 dark:text-danger-300 text-sm"
+    >
+      <div class="flex items-center gap-3">
+        <span class="mat-icon text-xl text-danger-500 select-none" aria-hidden="true">error_outline</span>
+        <span class="font-medium">{{ errorMessage() }}</span>
+      </div>
+      <button
+        type="button"
+        (click)="retry()"
+        class="px-3 py-1.5 min-h-[36px] rounded-lg text-xs font-semibold bg-white dark:bg-slate-900 text-danger-700 dark:text-danger-300 border border-danger-300 dark:border-danger-700 hover:bg-danger-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
+      >
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- Barra de Filtros Integrada -->
+  <section
+    aria-label="Filtros de búsqueda de roles"
+    class="filters-card p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm"
+  >
+    <app-list-filters
+      [searchPlaceholder]="'Buscar por nombre o descripción...'"
+      [toggles]="toggleFilters"
+      [initialValues]="queryState.filters()"
+      (filterChange)="onFilterChange($event)"
+    />
+  </section>
+
+  <!-- Tabla de Datos y Paginador -->
+  <section class="table-section flex flex-col gap-3 sm:gap-4 w-full" aria-label="Tabla de roles">
+    <app-data-table
+      [columns]="columns"
+      [data]="items()"
+      [loading]="isLoading()"
+      emptyTitle="No se encontraron roles"
+      emptyDescription="No hay roles que coincidan con los filtros aplicados o aún no se han creado."
+      emptyIcon="shield_outlined"
+    >
+      <!-- Template Celda: Rol (Ícono contextual + Nombre + Badge Sistema) -->
+      <ng-template [dataTableColumn]="'name'" let-role>
+        <div class="flex items-center gap-3 py-1">
+          <div
+            aria-hidden="true"
+            class="w-9 h-9 rounded-xl bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300 border border-primary/20 dark:border-primary/30 flex items-center justify-center font-bold text-xs flex-shrink-0 select-none"
+          >
+            <span class="mat-icon text-lg">{{ getRoleIcon(role.name) }}</span>
+          </div>
+          <div class="flex items-center gap-2 min-w-0 flex-wrap">
+            <span class="text-sm font-semibold text-slate-900 dark:text-white capitalize truncate">
+              {{ role.name }}
+            </span>
+            @if (role.isSystem) {
+              <span
+                role="status"
+                aria-label="Rol protegido del sistema"
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
+              >
+                <span class="mat-icon text-xs select-none">verified_user</span>
+                <span>Sistema</span>
+              </span>
+            }
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Template Celda: Descripción -->
+      <ng-template [dataTableColumn]="'description'" let-role>
+        <span class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+          {{ role.description || '—' }}
+        </span>
+      </ng-template>
+
+      <!-- Template Celda: Permisos (Chip contador) -->
+      <ng-template [dataTableColumn]="'permissionsCount'" let-role>
+        <div class="flex justify-center py-1">
+          <span
+            class="permission-chip inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-50 text-primary-700 border border-primary-100 dark:bg-primary-950/40 dark:text-primary-300 dark:border-primary-800/40"
+          >
+            <span class="mat-icon text-xs select-none">key</span>
+            <span>{{ role.permissionsCount }}</span>
+          </span>
+        </div>
+      </ng-template>
+
+      <!-- Template Celda: Estado (Activo / Inactivo con badge contrastado) -->
+      <ng-template [dataTableColumn]="'isActive'" let-role>
+        <div class="flex justify-center py-1">
+          @if (role.isActive) {
+            <span
+              role="status"
+              aria-label="Estado: Activo"
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-transparent"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true"></span>
+              <span>Activo</span>
+            </span>
+          } @else {
+            <span
+              role="status"
+              aria-label="Estado: Inactivo"
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-transparent"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-400" aria-hidden="true"></span>
+              <span>Inactivo</span>
+            </span>
+          }
+        </div>
+      </ng-template>
+
+      <!-- Template Celda: Acciones (5 botones de acción) -->
+      <ng-template [dataTableColumn]="'Acciones'" let-role>
+        <div class="flex items-center justify-end gap-1">
+          <!-- 1. Editar rol -->
+          <button
+            *hasPermission="'ROLE_EDIT'"
+            type="button"
+            (click)="onEditRole(role)"
+            matTooltip="Editar rol"
+            class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-primary-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-primary-300 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+            [attr.aria-label]="'Editar rol ' + role.name"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">edit</span>
+          </button>
+
+          <!-- 2. Matriz de permisos -->
+          <button
+            *hasPermission="'PERMISSION_VIEW'"
+            type="button"
+            (click)="onOpenMatrix(role)"
+            matTooltip="Configurar permisos"
+            class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-primary-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-primary-300 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+            [attr.aria-label]="'Configurar permisos del rol ' + role.name"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">rule</span>
+          </button>
+
+          <!-- 3. Clonar rol -->
+          <button
+            *hasPermission="'ROLE_CREATE'"
+            type="button"
+            (click)="onCloneRole(role)"
+            matTooltip="Clonar rol"
+            class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 dark:text-slate-400 dark:hover:text-amber-400 dark:hover:bg-amber-950/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-amber-500 dark:focus-visible:ring-offset-slate-900"
+            [attr.aria-label]="'Clonar rol ' + role.name"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">content_copy</span>
+          </button>
+
+          <!-- 4. Activar / Desactivar estado -->
+          <button
+            *hasPermission="'ROLE_EDIT'"
+            type="button"
+            (click)="onToggleStatus(role)"
+            [disabled]="role.isSystem && role.isActive"
+            [matTooltip]="role.isSystem && role.isActive ? 'Los roles de sistema no se pueden desactivar' : (role.isActive ? 'Desactivar rol' : 'Activar rol')"
+            class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-900"
+            [class.hover:text-danger-600]="!role.isSystem && role.isActive"
+            [class.hover:bg-danger-50]="!role.isSystem && role.isActive"
+            [class.hover:text-emerald-600]="!role.isActive"
+            [class.hover:bg-emerald-50]="!role.isActive"
+            [class.dark:hover:text-danger-400]="!role.isSystem && role.isActive"
+            [class.dark:hover:bg-danger-950/30]="!role.isSystem && role.isActive"
+            [class.dark:hover:text-emerald-400]="!role.isActive"
+            [class.dark:hover:bg-emerald-950/30]="!role.isActive"
+            [attr.aria-label]="(role.isActive ? 'Desactivar rol ' : 'Activar rol ') + role.name"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">
+              {{ role.isActive ? 'block' : 'check_circle' }}
+            </span>
+          </button>
+
+          <!-- 5. Eliminar rol -->
+          <button
+            *hasPermission="'ROLE_DELETE'"
+            type="button"
+            (click)="onDeleteRole(role)"
+            [disabled]="role.isSystem"
+            [matTooltip]="role.isSystem ? 'Los roles de sistema no se pueden eliminar' : 'Eliminar rol'"
+            class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-danger-600 hover:bg-danger-50 dark:text-slate-400 dark:hover:text-danger-400 dark:hover:bg-danger-950/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-danger-500 dark:focus-visible:ring-offset-slate-900"
+            [attr.aria-label]="'Eliminar rol ' + role.name"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">delete</span>
+          </button>
+        </div>
+      </ng-template>
+
+      <!-- Slot para botón de acción en estado vacío -->
+      <div *hasPermission="'ROLE_CREATE'" emptyAction>
+        <a
+          routerLink="/admin/roles/new"
+          class="inline-flex items-center gap-2 px-4 py-2 min-h-[40px] rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-700 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary"
+        >
+          <span class="mat-icon text-base select-none">add</span>
+          <span>Crear Rol</span>
+        </a>
+      </div>
+    </app-data-table>
+
+    <!-- Componente de Paginación -->
+    <div class="mt-2">
+      <app-pagination
+        [page]="queryState.page()"
+        [pageSize]="queryState.pageSize()"
+        [total]="total()"
+        [totalPages]="totalPages()"
+        (pageChange)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
+      />
+    </div>
+  </section>
+</div>

@@ -1,0 +1,347 @@
+<div class="role-form-page flex flex-col gap-6 w-full mx-auto">
+  <!-- 1. Breadcrumbs de Navegación -->
+  <nav aria-label="Ruta de navegación" class="flex items-center gap-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+    <a
+      routerLink="/admin/roles"
+      class="inline-flex items-center gap-1 hover:text-primary transition-colors focus:outline-none focus-visible:underline"
+    >
+      <span class="mat-icon text-base select-none" aria-hidden="true">arrow_back</span>
+      <span>Roles</span>
+    </a>
+    <span class="select-none text-slate-400">/</span>
+    <span class="font-medium text-slate-900 dark:text-white truncate max-w-[200px] sm:max-w-xs">
+      {{ isEditMode() ? (role()?.name || 'Editar Rol') : 'Nuevo Rol' }}
+    </span>
+  </nav>
+
+  <!-- 2. Encabezado de la Pantalla -->
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="space-y-1">
+      <div class="flex items-center gap-2.5">
+        <div
+          aria-hidden="true"
+          class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm"
+        >
+          <span class="mat-icon text-xl select-none">
+            {{ isEditMode() ? 'manage_accounts' : 'admin_panel_settings' }}
+          </span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              {{ isEditMode() ? 'Editar Rol' : 'Nuevo Rol' }}
+            </h1>
+            @if (role()?.isSystem) {
+              <span
+                role="status"
+                aria-label="Rol protegido del sistema"
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
+              >
+                <span class="mat-icon text-xs select-none">verified_user</span>
+                <span>Sistema</span>
+              </span>
+            }
+          </div>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            {{ isEditMode() ? 'Modifica los datos del perfil de acceso seleccionado.' : 'Define el nombre y descripción para un nuevo perfil en el sistema.' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de Acción Superiores -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a
+        routerLink="/admin/roles"
+        class="inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-900"
+      >
+        Cancelar
+      </a>
+      <button
+        type="button"
+        (click)="onSubmit()"
+        [disabled]="isSubmitting() || form.invalid"
+        class="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-primary hover:bg-primary-700 text-white font-medium text-xs sm:text-sm shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+      >
+        @if (isSubmitting()) {
+          <span class="mat-icon text-base animate-spin select-none" aria-hidden="true">refresh</span>
+          <span>Guardando...</span>
+        } @else {
+          <span class="mat-icon text-base select-none" aria-hidden="true">save</span>
+          <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Rol' }}</span>
+        }
+      </button>
+    </div>
+  </header>
+
+  <!-- Banner de error si la API retorna una excepción -->
+  @if (errorMessage()) {
+    <div
+      role="alert"
+      aria-live="assertive"
+      class="flex items-center justify-between p-4 rounded-xl bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800/40 text-danger-700 dark:text-danger-300 text-sm animate-shake"
+    >
+      <div class="flex items-center gap-3">
+        <span class="mat-icon text-xl text-danger-500 select-none flex-shrink-0" aria-hidden="true">error_outline</span>
+        <span class="font-medium">{{ errorMessage() }}</span>
+      </div>
+      <button
+        type="button"
+        (click)="errorMessage.set(null)"
+        class="text-danger-500 hover:text-danger-700 dark:hover:text-danger-300 transition-colors p-1.5 rounded-lg flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
+        aria-label="Cerrar alerta"
+      >
+        <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">close</span>
+      </button>
+    </div>
+  }
+
+  <!-- Vista Esqueleto durante la carga de datos del rol -->
+  @if (isLoading()) {
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-pulse">
+      <div class="lg:col-span-8 flex flex-col gap-6">
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
+          <div class="h-5 w-48 rounded bg-slate-200 dark:bg-slate-800"></div>
+          <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60 pt-2"></div>
+          <div class="h-24 rounded-xl bg-slate-100 dark:bg-slate-800/60 pt-2"></div>
+        </div>
+      </div>
+      <div class="lg:col-span-4 flex flex-col gap-6">
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 flex flex-col items-center space-y-4">
+          <div class="w-16 h-16 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
+          <div class="h-4 w-32 rounded bg-slate-200 dark:bg-slate-800"></div>
+          <div class="h-3 w-48 rounded bg-slate-100 dark:bg-slate-800/60"></div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <!-- Formulario Principal -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="w-full" novalidate>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- ==================== COLUMNA PRINCIPAL (8 columnas) ==================== -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+          <section class="form-section-card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
+            <!-- Header de la sección -->
+            <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40">
+                <span class="mat-icon text-lg select-none">badge</span>
+              </div>
+              <div>
+                <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                  Identidad del Rol
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  Nombre formal del perfil y su descripción en el sistema.
+                </p>
+              </div>
+            </div>
+
+            <!-- Campo: Nombre -->
+            <div class="space-y-1.5">
+              <label for="role-name" class="block text-xs font-semibold text-slate-700 dark:text-slate-200">
+                Nombre del rol <span class="text-danger">*</span>
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <span class="mat-icon text-lg select-none">badge</span>
+                </span>
+                <input
+                  id="role-name"
+                  type="text"
+                  formControlName="name"
+                  maxlength="50"
+                  placeholder="Ej. Administrador, Vendedor Senior..."
+                  class="input-field w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all placeholder:text-slate-400"
+                  [class.border-danger]="form.controls.name.invalid && form.controls.name.touched"
+                />
+              </div>
+              @if (form.controls.name.touched && form.controls.name.errors) {
+                <p class="text-xs text-danger flex items-center gap-1 mt-1">
+                  <span class="mat-icon text-xs select-none">error</span>
+                  @if (form.controls.name.hasError('required')) {
+                    El nombre del rol es obligatorio.
+                  } @else if (form.controls.name.hasError('minlength')) {
+                    Debe contener al menos 2 caracteres.
+                  } @else if (form.controls.name.hasError('maxlength')) {
+                    No puede exceder los 50 caracteres.
+                  }
+                </p>
+              }
+            </div>
+
+            <!-- Campo: Descripción -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label for="role-description" class="block text-xs font-semibold text-slate-700 dark:text-slate-200">
+                  Descripción <span class="text-slate-400 font-normal">(opcional)</span>
+                </label>
+                <span class="text-[11px] text-slate-400 font-mono">
+                  {{ form.controls.description.value?.length || 0 }}/255
+                </span>
+              </div>
+              <textarea
+                id="role-description"
+                formControlName="description"
+                rows="4"
+                maxlength="255"
+                placeholder="Ej. Rol asignado al personal encargado de ventas, cotizaciones y atención al cliente."
+                class="input-field w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all placeholder:text-slate-400 resize-none"
+              ></textarea>
+            </div>
+          </section>
+        </div>
+
+        <!-- ==================== COLUMNA LATERAL (4 columnas) ==================== -->
+        <aside class="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-4">
+          @if (isEditMode()) {
+            <!-- Tarjeta de Identidad del Rol (Modo Edición) -->
+            <section class="form-section-card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col items-center text-center space-y-4">
+              <div class="w-16 h-16 rounded-2xl bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300 flex items-center justify-center border border-primary/20 dark:border-primary/30 shadow-sm">
+                <span class="mat-icon text-3xl select-none">{{ getRoleIcon() }}</span>
+              </div>
+
+              <div class="space-y-1 w-full">
+                <div class="flex items-center justify-center gap-1.5">
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white capitalize">
+                    {{ role()?.name }}
+                  </h3>
+                  @if (role()?.isSystem) {
+                    <span class="mat-icon text-base text-slate-500" matTooltip="Rol de sistema">verified_user</span>
+                  }
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                  {{ role()?.description || 'Sin descripción' }}
+                </p>
+              </div>
+
+              <!-- Permisos asignados -->
+              <div class="w-full pt-3 border-t border-slate-100 dark:border-slate-800 text-left space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-semibold text-slate-700 dark:text-slate-200">Permisos asignados:</span>
+                  <span class="permission-chip px-2 py-0.5 rounded-full text-xs font-semibold bg-primary-50 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300">
+                    {{ permissionsCount }}
+                  </span>
+                </div>
+
+                @if (role()?.permissions && role()!.permissions.length > 0) {
+                  <div class="flex flex-wrap gap-1 max-h-32 overflow-y-auto pt-1">
+                    @for (perm of role()!.permissions.slice(0, 8); track perm.id) {
+                      <span class="permission-chip px-2 py-0.5 rounded-md text-[11px] font-mono bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                        {{ perm.code }}
+                      </span>
+                    }
+                    @if (role()!.permissions.length > 8) {
+                      <span class="text-[11px] text-slate-400 self-center font-medium">
+                        +{{ role()!.permissions.length - 8 }} más
+                      </span>
+                    }
+                  </div>
+                } @else {
+                  <p class="text-xs text-slate-400 italic">No tiene permisos asignados aún.</p>
+                }
+
+                <div class="pt-2">
+                  <button
+                    *hasPermission="'PERMISSION_EDIT'"
+                    type="button"
+                    (click)="onOpenMatrix()"
+                    class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold bg-primary-50 text-primary-700 hover:bg-primary-100 dark:bg-primary-950/40 dark:text-primary-300 dark:hover:bg-primary-900/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    <span class="mat-icon text-base select-none">rule</span>
+                    <span>Configurar Permisos</span>
+                  </button>
+                  <p class="text-[11px] text-slate-400 text-center mt-1">
+                    Los permisos se gestionan desde la matriz de permisos.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Metadatos del Rol -->
+              <div class="w-full pt-3 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-xs text-left">
+                <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                  <span>Creado:</span>
+                  <span class="font-medium text-slate-700 dark:text-slate-300">{{ formattedCreatedAt }}</span>
+                </div>
+                <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                  <span>Identificador:</span>
+                  <button
+                    type="button"
+                    (click)="copyRoleId()"
+                    matTooltip="Copiar ID del rol"
+                    class="font-mono text-[11px] text-primary hover:underline flex items-center gap-1"
+                  >
+                    <span>{{ roleId()?.substring(0, 8) }}...</span>
+                    <span class="mat-icon text-xs select-none">content_copy</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+          } @else {
+            <!-- Guía de Alta de Rol (Modo Creación) -->
+            <section class="form-section-card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+              <div class="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <span class="mat-icon text-primary select-none text-xl">info</span>
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white">
+                  Guía de Alta de Roles
+                </h3>
+              </div>
+              <ol class="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+                <li class="flex items-start gap-2.5">
+                  <span class="w-5 h-5 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center flex-shrink-0 text-[11px]">1</span>
+                  <span>El rol nace con datos básicos (nombre y descripción) y <strong>sin permisos</strong>.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="w-5 h-5 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center flex-shrink-0 text-[11px]">2</span>
+                  <span>Configura sus accesos detallados directamente en la <strong>Matriz de Permisos</strong>.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="w-5 h-5 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center flex-shrink-0 text-[11px]">3</span>
+                  <span>Una vez configurado, podrás asignarlo a cuentas de personal en el módulo de <strong>Usuarios</strong>.</span>
+                </li>
+              </ol>
+            </section>
+          }
+
+          <!-- Tarjeta de Estado y Acciones Rápidas -->
+          <section class="form-section-card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-500 dark:text-slate-400">Estado del formulario:</span>
+              <span
+                class="font-semibold inline-flex items-center gap-1"
+                [class.text-emerald-600]="form.valid"
+                [class.text-amber-600]="form.invalid"
+              >
+                <span class="mat-icon text-xs select-none">
+                  {{ form.valid ? 'check_circle' : 'pending' }}
+                </span>
+                <span>{{ form.valid ? 'Listo' : 'Pendiente' }}</span>
+              </span>
+            </div>
+
+            <button
+              type="submit"
+              [disabled]="isSubmitting() || form.invalid"
+              class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-primary hover:bg-primary-700 text-white font-medium text-xs sm:text-sm shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+            >
+              @if (isSubmitting()) {
+                <span class="mat-icon text-base animate-spin select-none" aria-hidden="true">refresh</span>
+                <span>Guardando...</span>
+              } @else {
+                <span class="mat-icon text-base select-none" aria-hidden="true">save</span>
+                <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Rol' }}</span>
+              }
+            </button>
+
+            <a
+              routerLink="/admin/roles"
+              class="w-full inline-flex items-center justify-center px-4 py-2 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
+            >
+              Cancelar y volver
+            </a>
+          </section>
+        </aside>
+      </div>
+    </form>
+  }
+</div>

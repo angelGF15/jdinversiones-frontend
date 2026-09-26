@@ -1,0 +1,41 @@
+/* ==========================================================================
+   RolesListComponent Styles — UI/UX Pro Max Polished
+   ========================================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* Elevación suave y transiciones de tarjetas */
+.filters-card {
+  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filters-card:hover {
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+.permission-chip {
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Indicadores de foco accesibles */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-primary, #032edd);
+  outline-offset: 2px;
+}
+
+/* Respeto estricto a accesibilidad para usuarios con sensibilidad al movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

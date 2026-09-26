@@ -1,0 +1,270 @@
+<div class="permission-matrix-page flex flex-col gap-5 w-full">
+  <!-- Cabecera de la Pantalla -->
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="space-y-1">
+      <div class="flex items-center gap-2.5">
+        <div
+          aria-hidden="true"
+          class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm"
+        >
+          <span class="mat-icon text-xl select-none">key</span>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Matriz de Permisos
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            Define los accesos y privilegios de cada rol sobre los módulos del sistema.
+          </p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tarjeta de Configuración y Selección de Rol -->
+  <section class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <!-- Selector de Rol -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+        <label for="matrix-role-select" class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 flex-shrink-0">
+          Rol a configurar:
+        </label>
+        <div class="relative min-w-[240px]">
+          <select
+            id="matrix-role-select"
+            [disabled]="isLoading() || isSaving()"
+            (change)="selectRole($any($event.target).value)"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all font-medium"
+          >
+            @for (role of availableRoles(); track role.id) {
+              <option [value]="role.id" [selected]="role.id === currentRoleId()">
+                {{ role.name }}{{ role.isSystem ? ' (Sistema)' : '' }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- Resumen / KPIs -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs">
+          <span class="text-slate-400">Módulos:</span>
+          <span class="font-bold text-slate-900 dark:text-white">{{ modules().length }}</span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs">
+          <span class="text-slate-400">Total permisos:</span>
+          <span class="font-bold text-slate-900 dark:text-white">{{ totalPermissions() }}</span>
+        </div>
+        <div
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold"
+          [class.bg-primary-50]="!isDirty()"
+          [class.text-primary-700]="!isDirty()"
+          [class.dark:bg-primary-950/40]="!isDirty()"
+          [class.dark:text-primary-300]="!isDirty()"
+          [class.bg-amber-50]="isDirty()"
+          [class.text-amber-700]="isDirty()"
+          [class.dark:bg-amber-950/40]="isDirty()"
+          [class.dark:text-amber-300]="isDirty()"
+        >
+          <span class="mat-icon text-xs select-none">
+            {{ isDirty() ? 'pending' : 'check_circle' }}
+          </span>
+          <span>Asignados: {{ selectedCount() }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Banner Informativo de Propagación de Permisos tras guardar -->
+  @if (propagationNotice()) {
+    <div
+      role="status"
+      aria-live="polite"
+      class="flex items-start justify-between p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/40 text-blue-700 dark:text-blue-300 text-sm gap-3"
+    >
+      <div class="flex items-start gap-3">
+        <span class="mat-icon text-xl text-blue-500 select-none flex-shrink-0 mt-0.5" aria-hidden="true">info</span>
+        <div class="space-y-0.5">
+          <p class="font-semibold">Permisos actualizados correctamente</p>
+          <p class="text-xs leading-relaxed text-blue-600 dark:text-blue-300/80">
+            Los usuarios que tengan este rol asignado conservarán los permisos anteriores en su sesión actual; los cambios aplicarán de forma efectiva al refrescar su token o al volver a iniciar sesión (aprox. 15 minutos).
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        (click)="propagationNotice.set(false)"
+        class="text-blue-500 hover:text-blue-700 dark:hover:text-blue-300 p-1 rounded-lg flex items-center justify-center transition-colors"
+        aria-label="Cerrar aviso"
+      >
+        <span class="mat-icon text-base select-none" aria-hidden="true">close</span>
+      </button>
+    </div>
+  }
+
+  <!-- Banner de error si falla la comunicación con la API -->
+  @if (errorMessage() && !isLoading()) {
+    <div
+      role="alert"
+      aria-live="assertive"
+      class="flex items-center justify-between p-4 rounded-xl bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800/40 text-danger-700 dark:text-danger-300 text-sm"
+    >
+      <div class="flex items-center gap-3">
+        <span class="mat-icon text-xl text-danger-500 select-none" aria-hidden="true">error_outline</span>
+        <span class="font-medium">{{ errorMessage() }}</span>
+      </div>
+      <button
+        type="button"
+        (click)="currentRoleId() ? selectRole(currentRoleId()!) : null"
+        class="px-3 py-1.5 min-h-[36px] rounded-lg text-xs font-semibold bg-white dark:bg-slate-900 text-danger-700 dark:text-danger-300 border border-danger-300 dark:border-danger-700 hover:bg-danger-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
+      >
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- Vista Esqueleto durante la carga -->
+  @if (isLoading()) {
+    <div class="space-y-4 animate-pulse">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
+          <div class="h-6 w-44 rounded bg-slate-200 dark:bg-slate-800"></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div class="h-16 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
+            <div class="h-16 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
+            <div class="h-16 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- Tarjetas de Módulos del Sistema -->
+    <div class="space-y-5 pb-24">
+      @for (module of modules(); track module.moduleId) {
+        <section class="matrix-module-card p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+          <!-- Cabecera del Módulo -->
+          <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800 flex-wrap">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 flex-shrink-0">
+                <span class="mat-icon text-lg select-none leading-none">{{ getModuleIcon(module.moduleCode) }}</span>
+              </div>
+              <div class="min-w-0">
+                <h2 class="text-sm font-bold text-slate-900 dark:text-white truncate">
+                  {{ module.moduleName }}
+                </h2>
+                <span class="text-[11px] font-mono text-slate-400 dark:text-slate-500">
+                  {{ module.moduleCode }}
+                </span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                {{ selectedInModule(module) }}/{{ module.actions.length }}
+              </span>
+              <button
+                type="button"
+                *hasPermission="'PERMISSION_EDIT'"
+                (click)="toggleModule(module)"
+                class="px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                {{ isModuleSelected(module) ? 'Deseleccionar todo' : 'Seleccionar todo' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Cuadrícula de Acciones de Permisos -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+            @for (action of module.actions; track action.actionId) {
+              <div
+                role="checkbox"
+                tabindex="0"
+                [attr.aria-checked]="isPermissionSelected(action.permissionId)"
+                [attr.aria-label]="'Permiso ' + action.permissionCode"
+                (click)="togglePermission(action.permissionId)"
+                (keydown)="onKeyDownPermission($event, action.permissionId)"
+                class="permission-tile group p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-left cursor-pointer select-none transition-all flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                [class.is-selected]="isPermissionSelected(action.permissionId)"
+              >
+                <!-- Checkbox visual -->
+                <div
+                  class="checkbox-box w-5 h-5 rounded-md flex items-center justify-center border transition-all flex-shrink-0"
+                  [class.bg-primary]="isPermissionSelected(action.permissionId)"
+                  [class.border-primary]="isPermissionSelected(action.permissionId)"
+                  [class.text-white]="isPermissionSelected(action.permissionId)"
+                  [class.border-slate-300]="!isPermissionSelected(action.permissionId)"
+                  [class.dark:border-slate-600]="!isPermissionSelected(action.permissionId)"
+                >
+                  @if (isPermissionSelected(action.permissionId)) {
+                    <span class="mat-icon text-xs select-none leading-none">check</span>
+                  }
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <!-- Código completo en mayúsculas -->
+                  <span class="block text-xs font-mono font-semibold text-slate-800 dark:text-slate-200 truncate">
+                    {{ action.permissionCode }}
+                  </span>
+                  <span class="block text-[11px] text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                    {{ action.actionCode }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      }
+    </div>
+
+    <!-- Footer Flotante de Acciones -->
+    <div class="matrix-footer fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 md:right-8 z-20 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 sm:p-4 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-xl max-w-3xl ml-auto">
+      <div class="flex-1 flex items-center gap-2 text-xs">
+        <span
+          class="mat-icon text-base select-none"
+          [class.text-amber-500]="isDirty()"
+          [class.text-emerald-500]="!isDirty()"
+        >
+          {{ isDirty() ? 'pending' : 'check_circle' }}
+        </span>
+        <span class="text-slate-600 dark:text-slate-300">
+          <strong class="font-semibold text-slate-900 dark:text-white">{{ selectedCount() }}</strong> de {{ totalPermissions() }} permisos
+          @if (isDirty()) {
+            <span class="font-semibold text-amber-600 dark:text-amber-400">· Cambios sin guardar</span>
+          }
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2 justify-end">
+        <button
+          type="button"
+          (click)="discard()"
+          [disabled]="!isDirty() || isSaving()"
+          class="px-3.5 py-2 min-h-[40px] rounded-xl text-xs font-medium border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          Descartar
+        </button>
+        <a
+          routerLink="/admin/roles"
+          class="px-3.5 py-2 min-h-[40px] inline-flex items-center rounded-xl text-xs font-medium border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        >
+          Volver a Roles
+        </a>
+        <button
+          type="button"
+          *hasPermission="'PERMISSION_EDIT'"
+          (click)="save()"
+          [disabled]="!isDirty() || isSaving()"
+          class="inline-flex items-center gap-2 px-4 py-2 min-h-[40px] rounded-xl bg-primary hover:bg-primary-700 text-white font-semibold text-xs shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+        >
+          @if (isSaving()) {
+            <span class="mat-icon text-base animate-spin select-none" aria-hidden="true">refresh</span>
+            <span>Guardando...</span>
+          } @else {
+            <span class="mat-icon text-base select-none" aria-hidden="true">save</span>
+            <span>Guardar Cambios</span>
+          }
+        </button>
+      </div>
+    </div>
+  }
+</div>

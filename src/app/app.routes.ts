@@ -60,6 +60,51 @@ export const routes: Routes = [
             (m) => m.UserFormComponent
           ),
       },
+      {
+        path: 'roles',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'ROLE_VIEW' },
+        loadComponent: () =>
+          import('./features/admin/roles/roles-list/roles-list.component').then(
+            (m) => m.RolesListComponent
+          ),
+      },
+      {
+        path: 'roles/new',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'ROLE_CREATE' },
+        loadComponent: () =>
+          import('./features/admin/roles/role-form/role-form.component').then(
+            (m) => m.RoleFormComponent
+          ),
+      },
+      {
+        path: 'roles/:id/edit',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'ROLE_EDIT' },
+        loadComponent: () =>
+          import('./features/admin/roles/role-form/role-form.component').then(
+            (m) => m.RoleFormComponent
+          ),
+      },
+      {
+        path: 'permissions',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'PERMISSION_VIEW' },
+        loadComponent: () =>
+          import(
+            './features/admin/permissions/permission-matrix/permission-matrix.component'
+          ).then((m) => m.PermissionMatrixComponent),
+      },
+      {
+        path: 'permissions/:roleId',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'PERMISSION_VIEW' },
+        loadComponent: () =>
+          import(
+            './features/admin/permissions/permission-matrix/permission-matrix.component'
+          ).then((m) => m.PermissionMatrixComponent),
+      },
     ],
   },
   {

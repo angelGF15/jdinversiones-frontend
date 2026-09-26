@@ -1,0 +1,55 @@
+/* ==========================================================================
+   PermissionMatrixComponent Styles — UI/UX Pro Max Polished
+   ========================================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.checkbox-box {
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.permission-tile {
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.permission-tile:hover {
+  border-color: rgba(148, 163, 184, 0.5);
+}
+
+.permission-tile:active {
+  transform: scale(0.985);
+}
+
+.permission-tile.is-selected {
+  border-color: var(--color-primary, #032edd);
+  background-color: rgba(3, 46, 221, 0.04);
+  box-shadow: 0 0 0 1px var(--color-primary, #032edd), 0 2px 8px rgba(3, 46, 221, 0.08);
+}
+
+:host-context(.dark) .permission-tile.is-selected {
+  background-color: rgba(3, 46, 221, 0.12);
+  box-shadow: 0 0 0 1px rgba(3, 46, 221, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.matrix-module-card {
+  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.matrix-module-card:hover {
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
