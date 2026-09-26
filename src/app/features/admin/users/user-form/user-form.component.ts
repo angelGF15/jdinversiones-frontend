@@ -32,7 +32,7 @@ import {
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 import { AvatarUploadDialogComponent } from '../../../../shared/components/avatar-upload-dialog/avatar-upload-dialog.component';
 import { CredentialsDialogComponent } from '../dialogs/credentials-dialog/credentials-dialog.component';
-import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-user-form',

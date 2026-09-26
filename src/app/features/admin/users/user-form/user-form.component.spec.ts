@@ -9,7 +9,7 @@ import { UserFormComponent } from './user-form.component';
 import { UsersService } from '../../../../core/services/users.service';
 import { ActiveRole, CreateUserResponse, User } from '../../../../core/models/user.models';
 import { CredentialsDialogComponent } from '../dialogs/credentials-dialog/credentials-dialog.component';
-import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 describe('UserFormComponent', () => {
   let component: UserFormComponent;
