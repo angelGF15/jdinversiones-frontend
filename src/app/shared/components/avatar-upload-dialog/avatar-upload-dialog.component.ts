@@ -30,7 +30,7 @@ export interface ImageDimensions {
 }
 
 const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
-const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB
+const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024; // 20 MB
 
 @Component({
   selector: 'app-avatar-upload-dialog',
@@ -141,7 +141,7 @@ export class AvatarUploadDialogComponent implements OnDestroy {
 
     // 2. Validación de tamaño (2 MB)
     if (file.size > MAX_FILE_SIZE_BYTES) {
-      this.errorMessage.set('La imagen supera el límite de 2 MB. Elige una imagen más liviana.');
+      this.errorMessage.set('La imagen supera el límite de 20 MB. Elige una imagen más liviana.');
       return;
     }
 
