@@ -4,8 +4,10 @@ export * from './menu.service';
 export * from './users.service';
 export * from './roles.service';
 export * from './permissions.service';
+export * from './config.service';
 export * from '../models/menu.models';
 export * from '../models/user.models';
 export * from '../models/role.models';
 export * from '../models/permission.models';
+export * from '../models/config.models';
 
