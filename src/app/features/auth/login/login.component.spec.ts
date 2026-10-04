@@ -30,6 +30,7 @@ describe('LoginComponent', () => {
       firstName: 'Admin',
       lastName: 'Seed',
       businessName: null,
+      avatarUrl: null,
       email: 'admin@jdinversiones.hn',
       themePreference: 'light',
       lastLoginAt: null,

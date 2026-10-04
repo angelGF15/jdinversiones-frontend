@@ -1,0 +1,189 @@
+<div
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="isEditMode() ? 'edit-recipient-title' : 'new-recipient-title'"
+  class="recipient-form-dialog-container p-6 bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full"
+>
+  <div class="flex items-start gap-4">
+    <!-- Icono representativo -->
+    <div
+      aria-hidden="true"
+      class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm bg-primary-50 text-primary dark:bg-primary-950/40 dark:text-primary-400 border border-primary-100 dark:border-primary-900/40"
+    >
+      <span class="mat-icon text-2xl select-none">contact_mail</span>
+    </div>
+
+    <!-- Título y subtítulo -->
+    <div class="flex-1 space-y-1 pt-0.5">
+      <h2
+        [id]="isEditMode() ? 'edit-recipient-title' : 'new-recipient-title'"
+        class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight"
+      >
+        {{ isEditMode() ? 'Editar Contacto de Notificación' : 'Nuevo Contacto de Notificación' }}
+      </h2>
+      <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+        {{
+          isEditMode()
+            ? 'Actualiza el valor de contacto o la etiqueta descriptiva.'
+            : 'Registra un canal y destinatario para la recepción de alertas del sistema.'
+        }}
+      </p>
+    </div>
+  </div>
+
+  @if (isEditMode()) {
+    <div
+      role="status"
+      class="mt-4 p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 flex items-start gap-2.5 text-xs text-blue-700 dark:text-blue-300"
+    >
+      <span class="mat-icon text-base select-none flex-shrink-0 mt-0.5">info</span>
+      <span>
+        El canal y el tipo de destinatario no se pueden modificar. Para cambiar el destino, crea un contacto nuevo y desactiva este.
+      </span>
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onConfirm()" class="mt-5 space-y-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- Canal de notificación -->
+      <div>
+        <label
+          for="recipient-channel"
+          class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-1.5"
+        >
+          Canal <span class="text-danger">*</span>
+        </label>
+        @if (isEditMode()) {
+          <div
+            id="recipient-channel"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 text-sm font-medium cursor-not-allowed"
+          >
+            {{ getChannelLabel(data.recipient?.channelId ?? '') }}
+          </div>
+        } @else {
+          <select
+            id="recipient-channel"
+            formControlName="channelId"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all cursor-pointer"
+            [class.border-danger]="form.controls.channelId.invalid && form.controls.channelId.touched"
+          >
+            <option value="" disabled>Selecciona un canal</option>
+            @for (c of data.channels; track c.id) {
+              <option [value]="c.id">{{ c.name }}</option>
+            }
+          </select>
+          @if (form.controls.channelId.touched && form.controls.channelId.invalid) {
+            <p class="text-xs text-danger mt-1">Debes seleccionar un canal.</p>
+          }
+        }
+      </div>
+
+      <!-- Tipo de destinatario -->
+      <div>
+        <label
+          for="recipient-type"
+          class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-1.5"
+        >
+          Tipo de destinatario <span class="text-danger">*</span>
+        </label>
+        @if (isEditMode()) {
+          <div
+            id="recipient-type"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 text-sm font-medium cursor-not-allowed"
+          >
+            {{ getRecipientTypeLabel(data.recipient?.recipientTypeId ?? '') }}
+          </div>
+        } @else {
+          <select
+            id="recipient-type"
+            formControlName="recipientTypeId"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all cursor-pointer"
+            [class.border-danger]="form.controls.recipientTypeId.invalid && form.controls.recipientTypeId.touched"
+          >
+            <option value="" disabled>Selecciona un tipo</option>
+            @for (t of data.recipientTypes; track t.id) {
+              <option [value]="t.id">{{ t.name }}</option>
+            }
+          </select>
+          @if (form.controls.recipientTypeId.touched && form.controls.recipientTypeId.invalid) {
+            <p class="text-xs text-danger mt-1">Debes seleccionar un tipo.</p>
+          }
+        }
+      </div>
+
+      <!-- Contacto (email o teléfono) -->
+      <div class="sm:col-span-2">
+        <label
+          for="recipient-contact"
+          class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-1.5"
+        >
+          Contacto (correo o número) <span class="text-danger">*</span>
+        </label>
+        <input
+          id="recipient-contact"
+          type="text"
+          formControlName="contact"
+          maxlength="150"
+          placeholder="Ej. administrador.jdinversiones@gmail.com o +504 9642-1283"
+          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all placeholder:text-slate-400"
+          [class.border-danger]="form.controls.contact.invalid && form.controls.contact.touched"
+        />
+        <div class="flex justify-between items-center mt-1">
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">
+            Correo electrónico o número de teléfono, según el canal seleccionado.
+          </p>
+          @if (form.controls.contact.touched && form.controls.contact.invalid) {
+            <p class="text-xs text-danger font-medium">{{ getError('contact') }}</p>
+          }
+        </div>
+      </div>
+
+      <!-- Etiqueta opcional -->
+      <div class="sm:col-span-2">
+        <div class="flex justify-between items-center mb-1.5">
+          <label
+            for="recipient-label"
+            class="block text-xs font-semibold text-slate-700 dark:text-slate-200"
+          >
+            Etiqueta <span class="text-slate-400 font-normal">(opcional)</span>
+          </label>
+          <span class="text-[11px] text-slate-400">
+            {{ form.controls.label.value?.length || 0 }}/80
+          </span>
+        </div>
+        <input
+          id="recipient-label"
+          type="text"
+          formControlName="label"
+          maxlength="80"
+          placeholder="Ej. Administrador principal / Tienda Centro"
+          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all placeholder:text-slate-400"
+        />
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+          Nombre identificador para reconocer fácilmente este destinatario.
+        </p>
+      </div>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="mt-6 flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-900"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        [disabled]="form.invalid"
+        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] text-xs sm:text-sm font-semibold rounded-xl text-white bg-primary hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+      >
+        <span class="mat-icon text-lg select-none">
+          {{ isEditMode() ? 'save' : 'add' }}
+        </span>
+        <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Contacto' }}</span>
+      </button>
+    </div>
+  </form>
+</div>

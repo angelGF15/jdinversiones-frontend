@@ -30,6 +30,7 @@ describe('AdminShellComponent', () => {
     ]);
     Object.defineProperty(authStateSpy, 'fullName', { value: signal('Admin Seed') });
     Object.defineProperty(authStateSpy, 'userEmail', { value: signal('admin@jdinversiones.hn') });
+    Object.defineProperty(authStateSpy, 'avatarUrl', { value: signal(null) });
     Object.defineProperty(authStateSpy, 'roles', { value: signal(['ADMINISTRADOR']) });
     Object.defineProperty(authStateSpy, 'permissions', {
       value: signal(['DASHBOARD_VIEW', 'PRODUCT_VIEW']),

@@ -14,6 +14,7 @@ describe('HeaderComponent', () => {
     authStateSpy = jasmine.createSpyObj('AuthState', ['hasPermission']);
     Object.defineProperty(authStateSpy, 'fullName', { value: signal('Admin User') });
     Object.defineProperty(authStateSpy, 'userEmail', { value: signal('admin@jdinversiones.hn') });
+    Object.defineProperty(authStateSpy, 'avatarUrl', { value: signal(null) });
     Object.defineProperty(authStateSpy, 'roles', { value: signal(['ADMINISTRADOR']) });
 
     await TestBed.configureTestingModule({

@@ -1,0 +1,200 @@
+<div class="config-recipients flex flex-col gap-5 w-full">
+  <!-- Cabecera de la sección -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div
+        aria-hidden="true"
+        class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-400 border border-primary-100 dark:border-primary-900/40 flex items-center justify-center flex-shrink-0 shadow-sm"
+      >
+        <span class="mat-icon text-xl select-none">notifications_active</span>
+      </div>
+      <div>
+        <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+          Contactos de Notificación
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Define quién recibe las alertas del sistema (ventas, stock y avisos administrativos).
+        </p>
+      </div>
+    </div>
+
+    <!-- Botón Nuevo Contacto -->
+    <div class="flex items-center gap-2 self-start sm:self-auto">
+      <button
+        *hasPermission="'CONFIG_EDIT'"
+        type="button"
+        (click)="onCreate()"
+        [disabled]="!catalogsReady() || isMutating()"
+        matTooltip="Registrar un nuevo canal y destinatario de alertas"
+        class="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-primary hover:bg-primary-700 text-white font-medium text-sm shadow-sm hover:shadow-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <span class="mat-icon text-lg select-none">add</span>
+        <span>Nuevo Contacto</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Banner de Error -->
+  @if (errorMessage()) {
+    <div
+      role="alert"
+      aria-live="assertive"
+      class="p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-900/50 flex items-start gap-3 text-danger-700 dark:text-danger-300 shadow-sm"
+    >
+      <span class="mat-icon text-xl select-none flex-shrink-0 mt-0.5">error_outline</span>
+      <div class="flex-1 text-sm font-medium">
+        {{ errorMessage() }}
+      </div>
+      <button
+        type="button"
+        (click)="reload()"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-danger-100 hover:bg-danger-200 dark:bg-danger-900/60 dark:hover:bg-danger-800/80 text-danger-800 dark:text-danger-200 transition-colors"
+      >
+        <span class="mat-icon text-base select-none">refresh</span>
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- Filtro y Estadísticas -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2 bg-slate-50/50 dark:bg-slate-900/50 rounded-2xl border border-slate-200/60 dark:border-slate-800/60">
+    <div class="w-full sm:w-auto">
+      <app-list-filters
+        [toggles]="toggleFilters"
+        [showReset]="true"
+        [initialValues]="{ isActive: isActiveFilter() === true }"
+        (filterChange)="onFilterChange($event)"
+      />
+    </div>
+
+    <!-- Contador de Contactos -->
+    <div
+      role="status"
+      class="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300"
+    >
+      <span class="inline-flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span><strong>{{ activeCount() }}</strong> activos</span>
+      </span>
+      <span class="text-slate-300 dark:text-slate-700">|</span>
+      <span>Total: <strong>{{ recipients().length }}</strong></span>
+    </div>
+  </div>
+
+  <!-- Tabla de Contactos de Notificación -->
+  <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm overflow-hidden">
+    <app-data-table
+      [columns]="columns"
+      [data]="recipients()"
+      [loading]="isLoading()"
+      [ariaBusy]="isLoading()"
+      emptyTitle="No hay contactos de notificación"
+      emptyDescription="Agrega al menos un contacto activo para que el sistema pueda enviarte alertas."
+      emptyIcon="notifications_active"
+    >
+      <!-- Columna Contacto -->
+      <ng-template [dataTableColumn]="'contact'" let-row>
+        <div class="flex flex-col py-1">
+          <div class="flex items-center gap-2">
+            <span class="font-medium text-slate-900 dark:text-white text-sm">
+              {{ row.contact }}
+            </span>
+          </div>
+          @if (row.label) {
+            <span class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              {{ row.label }}
+            </span>
+          }
+        </div>
+      </ng-template>
+
+      <!-- Columna Canal -->
+      <ng-template [dataTableColumn]="'channelName'" let-row>
+        <span class="channel-chip" [ngClass]="getChannelIconClass(row.channelCode)">
+          <span class="mat-icon text-sm select-none">
+            {{ getChannelIcon(row.channelCode) }}
+          </span>
+          <span>{{ row.channelName }}</span>
+        </span>
+      </ng-template>
+
+      <!-- Columna Tipo de Destinatario -->
+      <ng-template [dataTableColumn]="'recipientTypeName'" let-row>
+        <span class="text-xs font-medium text-slate-700 dark:text-slate-300">
+          {{ row.recipientTypeName }}
+        </span>
+      </ng-template>
+
+      <!-- Columna Estado -->
+      <ng-template [dataTableColumn]="'isActive'" let-row>
+        <div class="flex justify-center">
+          <span
+            role="status"
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+            [ngClass]="
+              row.isActive
+                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50'
+                : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
+            "
+          >
+            <span
+              class="w-1.5 h-1.5 rounded-full"
+              [ngClass]="row.isActive ? 'bg-emerald-500' : 'bg-slate-400'"
+            ></span>
+            {{ row.isActive ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+      </ng-template>
+
+      <!-- Columna Acciones -->
+      <ng-template [dataTableColumn]="'Acciones'" let-row>
+        <div class="flex items-center justify-end gap-1.5">
+          <!-- Botón Editar -->
+          <button
+            *hasPermission="'CONFIG_EDIT'"
+            type="button"
+            (click)="onEdit(row)"
+            [disabled]="!canEdit || isMutating()"
+            matTooltip="Editar información de contacto"
+            aria-label="Editar contacto"
+            class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 hover:text-primary dark:text-slate-400 dark:hover:text-primary-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <span class="mat-icon text-lg select-none">edit</span>
+          </button>
+
+          <!-- Botón Activar / Desactivar -->
+          <button
+            *hasPermission="'CONFIG_EDIT'"
+            type="button"
+            (click)="onToggleStatus(row)"
+            [disabled]="!canEdit || isMutating() || (row.isActive && isLastActive(row))"
+            [matTooltip]="
+              row.isActive && isLastActive(row)
+                ? 'Debe existir al menos un contacto activo en el sistema'
+                : (row.isActive ? 'Desactivar contacto' : 'Activar contacto')
+            "
+            [attr.aria-label]="row.isActive ? 'Desactivar contacto' : 'Activar contacto'"
+            class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            [ngClass]="
+              row.isActive
+                ? 'text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-950/40'
+                : 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-950/40'
+            "
+          >
+            <span class="mat-icon text-lg select-none">
+              {{ row.isActive ? 'block' : 'check_circle' }}
+            </span>
+          </button>
+        </div>
+      </ng-template>
+    </app-data-table>
+  </div>
+
+  <!-- Nota Informativa al pie -->
+  <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 flex items-start gap-3 text-xs text-slate-500 dark:text-slate-400">
+    <span class="mat-icon text-base select-none mt-0.5 text-slate-400">info</span>
+    <p>
+      <strong>Regla de negocio:</strong> Los cambios en los contactos de notificación entran en vigencia de inmediato. No existe eliminación física; para dejar de recibir alertas en una dirección o número, simplemente desactívalo. El sistema exige al menos un contacto activo en todo momento.
+    </p>
+  </div>
+</div>

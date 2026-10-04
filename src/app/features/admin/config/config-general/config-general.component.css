@@ -1,0 +1,45 @@
+/* ==========================================================================
+   ConfigGeneral Styles
+   ========================================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* ===== Clases Semánticas ===== */
+.config-section-card {
+  @apply p-4 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-shadow hover:shadow-md;
+}
+
+.setting-field {
+  @apply w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 placeholder:text-slate-400;
+}
+
+.setting-field.is-invalid {
+  @apply border-danger;
+}
+
+.setting-field:disabled,
+.setting-field[readonly] {
+  @apply opacity-90;
+}
+
+.setting-select {
+  @apply w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary;
+}
+
+.setting-select.is-invalid {
+  @apply border-danger;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

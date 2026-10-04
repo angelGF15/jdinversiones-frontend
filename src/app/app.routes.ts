@@ -105,6 +105,15 @@ export const routes: Routes = [
             './features/admin/permissions/permission-matrix/permission-matrix.component'
           ).then((m) => m.PermissionMatrixComponent),
       },
+      {
+        path: 'config',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'CONFIG_VIEW' },
+        loadComponent: () =>
+          import('./features/admin/config/config-page/config-page.component').then(
+            (m) => m.ConfigPageComponent
+          ),
+      },
     ],
   },
   {
