@@ -87,7 +87,13 @@
     </div>
   } @else {
     <!-- Formulario Principal -->
-    <form [formGroup]="form" (ngSubmit)="save()" class="flex flex-col gap-6">
+    <form
+      [formGroup]="form"
+      (ngSubmit)="save()"
+      (input)="updateDirtyState()"
+      (change)="updateDirtyState()"
+      class="flex flex-col gap-6"
+    >
       <!-- Tarjetas por Grupo Funcional -->
       @for (group of groupedRows(); track group.key) {
         <section class="config-section-card" [attr.aria-labelledby]="'group-title-' + group.key">
@@ -148,7 +154,6 @@
                       [formControlName]="row.setting.key"
                       class="setting-select cursor-pointer"
                       [class.is-invalid]="isInvalid(row.setting.key)"
-                      [disabled]="!canEdit"
                     >
                       @for (opt of row.meta.options; track opt.value) {
                         <option [value]="opt.value">{{ opt.label }}</option>

@@ -22,6 +22,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { Subscription } from 'rxjs';
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 import { ConfigService } from '../../../../core/services/config.service';
 import {
@@ -62,6 +63,7 @@ export class ConfigGeneralComponent implements OnInit {
   private readonly configService = inject(ConfigService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private formSub?: Subscription;
 
   // --- Señales de Estado ---
   public readonly settings = signal<Setting[]>([]);
@@ -70,6 +72,9 @@ export class ConfigGeneralComponent implements OnInit {
   public readonly errorMessage = signal<string | null>(null);
   public readonly savedMessage = signal<string | null>(null);
   public readonly themeNoticeVisible = signal<boolean>(true);
+
+  // --- Señal de Cambios Pendientes ---
+  public readonly dirtyItems = signal<UpdateSettingItem[]>([]);
 
   // --- Formulario Reactivo ---
   public form: FormGroup = this.fb.group({});
@@ -97,21 +102,9 @@ export class ConfigGeneralComponent implements OnInit {
     this.rows().filter((r) => !SETTINGS_REGISTRY[r.setting.key])
   );
 
-  public readonly dirtyCount = computed<number>(() => {
-    // Escucha cambios en settings o status de controls
-    return this.rows().filter((r) => r.control?.dirty).length;
-  });
+  public readonly dirtyCount = computed<number>(() => this.dirtyItems().length);
 
   public readonly isDirty = computed<boolean>(() => this.dirtyCount() > 0);
-
-  public readonly dirtyItems = computed<UpdateSettingItem[]>(() =>
-    this.rows()
-      .filter((r) => r.control?.dirty)
-      .map((r) => ({
-        key: r.setting.key,
-        value: this.normalizeValue(r.control.value),
-      }))
-  );
 
   public ngOnInit(): void {
     this.loadSettings();
@@ -128,8 +121,8 @@ export class ConfigGeneralComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.isLoading.set(false);
-          this.settings.set(res.settings);
           this.buildForm(res.settings);
+          this.settings.set(res.settings);
         },
         error: (err: HttpErrorResponse) => {
           this.isLoading.set(false);
@@ -141,6 +134,7 @@ export class ConfigGeneralComponent implements OnInit {
   }
 
   private buildForm(settings: Setting[]): void {
+    this.formSub?.unsubscribe();
     const controls: Record<string, FormControl<string | null>> = {};
 
     for (const setting of settings) {
@@ -157,6 +151,35 @@ export class ConfigGeneralComponent implements OnInit {
 
     this.form = this.fb.group(controls);
     this.form.markAsPristine();
+    this.updateDirtyState();
+
+    this.formSub = this.form.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.updateDirtyState();
+      });
+  }
+
+  public updateDirtyState(): void {
+    const changed: UpdateSettingItem[] = [];
+    const settingsMap = new Map(this.settings().map((s) => [s.key, s]));
+
+    for (const [key, control] of Object.entries(this.form.controls)) {
+      const orig = settingsMap.get(key);
+      if (!orig) continue;
+
+      const originalNormalized = this.normalizeValue(orig.value);
+      const currentNormalized = this.normalizeValue(control.value);
+
+      if (currentNormalized !== originalNormalized) {
+        changed.push({
+          key,
+          value: currentNormalized,
+        });
+      }
+    }
+
+    this.dirtyItems.set(changed);
   }
 
   private buildValidators(key: string, meta?: ConfigSettingMeta): ValidatorFn[] {
@@ -231,6 +254,7 @@ export class ConfigGeneralComponent implements OnInit {
             }
           }
           this.form.markAsPristine();
+          this.updateDirtyState();
 
           const count = res.settings.length;
           this.savedMessage.set(
@@ -270,6 +294,7 @@ export class ConfigGeneralComponent implements OnInit {
       }
     }
     this.form.markAsPristine();
+    this.updateDirtyState();
     this.errorMessage.set(null);
     this.savedMessage.set(null);
   }
