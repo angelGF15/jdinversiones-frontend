@@ -7,11 +7,20 @@ import { AuthState } from '../../../../../core/auth/auth.state';
 import { MenuService } from '../../../../../core/services/menu.service';
 import { MenuItem } from '../../../../../core/models/menu.models';
 
+import { BrandService } from '../../../../../core/services/brand.service';
+
 describe('SidebarComponent', () => {
   let component: SidebarComponent;
   let fixture: ComponentFixture<SidebarComponent>;
   let authStateSpy: jasmine.SpyObj<AuthState>;
   let menuServiceSpy: jasmine.SpyObj<MenuService>;
+
+  const mockBrandService = {
+    logoUrl: signal('logo.svg'),
+    companyName: signal('JD Inversiones'),
+    tagline: signal('Tienda y Centro Técnico'),
+    primaryColor: signal('#032EDD'),
+  };
 
   const mockMenu: MenuItem[] = [
     {
@@ -50,6 +59,7 @@ describe('SidebarComponent', () => {
       'hasAnyPermission',
     ]);
     Object.defineProperty(authStateSpy, 'fullName', { value: signal('Admin User') });
+    Object.defineProperty(authStateSpy, 'avatarUrl', { value: signal(null) });
     Object.defineProperty(authStateSpy, 'roles', { value: signal(['ADMINISTRADOR']) });
     Object.defineProperty(authStateSpy, 'permissions', {
       value: signal(['DASHBOARD_VIEW', 'PRODUCT_VIEW']),
@@ -80,6 +90,7 @@ describe('SidebarComponent', () => {
         provideRouter([]),
         { provide: AuthState, useValue: authStateSpy },
         { provide: MenuService, useValue: menuServiceSpy },
+        { provide: BrandService, useValue: mockBrandService },
       ],
     }).compileComponents();
 

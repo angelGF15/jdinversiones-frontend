@@ -10,6 +10,8 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
 import { MenuService } from '../../../core/services/menu.service';
 
+import { BrandService } from '../../../core/services/brand.service';
+
 describe('AdminShellComponent', () => {
   let component: AdminShellComponent;
   let fixture: ComponentFixture<AdminShellComponent>;
@@ -18,6 +20,13 @@ describe('AdminShellComponent', () => {
   let menuServiceSpy: jasmine.SpyObj<MenuService>;
   let router: Router;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
+
+  const mockBrandService = {
+    logoUrl: signal('logo.svg'),
+    companyName: signal('JD Inversiones'),
+    tagline: signal('Tienda y Centro Técnico'),
+    primaryColor: signal('#032EDD'),
+  };
 
   beforeEach(async () => {
     authServiceSpy = jasmine.createSpyObj('AuthService', ['logout']);
@@ -61,6 +70,7 @@ describe('AdminShellComponent', () => {
         { provide: AuthState, useValue: authStateSpy },
         { provide: MenuService, useValue: menuServiceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
+        { provide: BrandService, useValue: mockBrandService },
       ],
     }).compileComponents();
 
@@ -69,6 +79,7 @@ describe('AdminShellComponent', () => {
 
     fixture = TestBed.createComponent(AdminShellComponent);
     component = fixture.componentInstance;
+    spyOn((component as any).snackBar, 'open');
     fixture.detectChanges();
   });
 
@@ -102,7 +113,7 @@ describe('AdminShellComponent', () => {
     expect(authServiceSpy.logout).toHaveBeenCalled();
     expect(menuServiceSpy.clearMenu).toHaveBeenCalled();
     expect(authStateSpy.clearSession).toHaveBeenCalled();
-    expect(snackBarSpy.open).toHaveBeenCalledWith(
+    expect((component as any).snackBar.open).toHaveBeenCalledWith(
       'Sesión finalizada correctamente.',
       'Cerrar',
       jasmine.any(Object)

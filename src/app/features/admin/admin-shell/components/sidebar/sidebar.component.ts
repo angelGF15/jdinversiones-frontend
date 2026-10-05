@@ -19,6 +19,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthState } from '../../../../../core/auth/auth.state';
 import { MenuService } from '../../../../../core/services/menu.service';
+import { BrandService } from '../../../../../core/services/brand.service';
 import { MenuItem } from '../../../../../core/models/menu.models';
 
 export type NavItem = MenuItem;
@@ -40,8 +41,16 @@ export type NavItem = MenuItem;
 export class SidebarComponent implements OnInit {
   public readonly authState = inject(AuthState);
   public readonly menuService = inject(MenuService);
+  public readonly brandService = inject(BrandService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+
+  public onLogoError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img && !img.src.endsWith('logo.svg')) {
+      img.src = 'logo.svg';
+    }
+  }
 
   @Input() isOpen = false;
   @Input() isCollapsed = false;

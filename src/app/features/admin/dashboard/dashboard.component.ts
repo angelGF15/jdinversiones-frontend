@@ -72,8 +72,8 @@ export class DashboardComponent {
       change: '+18.4% vs. mes anterior',
       isPositive: true,
       icon: 'payments',
-      colorClass: 'text-blue-400',
-      borderClass: 'border-blue-500/30',
+      colorClass: 'text-primary-300',
+      borderClass: 'border-primary-500/30',
       permission: 'DASHBOARD_VIEW',
     },
     {

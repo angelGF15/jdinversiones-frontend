@@ -1,0 +1,198 @@
+<div
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="logo-dialog-title"
+  aria-describedby="logo-dialog-desc"
+  class="logo-dialog-card p-6 sm:p-7 bg-white dark:bg-slate-900 rounded-3xl w-full relative shadow-2xl border border-slate-200/80 dark:border-slate-800 transition-colors duration-200 max-w-md mx-auto"
+>
+  <!-- Cabecera del Diálogo -->
+  <header class="flex items-start justify-between gap-4 mb-6">
+    <div class="flex items-start gap-3.5">
+      <div
+        aria-hidden="true"
+        class="w-11 h-11 rounded-2xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center flex-shrink-0 shadow-sm border border-primary-100 dark:border-primary-800/40"
+      >
+        <span class="mat-icon text-2xl select-none">palette</span>
+      </div>
+
+      <div class="space-y-1">
+        <h2 id="logo-dialog-title" class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+          Cambiar Logotipo
+        </h2>
+        <p id="logo-dialog-desc" class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          Actualiza el logotipo visible en el login, encabezado y barra lateral.
+        </p>
+      </div>
+    </div>
+
+    @if (!isUploading()) {
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+        aria-label="Cerrar ventana de diálogo"
+      >
+        <span class="mat-icon text-lg select-none">close</span>
+      </button>
+    }
+  </header>
+
+  <!-- Banner de Notificación de Error -->
+  @if (errorMessage()) {
+    <div
+      role="alert"
+      aria-live="assertive"
+      class="mb-5 flex items-start justify-between gap-3 p-3.5 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800/50 text-danger-700 dark:text-danger-300 text-xs animate-shake"
+    >
+      <div class="flex items-start gap-2.5">
+        <span class="mat-icon text-lg text-danger-500 flex-shrink-0 mt-0.5 select-none" aria-hidden="true">error_outline</span>
+        <span class="font-medium leading-relaxed">{{ errorMessage() }}</span>
+      </div>
+      <button
+        type="button"
+        (click)="errorMessage.set(null)"
+        class="text-danger-500 hover:text-danger-700 dark:hover:text-danger-200 p-1 rounded-lg transition-colors flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
+        aria-label="Descartar mensaje de error"
+      >
+        <span class="mat-icon text-base select-none">close</span>
+      </button>
+    </div>
+  }
+
+  <!-- Zona Central: Dropzone y Previsualización del Logo -->
+  <div
+    class="upload-dropzone relative flex flex-col items-center justify-center p-6 rounded-2xl border-2 border-dashed transition-all duration-200 cursor-pointer text-center select-none"
+    [class.border-primary]="isDragging()"
+    [class.bg-primary-50/40]="isDragging()"
+    [class.dark:bg-primary-950/30]="isDragging()"
+    [class.border-slate-300]="!isDragging() && !previewUrl()"
+    [class.dark:border-slate-700]="!isDragging() && !previewUrl()"
+    [class.border-primary-400]="!isDragging() && previewUrl()"
+    [class.dark:border-primary-500]="!isDragging() && previewUrl()"
+    [class.bg-slate-50/70]="!isDragging() && !previewUrl()"
+    [class.dark:bg-slate-800/30]="!isDragging() && !previewUrl()"
+    [class.bg-white]="!isDragging() && previewUrl()"
+    [class.dark:bg-slate-900]="!isDragging() && previewUrl()"
+    [class.pointer-events-none]="isUploading()"
+    [class.opacity-60]="isUploading()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="fileInput.click()"
+    role="button"
+    tabindex="0"
+    (keydown.enter)="fileInput.click()"
+    (keydown.space)="fileInput.click()"
+    aria-label="Presiona enter o haz clic para seleccionar un logotipo de tu dispositivo o arrástralo aquí"
+  >
+    <input
+      #fileInput
+      type="file"
+      accept="image/png,image/jpeg,image/webp"
+      class="hidden"
+      [disabled]="isUploading()"
+      (change)="onFileSelected($event)"
+      aria-hidden="true"
+    />
+
+    <!-- Contenedor del Preview del Logo -->
+    <div class="relative w-full h-36 mb-4 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800/60 p-3 border border-slate-200/60 dark:border-slate-700/60 overflow-hidden">
+      @if (previewUrl()) {
+        <img
+          [src]="previewUrl()"
+          alt="Vista previa del nuevo logotipo"
+          class="max-h-full max-w-full object-contain drop-shadow-sm transition-transform duration-300"
+        />
+      } @else if (currentLogoUrl()) {
+        <img
+          [src]="currentLogoUrl()"
+          alt="Logotipo actual de la empresa"
+          class="max-h-full max-w-full object-contain drop-shadow-sm"
+        />
+      } @else {
+        <img
+          src="logo.svg"
+          alt="Logotipo predeterminado del sistema"
+          class="max-h-full max-w-full object-contain opacity-75"
+        />
+      }
+
+      @if (hasNewSelection() && !isUploading()) {
+        <button
+          type="button"
+          (click)="$event.stopPropagation(); onClearSelection()"
+          class="absolute top-2 right-2 w-8 h-8 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur-sm transition-transform hover:scale-105 shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          matTooltip="Descartar imagen seleccionada"
+          aria-label="Descartar imagen seleccionada"
+        >
+          <span class="mat-icon text-sm select-none">close</span>
+        </button>
+      }
+    </div>
+
+    <!-- Indicador de acción y requerimientos -->
+    @if (!hasNewSelection()) {
+      <div class="space-y-1">
+        <p class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200">
+          Haz clic para elegir o arrastra tu archivo aquí
+        </p>
+        <p class="text-[11px] text-slate-400 dark:text-slate-500">
+          Formatos admitidos: PNG, JPG, WebP (máx. 2 MB)
+        </p>
+      </div>
+    } @else {
+      <div class="space-y-0.5">
+        <p class="text-xs font-semibold text-primary dark:text-primary-400 flex items-center justify-center gap-1.5">
+          <span class="mat-icon text-sm select-none">check_circle</span>
+          <span>Archivo listo para subir</span>
+        </p>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400">
+          {{ selectedFile()?.name }} · {{ formatFileSize(selectedFile()?.size || 0) }}
+          @if (imageDimensions()) {
+            · {{ imageDimensions()?.width }}×{{ imageDimensions()?.height }} px
+          }
+        </p>
+      </div>
+    }
+  </div>
+
+  <!-- Barra de Progreso durante la Subida -->
+  @if (isUploading()) {
+    <div class="mt-4 space-y-1.5" aria-live="polite">
+      <div class="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 font-medium">
+        <span class="flex items-center gap-1.5">
+          <span class="mat-icon text-sm animate-spin text-primary select-none">refresh</span>
+          Subiendo y optimizando logotipo...
+        </span>
+      </div>
+      <mat-progress-bar mode="indeterminate" class="rounded-full overflow-hidden"></mat-progress-bar>
+    </div>
+  }
+
+  <!-- Pie con Botones de Acción -->
+  <footer class="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+    <button
+      type="button"
+      (click)="onCancel()"
+      [disabled]="isUploading()"
+      class="px-4 py-2.5 text-xs sm:text-sm font-medium rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 disabled:opacity-50 transition-colors"
+    >
+      Cancelar
+    </button>
+
+    <button
+      type="button"
+      (click)="onSave()"
+      [disabled]="!hasNewSelection() || isUploading()"
+      class="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-white bg-primary hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+    >
+      @if (isUploading()) {
+        <span class="mat-icon text-base animate-spin select-none">refresh</span>
+        <span>Guardando...</span>
+      } @else {
+        <span class="mat-icon text-base select-none">cloud_upload</span>
+        <span>Guardar Logotipo</span>
+      }
+    </button>
+  </footer>
+</div>

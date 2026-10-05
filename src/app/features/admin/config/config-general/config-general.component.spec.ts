@@ -2,67 +2,126 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { of, throwError } from 'rxjs';
 
 import { ConfigGeneralComponent } from './config-general.component';
 import { ConfigService } from '../../../../core/services/config.service';
+import { BrandService } from '../../../../core/services/brand.service';
 import { AuthState } from '../../../../core/auth/auth.state';
-import { Setting } from '../../../../core/models/config.models';
+import { ConfigGroup, Setting } from '../../../../core/models/config.models';
 
 describe('ConfigGeneralComponent', () => {
   let component: ConfigGeneralComponent;
   let fixture: ComponentFixture<ConfigGeneralComponent>;
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
+  let brandServiceSpy: jasmine.SpyObj<BrandService>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
   let authStateSpy: jasmine.SpyObj<AuthState>;
+
+  const mockGroups: ConfigGroup[] = [
+    { code: 'empresa', label: 'Empresa', description: 'Datos institucionales', icon: 'storefront' },
+    { code: 'sistema', label: 'Sistema', description: 'Parámetros del sistema', icon: 'tune' },
+  ];
 
   const mockSettings: Setting[] = [
     {
       key: 'company_name',
       value: 'JD Inversiones S.A.',
       description: 'Nombre comercial',
+      groupCode: 'empresa',
+      sortOrder: 1,
+      isRequired: true,
+      isPublic: true,
+      type: { code: 'text', name: 'Texto', maxLength: 100 },
       updatedAt: '2026-10-01T00:00:00Z',
     },
     {
       key: 'company_email',
       value: 'contacto@jdinversiones.com',
       description: 'Correo principal',
+      groupCode: 'empresa',
+      sortOrder: 2,
+      isRequired: false,
+      isPublic: true,
+      type: { code: 'email', name: 'Correo Electrónico', maxLength: 150 },
+      updatedAt: '2026-10-01T00:00:00Z',
+    },
+    {
+      key: 'primary_color',
+      value: '#032EDD',
+      description: 'Color primario de la marca',
+      groupCode: 'empresa',
+      sortOrder: 3,
+      isRequired: false,
+      isPublic: true,
+      type: { code: 'color', name: 'Color Hexadecimal' },
       updatedAt: '2026-10-01T00:00:00Z',
     },
     {
       key: 'currency',
       value: 'HNL',
       description: 'Código de moneda',
+      groupCode: 'sistema',
+      sortOrder: 1,
+      isRequired: true,
+      isPublic: false,
+      type: { code: 'currency', name: 'Moneda' },
       updatedAt: '2026-10-01T00:00:00Z',
     },
     {
       key: 'default_theme',
       value: 'light',
       description: 'Tema predeterminado',
+      groupCode: 'sistema',
+      sortOrder: 2,
+      isRequired: false,
+      isPublic: false,
+      type: { code: 'theme', name: 'Tema visual' },
       updatedAt: '2026-10-01T00:00:00Z',
     },
     {
       key: 'no_movement_threshold_days',
       value: '30',
       description: 'Días sin ventas',
-      updatedAt: '2026-10-01T00:00:00Z',
-    },
-    {
-      key: 'unknown_custom_setting',
-      value: 'custom_value',
-      description: 'Configuración personalizada externa',
+      groupCode: 'sistema',
+      sortOrder: 3,
+      isRequired: false,
+      isPublic: false,
+      type: { code: 'number', name: 'Número Entero' },
       updatedAt: '2026-10-01T00:00:00Z',
     },
   ];
 
   beforeEach(async () => {
-    configServiceSpy = jasmine.createSpyObj('ConfigService', ['getSettings', 'updateSettings']);
-    configServiceSpy.getSettings.and.returnValue(of({ settings: mockSettings }));
+    configServiceSpy = jasmine.createSpyObj('ConfigService', [
+      'getSettings',
+      'updateSettings',
+      'deleteLogo',
+    ]);
+    configServiceSpy.getSettings.and.returnValue(
+      of({ settings: mockSettings, groups: mockGroups })
+    );
     configServiceSpy.updateSettings.and.returnValue(
       of({
-        settings: [{ key: 'company_name', value: 'Nueva Empresa', description: '', updatedAt: '' }],
+        settings: [
+          {
+            key: 'company_name',
+            value: 'Nueva Empresa',
+            description: '',
+            groupCode: 'empresa',
+            sortOrder: 1,
+            isRequired: true,
+            isPublic: true,
+            type: { code: 'text', name: 'Texto' },
+            updatedAt: '',
+          },
+        ],
       })
     );
+
+    brandServiceSpy = jasmine.createSpyObj('BrandService', ['applyPrimaryColor', 'refresh']);
+    brandServiceSpy.refresh.and.returnValue(of(null));
 
     snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
 
@@ -74,6 +133,7 @@ describe('ConfigGeneralComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: ConfigService, useValue: configServiceSpy },
+        { provide: BrandService, useValue: brandServiceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
         { provide: AuthState, useValue: authStateSpy },
       ],
@@ -82,6 +142,7 @@ describe('ConfigGeneralComponent', () => {
     fixture = TestBed.createComponent(ConfigGeneralComponent);
     component = fixture.componentInstance;
     component.canEdit = true;
+    spyOn((component as any).dialog, 'open').and.returnValue({ afterClosed: () => of(null) } as any);
     fixture.detectChanges();
   });
 
@@ -89,12 +150,17 @@ describe('ConfigGeneralComponent', () => {
     expect(component).toBeTruthy();
     expect(configServiceSpy.getSettings).toHaveBeenCalled();
     expect(component.settings().length).toBe(6);
+    expect(component.groups().length).toBe(2);
   });
 
-  it('debe renderizar filas y clasificar keys desconocidas en unknownRows', () => {
+  it('debe renderizar filas y agruparlas correctamente en groupedRows', () => {
     expect(component.rows().length).toBe(6);
-    expect(component.unknownRows().length).toBe(1);
-    expect(component.unknownRows()[0].setting.key).toBe('unknown_custom_setting');
+    const grouped = component.groupedRows();
+    expect(grouped.length).toBe(2);
+    expect(grouped[0].code).toBe('empresa');
+    expect(grouped[0].rows.length).toBe(3);
+    expect(grouped[1].code).toBe('sistema');
+    expect(grouped[1].rows.length).toBe(3);
   });
 
   it('no debe llamar al servicio save() si no hay cambios (formulario pristine)', () => {
@@ -171,5 +237,10 @@ describe('ConfigGeneralComponent', () => {
 
     expect(component.isDirty()).toBeFalse();
     expect(nameCtrl?.value).toBe('JD Inversiones S.A.');
+  });
+
+  it('debe abrir el diálogo para subir logotipo', () => {
+    component.openLogoDialog('https://example.com/logo.png');
+    expect((component as any).dialog.open).toHaveBeenCalled();
   });
 });

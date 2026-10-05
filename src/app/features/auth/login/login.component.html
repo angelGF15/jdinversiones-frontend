@@ -3,16 +3,17 @@
   <header class="login-navbar">
     <div class="login-navbar-brand">
       <img
-        src="logo.png"
-        alt="JD Inversiones Logo"
+        [src]="brandService.logoUrl()"
+        (error)="onLogoError($event)"
+        [alt]="brandService.companyName() + ' Logo'"
         class="login-navbar-logo"
       />
       <div class="flex flex-col">
         <span class="login-navbar-title">
-          JD Inversiones
+          {{ brandService.companyName() }}
         </span>
         <span class="login-navbar-subtitle">
-          Tienda y Centro Técnico
+          {{ brandService.tagline() }}
         </span>
       </div>
     </div>
@@ -54,17 +55,18 @@
           <!-- Circular Badge with Official Logo -->
           <div class="login-logo-badge">
             <img
-              src="logo.png"
-              alt="JD Inversiones — Tienda y Centro Técnico"
+              [src]="brandService.logoUrl()"
+              (error)="onLogoError($event)"
+              [alt]="brandService.companyName() + ' — ' + brandService.tagline()"
               class="w-full h-full object-contain rounded-full"
             />
           </div>
 
           <h2 class="login-hero-title">
-            JD Inversiones
+            {{ brandService.companyName() }}
           </h2>
           <p class="login-hero-subtitle">
-            Tienda y Centro Técnico
+            {{ brandService.tagline() }}
           </p>
 
           <div class="login-hero-divider"></div>
@@ -76,7 +78,7 @@
           <!-- Slogan / Description -->
           <div class="space-y-1 max-w-xs">
             <p class="font-bold text-sm text-white">Gestión comercial.</p>
-            <p class="text-xs text-blue-100/85 leading-relaxed">
+            <p class="text-xs text-primary-100/85 leading-relaxed">
               Plataforma administrativa integral de inventario, ventas y facturación.
             </p>
           </div>
@@ -228,7 +230,7 @@
 
     <!-- Bottom Page Footer -->
     <footer class="login-page-footer">
-      <p>JD Inversiones © 2026 • Tienda y Centro Técnico • Plataforma de Gestión Comercial</p>
+      <p>{{ brandService.companyName() }} © 2026 • {{ brandService.tagline() }} • Plataforma de Gestión Comercial</p>
     </footer>
   </main>
 </div>

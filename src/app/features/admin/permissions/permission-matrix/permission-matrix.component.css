@@ -24,14 +24,14 @@
 }
 
 .permission-tile.is-selected {
-  border-color: var(--color-primary, #032edd);
-  background-color: rgba(3, 46, 221, 0.04);
-  box-shadow: 0 0 0 1px var(--color-primary, #032edd), 0 2px 8px rgba(3, 46, 221, 0.08);
+  border-color: rgb(var(--primary-500));
+  background-color: rgb(var(--primary-500) / 0.04);
+  box-shadow: 0 0 0 1px rgb(var(--primary-500)), 0 2px 8px rgb(var(--primary-500) / 0.08);
 }
 
 :host-context(.dark) .permission-tile.is-selected {
-  background-color: rgba(3, 46, 221, 0.12);
-  box-shadow: 0 0 0 1px rgba(3, 46, 221, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  background-color: rgb(var(--primary-500) / 0.12);
+  box-shadow: 0 0 0 1px rgb(var(--primary-500) / 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .matrix-module-card {

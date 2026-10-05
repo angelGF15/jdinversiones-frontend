@@ -5,10 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { signal } from '@angular/core';
 
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
+import { BrandService } from '../../../core/services/brand.service';
 import { LoginResponse } from '../../../core/auth/models/auth.models';
 
 describe('LoginComponent', () => {
@@ -18,6 +20,13 @@ describe('LoginComponent', () => {
   let authStateSpy: jasmine.SpyObj<AuthState>;
   let routerSpy: jasmine.SpyObj<Router>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
+
+  const mockBrandService = {
+    logoUrl: signal('logo.svg'),
+    companyName: signal('JD Inversiones'),
+    tagline: signal('Tienda y Centro Técnico'),
+    primaryColor: signal('#032EDD'),
+  };
 
   const mockLoginResponse: LoginResponse = {
     accessToken: 'mock-access-token',
@@ -62,6 +71,7 @@ describe('LoginComponent', () => {
             },
           },
         },
+        { provide: BrandService, useValue: mockBrandService },
       ],
     }).compileComponents();
 

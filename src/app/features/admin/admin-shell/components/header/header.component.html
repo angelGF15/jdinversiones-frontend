@@ -33,13 +33,18 @@
 
     <!-- Brand & Logo -->
     <div class="header-brand-group">
-      <img src="logo.png" alt="Logo JD Inversiones" class="header-brand-logo" />
+      <img
+        [src]="brandService.logoUrl()"
+        (error)="onLogoError($event)"
+        [alt]="brandService.companyName() + ' Logo'"
+        class="header-brand-logo"
+      />
       <div class="flex flex-col min-w-0">
         <span class="header-brand-name">
-          JD Inversiones
+          {{ brandService.companyName() }}
         </span>
         <span class="header-brand-subtitle">
-          Tienda y Centro Técnico
+          {{ brandService.tagline() }}
         </span>
       </div>
     </div>
@@ -95,7 +100,7 @@
         </p>
         <div class="mt-2 flex items-center gap-1.5">
           <span
-            class="px-2 py-0.5 text-[10px] font-medium bg-primary/10 text-primary dark:bg-primary/20 dark:text-blue-300 border border-primary/20 dark:border-primary/30 rounded">
+            class="px-2 py-0.5 text-[10px] font-medium bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300 border border-primary/20 dark:border-primary/30 rounded">
             Rol: {{ authState.roles()[0] || 'Personal' }}
           </span>
         </div>

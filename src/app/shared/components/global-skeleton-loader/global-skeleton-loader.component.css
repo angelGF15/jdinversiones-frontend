@@ -6,7 +6,7 @@
   right: 0;
   bottom: 0;
   z-index: 9999;
-  background-color: #010f48;
+  background-color: rgb(var(--primary-900));
 }
 
 .global-skeleton-container {

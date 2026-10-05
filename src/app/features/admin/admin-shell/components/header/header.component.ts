@@ -9,6 +9,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuthState } from '../../../../../core/auth/auth.state';
 import { ThemeService } from '../../../../../core/services/theme.service';
+import { BrandService } from '../../../../../core/services/brand.service';
 import { AvatarUploadDialogComponent } from '../../../../../shared/components/avatar-upload-dialog/avatar-upload-dialog.component';
 
 @Component({
@@ -30,10 +31,18 @@ import { AvatarUploadDialogComponent } from '../../../../../shared/components/av
 export class HeaderComponent {
   public readonly authState = inject(AuthState);
   public readonly themeService = inject(ThemeService);
+  public readonly brandService = inject(BrandService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
   public readonly avatarImgError = signal(false);
+
+  public onLogoError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img && !img.src.endsWith('logo.svg')) {
+      img.src = 'logo.svg';
+    }
+  }
 
   constructor() {
     effect(() => {

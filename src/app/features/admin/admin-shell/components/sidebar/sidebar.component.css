@@ -56,7 +56,7 @@
 }
 
 .sidebar-nav-badge {
-  @apply px-2 py-0.5 text-[10px] font-semibold rounded-full bg-blue-50 text-blue-600 border border-blue-200 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/30;
+  @apply px-2 py-0.5 text-[10px] font-semibold rounded-full bg-primary-50 text-primary-700 border border-primary-100 dark:bg-primary-950/40 dark:text-primary-300 dark:border-primary-900/50;
 }
 
 /* ==========================================================================
@@ -80,12 +80,12 @@
 }
 
 .active-group-btn {
-  @apply text-blue-600 dark:text-blue-400 bg-blue-50/70 dark:bg-blue-500/10 font-semibold;
+  @apply text-primary-700 dark:text-primary-300 bg-primary-50/70 dark:bg-primary-950/30 font-semibold;
 }
 
 .active-group-btn .sidebar-nav-icon,
 .active-group-btn .sidebar-group-chevron {
-  @apply text-blue-600 dark:text-blue-400;
+  @apply text-primary-700 dark:text-primary-300;
 }
 
 .sidebar-submenu-list {
@@ -106,10 +106,10 @@
 
 /* Sublink Activo */
 .active-sub-nav-link {
-  background-color: #032edd !important;
+  background-color: rgb(var(--primary-500)) !important;
   color: #ffffff !important;
   font-weight: 600;
-  box-shadow: 0 2px 8px 0 rgba(3, 46, 221, 0.25);
+  box-shadow: 0 2px 8px 0 rgb(var(--primary-500) / 0.25);
 }
 
 .active-sub-nav-link .sidebar-sub-icon {
@@ -118,9 +118,9 @@
 
 /* Active Nav Link Highlighting (Principal) */
 .active-nav-link {
-  background-color: #032edd !important;
+  background-color: rgb(var(--primary-500)) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 14px 0 rgba(3, 46, 221, 0.35);
+  box-shadow: 0 4px 14px 0 rgb(var(--primary-500) / 0.35);
 }
 
 .active-nav-link mat-icon {

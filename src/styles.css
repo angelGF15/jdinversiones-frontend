@@ -5,14 +5,13 @@
 @tailwind utilities;
 
 :root {
-  /* Tokens de diseño JDinversiones (Sección 8 del contexto) */
-  --color-primary: #032EDD;
-  --color-blue-50: #EEF2FF;
-  --color-blue-100: #DDE5FF;
-  --color-blue-300: #8EA5FF;
-  --color-blue-500: #032EDD;
-  --color-blue-700: #021F97;
-  --color-blue-900: #010F48;
+  /* Variables dinámicas para Tailwind primary (triplets R G B consumidas por Tailwind) */
+  --primary-50: 240 245 255;
+  --primary-100: 226 235 255;
+  --primary-300: 148 182 255;
+  --primary-500: 3 46 221;
+  --primary-700: 1 23 170;
+  --primary-900: 0 0 48;
 
   --color-success: #22C55E;
   --color-warning: #F59E0B;
@@ -133,17 +132,17 @@ mat-icon {
 /* Patrón sutil tecnológico para pantallas de autenticación */
 @layer utilities {
   .bg-tech-pattern {
-    background-color: #010f48;
-    background-image: radial-gradient(rgba(3, 46, 221, 0.25) 1px, transparent 1px),
-      radial-gradient(rgba(3, 46, 221, 0.15) 1px, #010f48 1px);
+    background-color: rgb(var(--primary-900));
+    background-image: radial-gradient(rgb(var(--primary-500) / 0.25) 1px, transparent 1px),
+      radial-gradient(rgb(var(--primary-500) / 0.15) 1px, rgb(var(--primary-900)) 1px);
     background-size: 32px 32px;
     background-position: 0 0, 16px 16px;
   }
 
   .bg-tech-pattern-light {
     background-color: #f3f6fc;
-    background-image: radial-gradient(rgba(3, 46, 221, 0.08) 1.2px, transparent 1.2px),
-      radial-gradient(rgba(3, 46, 221, 0.04) 1.2px, #f3f6fc 1.2px);
+    background-image: radial-gradient(rgb(var(--primary-500) / 0.08) 1.2px, transparent 1.2px),
+      radial-gradient(rgb(var(--primary-500) / 0.04) 1.2px, #f3f6fc 1.2px);
     background-size: 24px 24px;
     background-position: 0 0, 12px 12px;
   }

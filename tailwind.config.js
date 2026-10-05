@@ -8,21 +8,14 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#032EDD',
-          50: '#EEF2FF',
-          100: '#DDE5FF',
-          300: '#8EA5FF',
-          500: '#032EDD',
-          700: '#021F97',
-          900: '#010F48',
-        },
-        brand: {
-          50: '#EEF2FF',
-          100: '#DDE5FF',
-          300: '#8EA5FF',
-          500: '#032EDD',
-          700: '#021F97',
-          900: '#010F48',
+          DEFAULT: 'rgb(var(--primary-500) / <alpha-value>)',
+          50: 'rgb(var(--primary-50) / <alpha-value>)',
+          100: 'rgb(var(--primary-100) / <alpha-value>)',
+          300: 'rgb(var(--primary-300) / <alpha-value>)',
+          500: 'rgb(var(--primary-500) / <alpha-value>)',
+          700: 'rgb(var(--primary-700) / <alpha-value>)',
+          900: 'rgb(var(--primary-900) / <alpha-value>)',
+          950: 'rgb(var(--primary-900) / <alpha-value>)',
         },
         success: {
           DEFAULT: '#22C55E',

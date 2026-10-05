@@ -1,14 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   CreateNotificationRecipientRequest,
+  Currency,
   NotificationChannelListResponse,
   NotificationRecipient,
   NotificationRecipientListQuery,
   NotificationRecipientListResponse,
   NotificationRecipientTypeListResponse,
+  PublicBranding,
   SetRecipientStatusRequest,
   Setting,
   SettingListResponse,
@@ -25,11 +28,46 @@ export class ConfigService {
   private readonly baseUrl = `${this.apiUrl}/config`;
 
   // ==========================================================================
-  // CONFIGURACIONES GENERALES
+  // CONFIGURACIONES GENERALES Y BRANDING
   // ==========================================================================
 
   /**
-   * GET /config — devuelve las 10 keys de tbl_settings, incluso con value null.
+   * GET /config/public — branding público sin autenticación ni token.
+   */
+  public getPublicBranding(): Observable<PublicBranding> {
+    return this.http.get<PublicBranding>(`${this.baseUrl}/public`);
+  }
+
+  /**
+   * GET /config/currencies — catálogo de monedas activas configuradas.
+   * Requiere permiso CONFIG_VIEW.
+   */
+  public getCurrencies(): Observable<Currency[]> {
+    return this.http
+      .get<{ currencies: Currency[] }>(`${this.baseUrl}/currencies`)
+      .pipe(map((r) => r.currencies));
+  }
+
+  /**
+   * POST /config/logo — sube el logotipo institucional a Cloudinary.
+   * Requiere permiso CONFIG_EDIT.
+   */
+  public uploadLogo(file: File): Observable<{ logoUrl: string }> {
+    const fd = new FormData();
+    fd.append('file', file, file.name);
+    return this.http.post<{ logoUrl: string }>(`${this.baseUrl}/logo`, fd);
+  }
+
+  /**
+   * DELETE /config/logo — elimina el logotipo personalizado y revierte al local.
+   * Requiere permiso CONFIG_EDIT.
+   */
+  public deleteLogo(): Observable<{ logoUrl: null }> {
+    return this.http.delete<{ logoUrl: null }>(`${this.baseUrl}/logo`);
+  }
+
+  /**
+   * GET /config — devuelve la lista completa de configuraciones con metadatos y grupos.
    * Requiere permiso CONFIG_VIEW.
    */
   public getSettings(): Observable<SettingListResponse> {

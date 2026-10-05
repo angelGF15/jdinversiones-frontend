@@ -21,7 +21,7 @@
 }
 
 .pagination-pill:focus-visible {
-  outline: 2px solid var(--color-primary, #032edd);
+  outline: 2px solid rgb(var(--primary-500));
   outline-offset: 2px;
 }
 
@@ -32,19 +32,19 @@
 }
 
 .pill-nav-btn:focus-visible {
-  outline: 2px solid var(--color-primary, #032edd);
+  outline: 2px solid rgb(var(--primary-500));
   outline-offset: -2px;
 }
 
 /* Selector de filas */
 #page-size-select:focus-visible {
-  outline: 2px solid var(--color-primary, #032edd);
+  outline: 2px solid rgb(var(--primary-500));
   outline-offset: 2px;
 }
 
 /* Botones de salto (primera / última página) */
 .pill-nav-jump-btn:focus-visible {
-  outline: 2px solid var(--color-primary, #032edd);
+  outline: 2px solid rgb(var(--primary-500));
   outline-offset: 2px;
 }
 

@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
+import { BrandService } from '../../../core/services/brand.service';
 
 export type LoginErrorType = 'validation' | 'credentials' | 'suspended' | 'rate-limit' | 'network' | null;
 
@@ -35,9 +36,17 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly authState = inject(AuthState);
+  public readonly brandService = inject(BrandService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly snackBar = inject(MatSnackBar);
+
+  public onLogoError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img && !img.src.endsWith('logo.svg')) {
+      img.src = 'logo.svg';
+    }
+  }
 
   // --- Signals de Estado ---
   public readonly hidePassword = signal<boolean>(true);

@@ -47,10 +47,10 @@
   @if (themeNoticeVisible() && canEdit) {
     <div
       role="status"
-      class="p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 flex items-start justify-between gap-3 text-blue-800 dark:text-blue-300 shadow-sm"
+      class="p-4 rounded-2xl bg-primary-50 dark:bg-primary-950/40 border border-primary-100 dark:border-primary-900/50 flex items-start justify-between gap-3 text-primary-900 dark:text-primary-100 shadow-sm"
     >
       <div class="flex items-start gap-2.5 text-xs sm:text-sm">
-        <span class="mat-icon text-lg select-none flex-shrink-0 mt-0.5 text-blue-600 dark:text-blue-400">palette</span>
+        <span class="mat-icon text-lg select-none flex-shrink-0 mt-0.5 text-primary-700 dark:text-primary-300">palette</span>
         <span>
           <strong>Nota sobre el tema:</strong> El «Tema por defecto» solo se aplica como preferencia inicial a sesiones nuevas o navegadores limpios. Tu tema actual seguirá igual hasta que cambies tu preferencia en el encabezado.
         </span>
@@ -58,7 +58,7 @@
       <button
         type="button"
         (click)="closeNotice()"
-        class="p-1 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/60 rounded-lg transition-colors flex-shrink-0"
+        class="p-1 text-primary-700 hover:bg-primary-100 dark:text-primary-300 dark:hover:bg-primary-900/60 rounded-lg transition-colors flex-shrink-0"
         aria-label="Cerrar aviso"
       >
         <span class="mat-icon text-base select-none">close</span>
@@ -95,19 +95,19 @@
       class="flex flex-col gap-6"
     >
       <!-- Tarjetas por Grupo Funcional -->
-      @for (group of groupedRows(); track group.key) {
-        <section class="config-section-card" [attr.aria-labelledby]="'group-title-' + group.key">
+      @for (group of groupedRows(); track group.code) {
+        <section class="config-section-card" [attr.aria-labelledby]="'group-title-' + group.code">
           <!-- Cabecera de la Sección -->
           <div class="flex items-center gap-3.5 pb-4 border-b border-slate-100 dark:border-slate-800/80">
             <div
               aria-hidden="true"
-              class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-400 border border-primary-100 dark:border-primary-900/40 flex items-center justify-center flex-shrink-0 shadow-sm"
+              class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-100 dark:border-primary-900/40 flex items-center justify-center flex-shrink-0 shadow-sm"
             >
               <span class="mat-icon text-xl select-none">{{ group.icon }}</span>
             </div>
             <div>
               <h2
-                [id]="'group-title-' + group.key"
+                [id]="'group-title-' + group.code"
                 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white"
               >
                 {{ group.label }}
@@ -121,123 +121,201 @@
           <!-- Campos en Grid -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-4">
             @for (row of group.rows; track row.setting.key) {
-              <div class="space-y-1.5">
+              <div
+                class="space-y-1.5"
+                [class.lg:col-span-2]="row.setting.type.code === 'image'"
+              >
                 <div class="flex items-center justify-between">
                   <label
                     [for]="'setting-' + row.setting.key"
-                    class="block text-xs font-semibold text-slate-700 dark:text-slate-200"
+                    [matTooltip]="row.setting.description || ''"
+                    class="block text-xs font-semibold text-slate-700 dark:text-slate-200 cursor-help"
                   >
-                    {{ row.meta.label }}
-                    @if (row.meta.required) {
+                    {{ row.setting.label }}
+                    @if (row.setting.isRequired) {
                       <span class="text-danger">*</span>
                     }
                   </label>
-                  @if (row.meta.widget !== 'theme' && row.meta.widget !== 'currency') {
+                  @if (row.setting.type.code !== 'theme' && row.setting.type.code !== 'currency' && row.setting.type.code !== 'image' && row.setting.type.code !== 'color') {
                     <span class="text-[11px] text-slate-400">
-                      {{ row.control.value?.length || 0 }}/500
+                      {{ row.control.value?.length || 0 }}/{{ row.setting.type.maxLength || 500 }}
                     </span>
                   }
                 </div>
 
-                <!-- Input con Icono -->
-                <div class="relative flex items-center">
-                  <span
-                    aria-hidden="true"
-                    class="mat-icon text-lg absolute left-3 text-slate-400 select-none pointer-events-none"
-                  >
-                    {{ row.meta.icon }}
-                  </span>
-
-                  @if (row.meta.widget === 'theme' || row.meta.widget === 'currency') {
+                <!-- Render de Campo según tipo (type.code) -->
+                @if (row.setting.type.code === 'image') {
+                  <!-- Bloque Especial para Logotipo -->
+                  <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex flex-col sm:flex-row items-center gap-5">
+                    <div class="w-32 h-20 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 p-2 flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden">
+                      <img
+                        #logoPreview
+                        [src]="row.control.value || 'logo.svg'"
+                        alt="Logotipo de la empresa"
+                        (error)="logoPreview.src = 'logo.svg'"
+                        class="max-h-full max-w-full object-contain"
+                      />
+                    </div>
+                    <div class="flex-1 text-center sm:text-left space-y-1">
+                      <h3 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
+                        {{ row.control.value ? 'Logotipo personalizado activo' : 'Logotipo predeterminado del sistema' }}
+                      </h3>
+                      <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {{ row.setting.helper || 'Se muestra en el login, encabezado y barra lateral del panel.' }}
+                      </p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                      @if (row.control.value) {
+                        <button
+                          type="button"
+                          *hasPermission="'CONFIG_EDIT'"
+                          (click)="deleteLogo()"
+                          [disabled]="!canEdit || isDeletingLogo()"
+                          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-danger-700 dark:text-danger-300 hover:bg-danger-50 dark:hover:bg-danger-950/40 border border-danger-200 dark:border-danger-900/60 transition-colors disabled:opacity-50"
+                        >
+                          <span class="mat-icon text-base select-none">restart_alt</span>
+                          <span>Restablecer</span>
+                        </button>
+                      }
+                      <button
+                        type="button"
+                        *hasPermission="'CONFIG_EDIT'"
+                        (click)="openLogoDialog(row.control.value)"
+                        [disabled]="!canEdit"
+                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-primary hover:bg-primary-700 shadow-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50"
+                      >
+                        <span class="mat-icon text-base select-none">cloud_upload</span>
+                        <span>Cambiar logo</span>
+                      </button>
+                    </div>
+                  </div>
+                } @else if (row.setting.type.code === 'color') {
+                  <!-- Selector de Color Hexadecimal con Picker Nativo -->
+                  <div class="relative flex items-center gap-2.5">
+                    <input
+                      type="color"
+                      [value]="row.control.value || '#032EDD'"
+                      (input)="onColorPickerChange(row.setting.key, $event)"
+                      [disabled]="!canEdit"
+                      class="w-11 h-10 rounded-xl cursor-pointer border border-slate-300 dark:border-slate-700 p-0.5 bg-transparent flex-shrink-0"
+                      aria-label="Selector visual de color"
+                    />
+                    <div class="relative flex-1 flex items-center">
+                      <span
+                        aria-hidden="true"
+                        class="mat-icon text-lg absolute left-3 text-slate-400 select-none pointer-events-none"
+                      >
+                        palette
+                      </span>
+                      <input
+                        [id]="'setting-' + row.setting.key"
+                        type="text"
+                        maxlength="7"
+                        [formControlName]="row.setting.key"
+                        class="setting-field font-mono uppercase"
+                        [class.is-invalid]="isInvalid(row.setting.key)"
+                        [readonly]="!canEdit"
+                        placeholder="#032EDD"
+                      />
+                    </div>
+                  </div>
+                } @else if (row.setting.type.code === 'theme') {
+                  <!-- Selector de Tema -->
+                  <div class="relative flex items-center">
+                    <span
+                      aria-hidden="true"
+                      class="mat-icon text-lg absolute left-3 text-slate-400 select-none pointer-events-none"
+                    >
+                      brightness_medium
+                    </span>
                     <select
                       [id]="'setting-' + row.setting.key"
                       [formControlName]="row.setting.key"
                       class="setting-select cursor-pointer"
                       [class.is-invalid]="isInvalid(row.setting.key)"
                     >
-                      @for (opt of row.meta.options; track opt.value) {
-                        <option [value]="opt.value">{{ opt.label }}</option>
+                      <option value="light">Claro</option>
+                      <option value="dark">Oscuro</option>
+                    </select>
+                  </div>
+                } @else if (row.setting.type.code === 'currency') {
+                  <!-- Selector de Moneda -->
+                  <div class="relative flex items-center">
+                    <span
+                      aria-hidden="true"
+                      class="mat-icon text-lg absolute left-3 text-slate-400 select-none pointer-events-none"
+                    >
+                      payments
+                    </span>
+                    <select
+                      [id]="'setting-' + row.setting.key"
+                      [formControlName]="row.setting.key"
+                      class="setting-select cursor-pointer"
+                      [class.is-invalid]="isInvalid(row.setting.key)"
+                    >
+                      @if (row.setting.options && row.setting.options.length > 0) {
+                        @for (opt of row.setting.options; track opt.value) {
+                          <option [value]="opt.value">{{ opt.value }} — {{ opt.label }}</option>
+                        }
+                      } @else {
+                        <option value="HNL">HNL — Lempira hondureño</option>
+                        <option value="USD">USD — Dólar estadounidense</option>
                       }
                     </select>
-                  } @else if (row.meta.widget === 'number') {
+                  </div>
+                } @else if (row.setting.type.code === 'number') {
+                  <!-- Input Numérico -->
+                  <div class="relative flex items-center">
+                    <span
+                      aria-hidden="true"
+                      class="mat-icon text-lg absolute left-3 text-slate-400 select-none pointer-events-none"
+                    >
+                      {{ row.setting.icon || 'tag' }}
+                    </span>
                     <input
                       [id]="'setting-' + row.setting.key"
-                      type="text"
-                      inputmode="numeric"
-                      pattern="[0-9]*"
-                      maxlength="9"
+                      type="number"
                       [formControlName]="row.setting.key"
                       class="setting-field"
                       [class.is-invalid]="isInvalid(row.setting.key)"
                       [readonly]="!canEdit"
-                      [placeholder]="'Ej. ' + (row.setting.value ?? '30')"
+                      [placeholder]="row.setting.helper || ''"
                     />
-                  } @else {
+                  </div>
+                } @else {
+                  <!-- Inputs estándar (text, email, tel, url) -->
+                  <div class="relative flex items-center">
+                    <span
+                      aria-hidden="true"
+                      class="mat-icon text-lg absolute left-3 text-slate-400 select-none pointer-events-none"
+                    >
+                      {{ row.setting.icon || 'tune' }}
+                    </span>
                     <input
                       [id]="'setting-' + row.setting.key"
-                      [type]="row.meta.widget === 'email' ? 'email' : (row.meta.widget === 'tel' ? 'tel' : (row.meta.widget === 'url' ? 'url' : 'text'))"
-                      maxlength="500"
+                      [type]="row.setting.type.code === 'email' ? 'email' : (row.setting.type.code === 'tel' ? 'tel' : (row.setting.type.code === 'url' ? 'url' : 'text'))"
+                      [maxlength]="row.setting.type.maxLength || 500"
                       [formControlName]="row.setting.key"
                       class="setting-field"
                       [class.is-invalid]="isInvalid(row.setting.key)"
                       [readonly]="!canEdit"
-                      [placeholder]="row.meta.helper"
+                      [placeholder]="row.setting.helper || ''"
                     />
-                  }
-                </div>
+                  </div>
+                }
 
                 <!-- Helper & Error -->
                 <div class="min-h-[18px]">
                   @if (isInvalid(row.setting.key)) {
                     <p class="text-xs text-danger-600 dark:text-danger-400 font-medium" role="alert">
-                      {{ getError(row.setting.key) }}
+                      {{ getError(row.setting) }}
                     </p>
                   } @else {
                     <p class="text-[11px] text-slate-500 dark:text-slate-400">
-                      {{ row.meta.helper }}
+                      {{ row.setting.helper }}
                     </p>
                   }
                 </div>
-              </div>
-            }
-          </div>
-        </section>
-      }
-
-      <!-- Tarjeta para claves no registradas (tolerancia a cambios de BD) -->
-      @if (unknownRows().length > 0) {
-        <section class="config-section-card border-dashed">
-          <div class="flex items-center gap-3.5 pb-4 border-b border-slate-100 dark:border-slate-800/80">
-            <div
-              class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0"
-            >
-              <span class="mat-icon text-xl select-none">help_outline</span>
-            </div>
-            <div>
-              <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                Otras configuraciones del sistema
-              </h2>
-              <p class="text-xs text-slate-500 dark:text-slate-400">
-                Parámetros adicionales detectados en la base de datos (modo solo lectura).
-              </p>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-4">
-            @for (row of unknownRows(); track row.setting.key) {
-              <div class="space-y-1">
-                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-200">
-                  {{ row.setting.key }}
-                </label>
-                <input
-                  type="text"
-                  [value]="row.setting.value ?? ''"
-                  readonly
-                  class="setting-field opacity-70 cursor-not-allowed bg-slate-100 dark:bg-slate-800"
-                />
-                <p class="text-[11px] text-slate-400">
-                  {{ row.setting.description ?? 'Sin descripción adicional.' }}
-                </p>
               </div>
             }
           </div>

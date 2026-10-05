@@ -20,7 +20,7 @@
 /* Indicadores de foco accesibles */
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--color-primary, #0284c7);
+  outline: 2px solid rgb(var(--primary-500));
   outline-offset: 2px;
 }
 

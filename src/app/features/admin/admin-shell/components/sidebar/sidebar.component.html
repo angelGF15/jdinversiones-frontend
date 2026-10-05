@@ -21,7 +21,12 @@
   <!-- Mobile Drawer Header (Solo en móvil para cerrar el drawer) -->
   <div class="sidebar-mobile-header md:hidden">
     <div class="flex items-center gap-2.5">
-      <img src="logo.png" alt="Logo JD Inversiones" class="w-7 h-7 object-contain rounded-full drop-shadow-sm" />
+      <img
+        [src]="brandService.logoUrl()"
+        (error)="onLogoError($event)"
+        [alt]="brandService.companyName() + ' Logo'"
+        class="w-7 h-7 object-contain rounded-full drop-shadow-sm"
+      />
       <span class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-white">
         Menú
       </span>

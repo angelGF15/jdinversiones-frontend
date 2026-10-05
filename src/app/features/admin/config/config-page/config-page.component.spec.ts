@@ -22,7 +22,7 @@ describe('ConfigPageComponent', () => {
       'listChannels',
       'listRecipientTypes',
     ]);
-    configServiceSpy.getSettings.and.returnValue(of({ settings: [] }));
+    configServiceSpy.getSettings.and.returnValue(of({ settings: [], groups: [] }));
     configServiceSpy.listRecipients.and.returnValue(of({ recipients: [] }));
     configServiceSpy.listChannels.and.returnValue(of({ channels: [] }));
     configServiceSpy.listRecipientTypes.and.returnValue(of({ recipientTypes: [] }));

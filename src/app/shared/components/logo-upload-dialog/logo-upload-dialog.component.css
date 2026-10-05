@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AvatarUploadDialog Component Styles — UI/UX Pro Max
+   LogoUploadDialog Component Styles — Dynamic Brand Theme
    ========================================================================== */
 
 :host {
@@ -7,8 +7,8 @@
   width: 100%;
 }
 
-::ng-deep .avatar-dialog-panel .mdc-dialog__surface,
-::ng-deep .mat-mdc-dialog-container:has(app-avatar-upload-dialog) .mdc-dialog__surface {
+::ng-deep .logo-dialog-panel .mdc-dialog__surface,
+::ng-deep .mat-mdc-dialog-container:has(app-logo-upload-dialog) .mdc-dialog__surface {
   background: transparent !important;
   box-shadow: none !important;
   border-radius: 1.5rem !important;
@@ -16,7 +16,7 @@
 }
 
 /* Animación de entrada suave del diálogo */
-.avatar-dialog-card {
+.logo-dialog-card {
   animation: dialogFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -48,30 +48,9 @@
   animation: shake 0.35s ease-in-out;
 }
 
-/* Animación de zoom suave para la imagen cargada */
-@keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-zoom-in {
-  animation: zoomIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Efecto de borde y resplandor al arrastrar archivos */
+/* Efecto de borde dinámico al arrastrar archivos */
 .upload-dropzone:hover {
   border-color: rgb(var(--primary-500));
-}
-
-:host-context(.dark) .upload-dropzone:hover,
-.dark .upload-dropzone:hover {
-  border-color: rgb(var(--primary-300));
 }
 
 /* Estilo accesible de foco para la zona de arrastre */
@@ -81,17 +60,10 @@
   box-shadow: 0 0 0 3px rgb(var(--primary-500) / 0.25);
 }
 
-:host-context(.dark) .upload-dropzone:focus-visible,
-.dark .upload-dropzone:focus-visible {
-  border-color: rgb(var(--primary-300));
-  box-shadow: 0 0 0 3px rgb(var(--primary-300) / 0.3);
-}
-
 /* Desactivar animaciones si el usuario prefiere movimiento reducido (WCAG 2.2 AA) */
 @media (prefers-reduced-motion: reduce) {
-  .avatar-dialog-card,
-  .animate-shake,
-  .animate-zoom-in {
+  .logo-dialog-card,
+  .animate-shake {
     animation: none !important;
     transition: none !important;
   }

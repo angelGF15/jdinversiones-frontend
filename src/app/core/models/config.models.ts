@@ -1,56 +1,54 @@
-/** Grupo funcional al que pertenece una setting, usado para renderizar las secciones del formulario. */
-export type ConfigSettingGroup = 'empresa' | 'redes' | 'operacion' | 'aplicacion';
-
 /**
- * Widget a renderizar para una key de configuración.
- * - 'text'     → input de texto
- * - 'email'    → input type="email"
- * - 'tel'      → input type="tel"
- * - 'url'      → input type="url" (opcional, se puede dejar vacío)
- * - 'number'   → input type="number" con enteros >= 0
- * - 'theme'    → select light | dark
- * - 'currency' → select con códigos de moneda frecuentes
+ * Modelos de datos para el módulo de Configuración del sistema.
+ * Basados en el contrato expuesto por jdinversiones-backend (GET /config, GET /config/public, GET /config/currencies).
  */
-export type ConfigSettingWidget =
-  | 'text'
-  | 'email'
-  | 'tel'
-  | 'url'
-  | 'number'
-  | 'theme'
-  | 'currency';
 
-/** Opción de un <select> nativo controlado por ConfigSettingMeta. */
-export interface ConfigSettingOption {
+export type IconName = string;
+
+/** Definición del tipo de control y validaciones de una configuración. */
+export interface SettingType {
+  code: string;
+  name: string;
+  maxLength?: number | null;
+  pattern?: string | null;
+  optionsSource?: string | null;
+}
+
+/** Opción individual para configuraciones selectivas (ej. currencies, themes). */
+export interface SettingOption {
   value: string;
   label: string;
 }
 
-/** Metadatos de presentación y validación de una key de configuración. */
-export interface ConfigSettingMeta {
-  label: string;
-  helper: string;
-  group: ConfigSettingGroup;
-  widget: ConfigSettingWidget;
-  icon: string;
-  required: boolean;
-  /** Opciones cuando widget === 'theme' | 'currency'. */
-  options?: ConfigSettingOption[];
-  /** Valor mostrado cuando el backend devuelve value === null. */
-  fallbackValue?: string;
-}
-
-/** Configuración clave-valor del sistema (GET /config, GET /config/:key). */
+/** Configuración clave-valor del sistema con metadatos descriptivos y de presentación. */
 export interface Setting {
   key: string;
   value: string | null;
   description: string | null;
   updatedAt: string;
+  label?: string | null;
+  helper?: string | null;
+  icon?: IconName | null;
+  groupCode: string;
+  sortOrder: number;
+  isRequired: boolean;
+  isPublic: boolean;
+  type: SettingType;
+  options?: SettingOption[] | null;
 }
 
-/** Respuesta del listado completo de settings (GET /config). */
+/** Grupo temático de configuraciones expuesto por el backend. */
+export interface ConfigGroup {
+  code: string;
+  label: string;
+  description: string;
+  icon: IconName;
+}
+
+/** Respuesta del listado completo de configuraciones y grupos (GET /config). */
 export interface SettingListResponse {
   settings: Setting[];
+  groups?: ConfigGroup[];
 }
 
 /** Item de actualización de una setting (PATCH /config). */
@@ -63,6 +61,48 @@ export interface UpdateSettingItem {
 export interface UpdateSettingsRequest {
   settings: UpdateSettingItem[];
 }
+
+/** Identidad de marca de la empresa (GET /config/public). */
+export interface Brand {
+  name: string;
+  tagline: string | null;
+  logoUrl: string | null;
+  primaryColor: string;
+}
+
+/** Información oficial de contacto de la empresa (GET /config/public). */
+export interface Contact {
+  email: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+}
+
+/** Enlaces a redes sociales oficiales (GET /config/public). */
+export interface Social {
+  facebookUrl: string | null;
+  instagramUrl: string | null;
+}
+
+/** Datos públicos de marca y contacto consumidos sin autenticación (GET /config/public). */
+export interface PublicBranding {
+  brand: Brand;
+  contact: Contact;
+  social: Social;
+}
+
+/** Moneda activa del catálogo de divisas (GET /config/currencies). */
+export interface Currency {
+  id: string;
+  code: string;
+  name: string;
+  symbol: string | null;
+  decimalPlaces: number;
+  isDefault: boolean;
+}
+
+// ==============================================================================
+// CONTACTOS Y CANALES DE NOTIFICACIÓN
+// ==============================================================================
 
 /** Canal de notificación del catálogo (GET /config/channels). */
 export interface NotificationChannel {
@@ -131,138 +171,3 @@ export interface UpdateNotificationRecipientRequest {
 export interface SetRecipientStatusRequest {
   isActive: boolean;
 }
-
-/**
- * Registro de presentación y validación de las keys de tbl_settings.
- * Si el backend devuelve una key que NO está aquí, la UI la renderiza
- * con un input de texto genérico usando su `description`.
- */
-export const SETTINGS_REGISTRY: Record<string, ConfigSettingMeta> = {
-  company_name: {
-    label: 'Nombre comercial',
-    helper: 'Se muestra en las cabeceras y correos del sistema.',
-    group: 'empresa',
-    widget: 'text',
-    icon: 'storefront',
-    required: true,
-  },
-  company_email: {
-    label: 'Correo de contacto',
-    helper: 'Correo principal de la empresa.',
-    group: 'empresa',
-    widget: 'email',
-    icon: 'mail',
-    required: true,
-  },
-  company_phone: {
-    label: 'Teléfono',
-    helper: 'Teléfono principal de la empresa.',
-    group: 'empresa',
-    widget: 'tel',
-    icon: 'contact_phone',
-    required: false,
-  },
-  whatsapp_number: {
-    label: 'WhatsApp',
-    helper: 'Número usado en el botón de contacto del sitio público.',
-    group: 'redes',
-    widget: 'tel',
-    icon: 'chat',
-    required: false,
-  },
-  facebook_url: {
-    label: 'Facebook',
-    helper: 'Enlace completo a la página de Facebook.',
-    group: 'redes',
-    widget: 'url',
-    icon: 'link',
-    required: false,
-  },
-  instagram_url: {
-    label: 'Instagram',
-    helper: 'Enlace completo al perfil. Puede quedar vacío.',
-    group: 'redes',
-    widget: 'url',
-    icon: 'link',
-    required: false,
-  },
-  default_theme: {
-    label: 'Tema por defecto',
-    helper: 'Tema inicial del panel. Solo aplica a sesiones nuevas.',
-    group: 'aplicacion',
-    widget: 'theme',
-    icon: 'palette',
-    required: true,
-    options: [
-      { value: 'light', label: 'Claro' },
-      { value: 'dark', label: 'Oscuro' },
-    ],
-  },
-  currency: {
-    label: 'Moneda',
-    helper: 'Código ISO de 3 letras usado en todos los precios.',
-    group: 'aplicacion',
-    widget: 'currency',
-    icon: 'payments',
-    required: true,
-    options: [
-      { value: 'HNL', label: 'HNL — Lempira hondureño' },
-      { value: 'USD', label: 'USD — Dólar estadounidense' },
-      { value: 'EUR', label: 'EUR — Euro' },
-      { value: 'MXN', label: 'MXN — Peso mexicano' },
-      { value: 'GTQ', label: 'GTQ — Quetzal guatemalteco' },
-      { value: 'COP', label: 'COP — Peso colombiano' },
-      { value: 'CRC', label: 'CRC — Colón costarricense' },
-      { value: 'PAB', label: 'PAB — Balboa panameño' },
-    ],
-  },
-  no_movement_threshold_days: {
-    label: 'Días sin movimiento',
-    helper: 'Días sin venta para marcar un producto como sin movimiento.',
-    group: 'operacion',
-    widget: 'number',
-    icon: 'trending_flat',
-    required: true,
-  },
-  low_stock_threshold_days: {
-    label: 'Umbral de stock bajo',
-    helper: 'Unidades en existencia que disparan la alerta de stock bajo.',
-    group: 'operacion',
-    widget: 'number',
-    icon: 'inventory_2',
-    required: true,
-  },
-};
-
-/** Orden de las secciones del formulario de configuración general. */
-export const SETTINGS_GROUPS: {
-  key: ConfigSettingGroup;
-  label: string;
-  description: string;
-  icon: string;
-}[] = [
-  {
-    key: 'empresa',
-    label: 'Datos de la empresa',
-    description: 'Información visible en el panel y en los correos.',
-    icon: 'storefront',
-  },
-  {
-    key: 'redes',
-    label: 'Redes sociales',
-    description: 'Contactos y enlaces usados en el sitio público.',
-    icon: 'public',
-  },
-  {
-    key: 'operacion',
-    label: 'Umbrales operativos',
-    description: 'Reglas consumidas por el Dashboard y los Reportes.',
-    icon: 'query_stats',
-  },
-  {
-    key: 'aplicacion',
-    label: 'Preferencias de la aplicación',
-    description: 'Moneda y tema por defecto del panel.',
-    icon: 'tune',
-  },
-];

@@ -5,10 +5,19 @@ import { HeaderComponent } from './header.component';
 import { AuthState } from '../../../../../core/auth/auth.state';
 import { ThemeService } from '../../../../../core/services/theme.service';
 
+import { BrandService } from '../../../../../core/services/brand.service';
+
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let authStateSpy: jasmine.SpyObj<AuthState>;
+
+  const mockBrandService = {
+    logoUrl: signal('logo.svg'),
+    companyName: signal('JD Inversiones'),
+    tagline: signal('Tienda y Centro Técnico'),
+    primaryColor: signal('#032EDD'),
+  };
 
   beforeEach(async () => {
     authStateSpy = jasmine.createSpyObj('AuthState', ['hasPermission']);
@@ -23,6 +32,7 @@ describe('HeaderComponent', () => {
         provideZonelessChangeDetection(),
         provideNoopAnimations(),
         { provide: AuthState, useValue: authStateSpy },
+        { provide: BrandService, useValue: mockBrandService },
       ],
     }).compileComponents();
 

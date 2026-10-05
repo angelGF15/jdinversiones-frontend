@@ -47,9 +47,13 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      // Excluir endpoints de auth para permitir que la UI maneje errores como "Credenciales inválidas"
-      // y para evitar bucles si el propio /auth/refresh retorna 401
-      if (req.url.includes('/auth/login') || req.url.includes('/auth/refresh')) {
+      // Excluir endpoints de auth y branding público para no interferir con la sesión
+      // y evitar encolar peticiones anónimas
+      if (
+        req.url.includes('/auth/login') ||
+        req.url.includes('/auth/refresh') ||
+        req.url.includes('/config/public')
+      ) {
         return throwError(() => error);
       }
 

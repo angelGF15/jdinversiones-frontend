@@ -47,7 +47,7 @@
 }
 
 .login-navbar-subtitle {
-  @apply text-[10px] font-semibold text-blue-600 tracking-wider uppercase leading-tight;
+  @apply text-[10px] font-semibold text-primary-700 tracking-wider uppercase leading-tight;
 }
 
 .login-navbar-status {
@@ -59,7 +59,7 @@
 }
 
 .login-ambient-blob-1 {
-  @apply absolute top-1/4 left-1/2 -translate-x-1/2 w-[36rem] h-[36rem] bg-gradient-to-br from-blue-400/15 via-primary/10 to-transparent rounded-full blur-3xl pointer-events-none;
+  @apply absolute top-1/4 left-1/2 -translate-x-1/2 w-[36rem] h-[36rem] bg-gradient-to-br from-primary-300/15 via-primary/10 to-transparent rounded-full blur-3xl pointer-events-none;
 }
 
 .login-ambient-blob-2 {
@@ -67,15 +67,15 @@
 }
 
 .login-split-card {
-  @apply w-full max-w-4xl bg-white border border-slate-200/90 rounded-[2rem] shadow-2xl shadow-blue-950/10 overflow-hidden flex flex-col md:flex-row relative z-10 animate-fade-in;
+  @apply w-full max-w-4xl bg-white border border-slate-200/90 rounded-[2rem] shadow-2xl shadow-primary-900/10 overflow-hidden flex flex-col md:flex-row relative z-10 animate-fade-in;
 }
 
 .login-hero-panel {
-  @apply w-full md:w-5/12 bg-gradient-to-br from-[#032EDD] via-[#0226b8] to-[#010F48] p-8 sm:p-10 flex flex-col justify-between items-center text-center text-white relative overflow-hidden;
+  @apply w-full md:w-5/12 bg-gradient-to-br from-primary via-primary-700 to-primary-900 p-8 sm:p-10 flex flex-col justify-between items-center text-center text-white relative overflow-hidden;
 }
 
 .login-hero-glow-1 {
-  @apply absolute -top-20 -left-20 w-64 h-64 bg-blue-300/20 rounded-full blur-2xl pointer-events-none;
+  @apply absolute -top-20 -left-20 w-64 h-64 bg-primary-300/20 rounded-full blur-2xl pointer-events-none;
 }
 
 .login-hero-glow-2 {
@@ -95,7 +95,7 @@
 }
 
 .login-hero-subtitle {
-  @apply text-xs font-semibold text-blue-200 uppercase tracking-widest mt-1;
+  @apply text-xs font-semibold text-primary-100 uppercase tracking-widest mt-1;
 }
 
 .login-hero-divider {
@@ -103,11 +103,11 @@
 }
 
 .login-hero-tag {
-  @apply inline-block px-3.5 py-1 text-xs font-bold bg-white/15 border border-white/25 rounded-full text-blue-100 backdrop-blur-sm shadow-inner mb-4;
+  @apply inline-block px-3.5 py-1 text-xs font-bold bg-white/15 border border-white/25 rounded-full text-primary-100 backdrop-blur-sm shadow-inner mb-4;
 }
 
 .login-hero-footer-note {
-  @apply relative z-10 text-[11px] text-blue-200/75 mt-4;
+  @apply relative z-10 text-[11px] text-primary-100/75 mt-4;
 }
 
 .login-form-panel {
@@ -115,7 +115,7 @@
 }
 
 .login-portal-badge {
-  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold text-primary mb-3 shadow-sm;
+  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-50 border border-primary-100 text-xs font-bold text-primary mb-3 shadow-sm;
 }
 
 .login-form-title {
@@ -172,7 +172,7 @@
 ::ng-deep .custom-mat-field-light.mat-focused .mdc-notched-outline__leading,
 ::ng-deep .custom-mat-field-light.mat-focused .mdc-notched-outline__notch,
 ::ng-deep .custom-mat-field-light.mat-focused .mdc-notched-outline__trailing {
-  border-color: #032edd !important;
+  border-color: rgb(var(--primary-500)) !important;
   border-width: 2px !important;
 }
 

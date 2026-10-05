@@ -78,7 +78,7 @@
 }
 
 .dash-live-badge {
-  @apply px-2.5 py-1 text-xs font-semibold rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-blue-300 border border-primary/20 dark:border-primary/30;
+  @apply px-2.5 py-1 text-xs font-semibold rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300 border border-primary/20 dark:border-primary/30;
 }
 
 .dash-progress-track {
