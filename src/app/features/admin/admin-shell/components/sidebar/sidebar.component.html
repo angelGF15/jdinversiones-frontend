@@ -21,14 +21,22 @@
   <!-- Mobile Drawer Header (Solo en móvil para cerrar el drawer) -->
   <div class="sidebar-mobile-header md:hidden">
     <div class="flex items-center gap-2.5">
-      <img
-        [src]="brandService.logoUrl()"
-        (error)="onLogoError($event)"
-        [alt]="brandService.companyName() + ' Logo'"
-        class="w-7 h-7 object-contain rounded-full drop-shadow-sm"
-      />
-      <span class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-white">
-        Menú
+      @if (brandService.hasCustomLogo() && !logoImgError()) {
+        <img
+          [src]="brandService.logoUrl()"
+          (error)="logoImgError.set(true)"
+          [alt]="brandService.companyName() + ' Logo'"
+          class="w-7 h-7 object-contain rounded-full drop-shadow-sm"
+        />
+      } @else {
+        <div
+          class="w-7 h-7 rounded-lg bg-primary text-on-primary font-bold text-xs flex items-center justify-center shadow-sm select-none"
+        >
+          {{ monogram() }}
+        </div>
+      }
+      <span class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-white truncate max-w-[160px]">
+        {{ brandService.companyName() }}
       </span>
     </div>
     <button
@@ -44,7 +52,30 @@
 
   <!-- Navigation Menu List -->
   <nav class="sidebar-nav-list" role="navigation">
-    @if (!isCollapsed) {
+    <!-- Brand Anchor en Rail Colapsado (Desktop: w-20) -->
+    @if (isCollapsed) {
+      <div class="flex justify-center items-center py-2 mb-2" aria-label="Identidad institucional">
+        @if (brandService.hasCustomLogo() && !logoImgError()) {
+          <img
+            [src]="brandService.logoUrl()"
+            (error)="logoImgError.set(true)"
+            [alt]="brandService.companyName() + ' Logo'"
+            class="w-10 h-10 object-contain rounded-xl drop-shadow-sm select-none cursor-pointer"
+            [matTooltip]="brandService.companyName()"
+            matTooltipPosition="right"
+          />
+        } @else {
+          <div
+            class="w-10 h-10 rounded-xl bg-primary text-on-primary font-bold text-sm flex items-center justify-center shadow-sm select-none cursor-pointer"
+            [matTooltip]="brandService.companyName()"
+            matTooltipPosition="right"
+            [attr.aria-label]="brandService.companyName()"
+          >
+            {{ monogram() }}
+          </div>
+        }
+      </div>
+    } @else {
       <p class="sidebar-nav-title">
         Módulos Principales
       </p>
@@ -113,13 +144,18 @@
             <button
               type="button"
               class="sidebar-nav-link sidebar-group-btn"
+              [class.justify-center]="isCollapsed"
+              [class.px-2]="isCollapsed"
               [class.active-group-btn]="isGroupActive(item)"
               [class.group-expanded]="isGroupExpanded(item.id)"
               (click)="toggleGroup(item)"
-              [attr.title]="isCollapsed ? item.name : null"
+              [matTooltip]="isCollapsed ? item.name : ''"
+              matTooltipPosition="right"
+              [attr.aria-label]="item.name"
               [attr.aria-expanded]="isGroupExpanded(item.id)"
+              [attr.aria-controls]="'submenu-' + item.id"
             >
-              <mat-icon class="sidebar-nav-icon">
+              <mat-icon class="sidebar-nav-icon" aria-hidden="true">
                 {{ getIcon(item.icon) }}
               </mat-icon>
 
@@ -128,6 +164,7 @@
                 <mat-icon
                   class="sidebar-group-chevron"
                   [class.rotate-chevron]="isGroupExpanded(item.id)"
+                  aria-hidden="true"
                 >
                   expand_more
                 </mat-icon>
@@ -136,16 +173,22 @@
 
             <!-- Submenús hijos cuando el grupo está expandido -->
             @if (isGroupExpanded(item.id) && !isCollapsed) {
-              <div class="sidebar-submenu-list animate-slide-down">
+              <div
+                class="sidebar-submenu-list animate-slide-down"
+                [id]="'submenu-' + item.id"
+                role="region"
+                [attr.aria-label]="item.name"
+              >
                 @for (child of item.children; track child.id) {
                   <a
                     [routerLink]="child.route"
                     routerLinkActive="active-sub-nav-link"
+                    [ariaCurrentWhenActive]="'page'"
                     [routerLinkActiveOptions]="{ exact: child.route === '/admin/dashboard' }"
                     (click)="onNavItemClick()"
                     class="sidebar-nav-link sidebar-sub-link"
                   >
-                    <mat-icon class="sidebar-sub-icon">
+                    <mat-icon class="sidebar-sub-icon" aria-hidden="true">
                       {{ getIcon(child.icon) }}
                     </mat-icon>
 
@@ -168,12 +211,17 @@
           <a
             [routerLink]="item.route"
             routerLinkActive="active-nav-link"
+            [ariaCurrentWhenActive]="'page'"
             [routerLinkActiveOptions]="{ exact: item.route === '/admin/dashboard' }"
             (click)="onNavItemClick()"
             class="sidebar-nav-link"
-            [attr.title]="isCollapsed ? item.name : null"
+            [class.justify-center]="isCollapsed"
+            [class.px-2]="isCollapsed"
+            [matTooltip]="isCollapsed ? item.name : ''"
+            matTooltipPosition="right"
+            [attr.aria-label]="item.name"
           >
-            <mat-icon class="sidebar-nav-icon">
+            <mat-icon class="sidebar-nav-icon" aria-hidden="true">
               {{ getIcon(item.icon) }}
             </mat-icon>
 
@@ -194,16 +242,26 @@
 
   <!-- User Profile & Quick Action Footer -->
   <div class="sidebar-user-footer">
-    <div class="sidebar-user-card">
+    <div
+      class="sidebar-user-card"
+      [class.flex-col]="isCollapsed"
+      [class.p-1.5]="isCollapsed"
+    >
       @if (authState.avatarUrl() && !avatarImgError()) {
         <img
           class="sidebar-user-avatar"
           [src]="authState.avatarUrl()"
           alt="Avatar de usuario"
           (error)="avatarImgError.set(true)"
+          [matTooltip]="isCollapsed ? (authState.fullName() || 'Usuario del Sistema') : ''"
+          matTooltipPosition="right"
         />
       } @else {
-        <div class="sidebar-user-avatar">
+        <div
+          class="sidebar-user-avatar select-none"
+          [matTooltip]="isCollapsed ? (authState.fullName() || 'Usuario del Sistema') : ''"
+          matTooltipPosition="right"
+        >
           {{ authState.fullName().substring(0, 2).toUpperCase() || 'JD' }}
         </div>
       }
@@ -225,6 +283,18 @@
           class="text-slate-400 hover:text-danger transition-colors flex-shrink-0"
           aria-label="Cerrar sesión"
           title="Cerrar sesión"
+        >
+          <mat-icon class="text-lg">logout</mat-icon>
+        </button>
+      } @else {
+        <button
+          mat-icon-button
+          type="button"
+          (click)="onLogout()"
+          class="text-slate-400 hover:text-danger transition-colors flex-shrink-0 mt-1"
+          aria-label="Cerrar sesión"
+          matTooltip="Cerrar sesión"
+          matTooltipPosition="right"
         >
           <mat-icon class="text-lg">logout</mat-icon>
         </button>

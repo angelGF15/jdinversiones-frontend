@@ -31,7 +31,7 @@ describe('LogoUploadDialogComponent', () => {
       of({ logoUrl: 'https://cdn.example.com/nuevo-logo.webp' })
     );
 
-    brandServiceSpy = jasmine.createSpyObj('BrandService', ['refresh']);
+    brandServiceSpy = jasmine.createSpyObj('BrandService', ['refresh', 'patchBrandLocally']);
     brandServiceSpy.refresh.and.returnValue(of(null));
 
     snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);

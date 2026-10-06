@@ -17,6 +17,7 @@ module.exports = {
           900: 'rgb(var(--primary-900) / <alpha-value>)',
           950: 'rgb(var(--primary-900) / <alpha-value>)',
         },
+        'on-primary': 'rgb(var(--on-primary) / <alpha-value>)',
         success: {
           DEFAULT: '#22C55E',
           500: '#22C55E',

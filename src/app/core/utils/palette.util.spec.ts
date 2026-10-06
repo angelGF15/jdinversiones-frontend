@@ -1,4 +1,4 @@
-import { deriveRamp, PaletteRamp } from './palette.util';
+import { deriveRamp, getOnColorTriplet, PaletteRamp } from './palette.util';
 
 describe('palette.util (deriveRamp)', () => {
   it('debe derivar los 6 tonos para el color institucional predeterminado (#032EDD)', () => {
@@ -85,5 +85,16 @@ describe('palette.util (deriveRamp)', () => {
     const defaultRamp = deriveRamp('#032EDD');
 
     expect(invalidRamp).toEqual(defaultRamp);
+  });
+
+  it('debe calcular correctamente el texto legible on-primary según WCAG', () => {
+    // Color oscuro (#032EDD) -> texto blanco
+    expect(getOnColorTriplet('#032EDD')).toBe('255 255 255');
+    // Color claro/amarillo (#FACC15) -> texto oscuro
+    expect(getOnColorTriplet('#FACC15')).toBe('15 23 42');
+    // Blanco puro -> texto oscuro
+    expect(getOnColorTriplet('#FFFFFF')).toBe('15 23 42');
+    // Negro puro -> texto blanco
+    expect(getOnColorTriplet('#000000')).toBe('255 255 255');
   });
 });

@@ -2,6 +2,20 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('jd_theme_preference');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = stored ? stored === 'dark' : prefersDark;
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <title>JD Inversiones — Tienda y Centro Técnico</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">

@@ -5,6 +5,7 @@ import {
   EventEmitter,
   inject,
   signal,
+  computed,
   effect,
   OnInit,
   DestroyRef,
@@ -14,8 +15,9 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { filter } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { filter, map } from 'rxjs';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 import { AuthState } from '../../../../../core/auth/auth.state';
 import { MenuService } from '../../../../../core/services/menu.service';
@@ -33,6 +35,7 @@ export type NavItem = MenuItem;
     RouterLinkActive,
     MatIconModule,
     MatButtonModule,
+    MatTooltipModule,
   ],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
@@ -44,6 +47,15 @@ export class SidebarComponent implements OnInit {
   public readonly brandService = inject(BrandService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+
+  /** Signal reactivo sincronizado con los eventos de navegación de Angular (Zoneless compliant) */
+  public readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects)
+    ),
+    { initialValue: this.router.url }
+  );
 
   public onLogoError(event: Event): void {
     const img = event.target as HTMLImageElement;
@@ -63,11 +75,26 @@ export class SidebarComponent implements OnInit {
   public readonly expandedGroups = signal<Set<string>>(new Set<string>());
 
   public readonly avatarImgError = signal(false);
+  public readonly logoImgError = signal(false);
+
+  /** Iniciales de la marca para el monograma vectorial del rail colapsado */
+  public readonly monogram = computed(() => {
+    const name = (this.brandService.companyName() || 'JD').trim();
+    const words = name.split(/\s+/).filter(Boolean);
+    return words.length >= 2
+      ? `${words[0][0]}${words[1][0]}`.toUpperCase()
+      : name.slice(0, 2).toUpperCase();
+  });
 
   constructor() {
     effect(() => {
       this.authState.avatarUrl();
       this.avatarImgError.set(false);
+    });
+
+    effect(() => {
+      this.brandService.logoUrl();
+      this.logoImgError.set(false);
     });
   }
 
@@ -82,12 +109,15 @@ export class SidebarComponent implements OnInit {
     // Monitorea cambios de navegación para expandir automáticamente el grupo activo
     this.router.events
       .pipe(
-        filter((event) => event instanceof NavigationEnd),
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => {
         this.autoExpandActiveGroups();
       });
+
+    // Auto-expande si al iniciar ya nos encontramos en una subruta (deep-linking o F5)
+    this.autoExpandActiveGroups();
   }
 
   /**
@@ -121,13 +151,15 @@ export class SidebarComponent implements OnInit {
 
   /**
    * Comprueba si la ruta activa actual pertenece a alguna de las subopciones del grupo.
+   * Utiliza el signal reactivo currentUrl para que el cambio de detección Zoneless
+   * actualice la UI inmediatamente ante eventos de navegación.
    */
   public isGroupActive(item: MenuItem): boolean {
     if (!item.children || item.children.length === 0) {
       return false;
     }
 
-    const currentUrl = this.router.url;
+    const currentUrl = this.currentUrl() ?? this.router.url;
     return item.children.some((child) => {
       if (!child.route) return false;
       return currentUrl === child.route || currentUrl.startsWith(child.route + '/');

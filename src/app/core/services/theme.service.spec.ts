@@ -52,4 +52,30 @@ describe('ThemeService', () => {
     service.setTheme('dark');
     expect(localStorage.getItem('jd_theme_preference')).toBe('dark');
   });
+
+  it('debe inicializar el tema guardado en localStorage', () => {
+    localStorage.setItem('jd_theme_preference', 'light');
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection(), ThemeService],
+    });
+    const lightService = TestBed.inject(ThemeService);
+    expect(lightService.theme()).toBe('light');
+    expect(lightService.isDark()).toBeFalse();
+    expect(document.documentElement.classList.contains('dark')).toBeFalse();
+  });
+
+  it('debe ejecutar toggleTheme() con animación utilizando runWithViewTransition', () => {
+    if ('startViewTransition' in document) {
+      spyOn<any>(document, 'startViewTransition').and.callFake((cb: () => void) => {
+        cb();
+        return {};
+      });
+    }
+    service.setTheme('dark');
+    service.toggleTheme();
+    expect(service.theme()).toBe('light');
+    expect(document.documentElement.classList.contains('dark')).toBeFalse();
+  });
 });
+

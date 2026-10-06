@@ -12,18 +12,7 @@
   --primary-500: 3 46 221;
   --primary-700: 1 23 170;
   --primary-900: 0 0 48;
-
-  --color-success: #22C55E;
-  --color-warning: #F59E0B;
-  --color-danger: #EF4444;
-  --color-info: #06B6D4;
-
-  --color-gray-50: #F8FAFC;
-  --color-gray-100: #F1F5F9;
-  --color-gray-300: #CBD5E1;
-  --color-gray-500: #64748B;
-  --color-gray-700: #334155;
-  --color-gray-900: #0F172A;
+  --on-primary: 255 255 255;
 }
 
 html, body {
@@ -168,4 +157,22 @@ mat-icon {
   padding: 0 !important;
   background: transparent !important;
 }
+
+/* ==========================================================================
+   Transición Suave de Color y Tema (View Transitions API - M3 Emphasized)
+   ========================================================================== */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
+
 

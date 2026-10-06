@@ -167,6 +167,7 @@ export class LogoUploadDialogComponent implements OnDestroy {
     this.configService.uploadLogo(file).subscribe({
       next: (res) => {
         this.isUploading.set(false);
+        this.brandService.patchBrandLocally({ logoUrl: res.logoUrl });
         this.brandService.refresh().subscribe();
         this.snackBar.open('Logotipo institucional actualizado exitosamente.', 'Cerrar', {
           duration: 3500,

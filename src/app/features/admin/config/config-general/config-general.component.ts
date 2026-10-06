@@ -275,6 +275,7 @@ export class ConfigGeneralComponent implements OnInit {
           items.map((s) => (s.key === 'company_logo_url' ? { ...s, value: result.logoUrl } : s))
         );
         this.updateDirtyState();
+        this.brandService.patchBrandLocally({ logoUrl: result.logoUrl });
       }
     });
   }
@@ -303,7 +304,7 @@ export class ConfigGeneralComponent implements OnInit {
             items.map((s) => (s.key === 'company_logo_url' ? { ...s, value: null } : s))
           );
           this.updateDirtyState();
-          this.brandService.refresh().subscribe();
+          this.brandService.patchBrandLocally({ logoUrl: null });
           this.snackBar.open('Logotipo restablecido al valor predeterminado.', 'Cerrar', {
             duration: 3500,
             horizontalPosition: 'center',
@@ -350,19 +351,19 @@ export class ConfigGeneralComponent implements OnInit {
           this.form.markAsPristine();
           this.updateDirtyState();
 
-          // Sincronizar dinámicamente si se actualizó el color primario
+          // Sincronizar dinámicamente si se modificó algún atributo de identidad de marca
           const colorSetting = res.settings.find((s) => s.key === 'primary_color');
-          if (colorSetting && colorSetting.value) {
-            this.brandService.applyPrimaryColor(colorSetting.value, true);
-          }
+          const nameSetting = res.settings.find((s) => s.key === 'company_name');
+          const taglineSetting = res.settings.find((s) => s.key === 'company_tagline');
+          const logoSetting = res.settings.find((s) => s.key === 'company_logo_url');
 
-          // Si cambiaron nombres o textos de marca, refrescar branding global
-          if (
-            updatedKeys.includes('company_name') ||
-            updatedKeys.includes('company_tagline') ||
-            updatedKeys.includes('company_logo_url')
-          ) {
-            this.brandService.refresh().subscribe();
+          if (colorSetting || nameSetting || taglineSetting || logoSetting) {
+            this.brandService.patchBrandLocally({
+              ...(nameSetting ? { name: nameSetting.value ?? '' } : {}),
+              ...(taglineSetting ? { tagline: taglineSetting.value ?? '' } : {}),
+              ...(logoSetting ? { logoUrl: logoSetting.value } : {}),
+              ...(colorSetting && colorSetting.value ? { primaryColor: colorSetting.value } : {}),
+            });
           }
 
           const count = res.settings.length;

@@ -22,7 +22,9 @@ describe('AdminShellComponent', () => {
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
 
   const mockBrandService = {
+    brand: signal(null),
     logoUrl: signal('logo.svg'),
+    hasCustomLogo: signal(false),
     companyName: signal('JD Inversiones'),
     tagline: signal('Tienda y Centro Técnico'),
     primaryColor: signal('#032EDD'),

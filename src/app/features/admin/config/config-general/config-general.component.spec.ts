@@ -120,7 +120,11 @@ describe('ConfigGeneralComponent', () => {
       })
     );
 
-    brandServiceSpy = jasmine.createSpyObj('BrandService', ['applyPrimaryColor', 'refresh']);
+    brandServiceSpy = jasmine.createSpyObj('BrandService', [
+      'applyPrimaryColor',
+      'refresh',
+      'patchBrandLocally',
+    ]);
     brandServiceSpy.refresh.and.returnValue(of(null));
 
     snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
@@ -191,6 +195,9 @@ describe('ConfigGeneralComponent', () => {
     expect(configServiceSpy.updateSettings).toHaveBeenCalledWith([
       { key: 'company_name', value: 'Nueva Empresa' },
     ]);
+    expect(brandServiceSpy.patchBrandLocally).toHaveBeenCalledWith(
+      jasmine.objectContaining({ name: 'Nueva Empresa' })
+    );
 
     // Merge verification
     const current = component.settings();

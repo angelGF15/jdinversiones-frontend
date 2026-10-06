@@ -16,7 +16,9 @@ describe('SidebarComponent', () => {
   let menuServiceSpy: jasmine.SpyObj<MenuService>;
 
   const mockBrandService = {
+    brand: signal(null),
     logoUrl: signal('logo.svg'),
+    hasCustomLogo: signal(false),
     companyName: signal('JD Inversiones'),
     tagline: signal('Tienda y Centro Técnico'),
     primaryColor: signal('#032EDD'),
@@ -142,5 +144,36 @@ describe('SidebarComponent', () => {
     spyOn(component.logoutTriggered, 'emit');
     component.onLogout();
     expect(component.logoutTriggered.emit).toHaveBeenCalled();
+  });
+
+  it('debe identificar un grupo como activo cuando la ruta coincide con uno de sus hijos (isGroupActive)', () => {
+    const inventoryGroup = mockMenu[1];
+    // Cuando la URL no coincide
+    expect(component.isGroupActive(inventoryGroup)).toBeFalse();
+
+    // Simular que el signal currentUrl apunta a la subruta
+    Object.defineProperty(component, 'currentUrl', {
+      value: () => '/admin/inventory/products',
+    });
+
+    expect(component.isGroupActive(inventoryGroup)).toBeTrue();
+  });
+
+  it('debe auto-expandir el grupo padre activo', () => {
+    const inventoryGroup = mockMenu[1];
+    spyOn(component, 'isGroupActive').and.callFake((item) => item.id === inventoryGroup.id);
+
+    (component as any).autoExpandActiveGroups();
+    expect(component.isGroupExpanded(inventoryGroup.id)).toBeTrue();
+  });
+
+  it('debe computar el monograma a partir de las iniciales del nombre de empresa', () => {
+    expect(component.monogram()).toBe('JI'); // "JD Inversiones" -> "JI"
+  });
+
+  it('debe computar monograma de una sola palabra tomando las primeras 2 letras', () => {
+    mockBrandService.companyName.set('JDinversiones');
+    expect(component.monogram()).toBe('JD');
+    mockBrandService.companyName.set('JD Inversiones');
   });
 });

@@ -80,7 +80,7 @@
 }
 
 .active-group-btn {
-  @apply text-primary-700 dark:text-primary-300 bg-primary-50/70 dark:bg-primary-950/30 font-semibold;
+  @apply bg-primary/10 text-primary-700 dark:text-primary-300 font-semibold;
 }
 
 .active-group-btn .sidebar-nav-icon,
@@ -104,27 +104,23 @@
   @apply text-primary;
 }
 
-/* Sublink Activo */
+/* Sublink Activo (Nivel 2): barra izquierda 3px + tinte + texto primary */
 .active-sub-nav-link {
-  background-color: rgb(var(--primary-500)) !important;
-  color: #ffffff !important;
-  font-weight: 600;
-  box-shadow: 0 2px 8px 0 rgb(var(--primary-500) / 0.25);
+  @apply bg-primary/10 text-primary-700 dark:text-primary-300 font-semibold relative before:content-[''] before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:bg-primary before:rounded-r;
 }
 
 .active-sub-nav-link .sidebar-sub-icon {
-  color: #ffffff !important;
+  @apply text-primary-700 dark:text-primary-300;
 }
 
-/* Active Nav Link Highlighting (Principal) */
+/* Enlace Directo Activo (Nivel 1): fondo sólido + texto on-primary accesible + glow */
 .active-nav-link {
-  background-color: rgb(var(--primary-500)) !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 14px 0 rgb(var(--primary-500) / 0.35);
+  @apply bg-primary text-on-primary font-semibold shadow-[0_4px_14px_0_rgb(var(--primary-500)/0.35)];
 }
 
+.active-nav-link .sidebar-nav-icon,
 .active-nav-link mat-icon {
-  color: #ffffff !important;
+  @apply text-on-primary;
 }
 
 /* ==========================================================================

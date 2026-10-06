@@ -1,5 +1,6 @@
 import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { runWithViewTransition } from '../utils/view-transition.util';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -34,26 +35,42 @@ export class ThemeService {
         this._theme.set(stored);
       } else {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        this._theme.set(prefersDark ? 'dark' : 'dark'); // Por defecto dark para estética Deep Navy
+        this._theme.set(prefersDark ? 'dark' : 'light');
       }
       this.applyTheme(this._theme());
+
+      // Sincronizar automáticamente con el sistema operativo mientras no haya preferencia manual guardada
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      mediaQuery.addEventListener('change', (e) => {
+        try {
+          const userChoice = localStorage.getItem(this.STORAGE_KEY);
+          if (!userChoice) {
+            const nextMode: ThemeMode = e.matches ? 'dark' : 'light';
+            this._theme.set(nextMode);
+            this.applyTheme(nextMode);
+          }
+        } catch {
+          // Ignorar si el almacenamiento está restringido
+        }
+      });
     } catch {
       this.applyTheme('dark');
     }
   }
 
   /**
-   * Alterna entre modo claro y modo oscuro.
+   * Alterna entre modo claro y modo oscuro con animación fluida de transición.
    */
   public toggleTheme(): void {
     const nextTheme: ThemeMode = this._theme() === 'dark' ? 'light' : 'dark';
-    this.setTheme(nextTheme);
+    this.setTheme(nextTheme, true);
   }
 
   /**
-   * Establece un tema específico ('light' o 'dark') y lo persiste.
+   * Establece un tema específico ('light' o 'dark'), lo persiste y opcionalmente
+   * anima la transición visual con View Transitions API.
    */
-  public setTheme(mode: ThemeMode): void {
+  public setTheme(mode: ThemeMode, animate = false): void {
     this._theme.set(mode);
 
     if (this.isBrowser) {
@@ -62,21 +79,30 @@ export class ThemeService {
       } catch {
         // Ignora errores si el almacenamiento está restringido
       }
-      this.applyTheme(mode);
+      this.applyTheme(mode, animate);
     }
   }
 
   /**
    * Aplica la clase .dark en la etiqueta raíz <html> para Tailwind CSS.
    */
-  private applyTheme(mode: ThemeMode): void {
+  private applyTheme(mode: ThemeMode, animate = false): void {
     if (!this.isBrowser) return;
 
-    const root = document.documentElement;
-    if (mode === 'dark') {
-      root.classList.add('dark');
+    const apply = () => {
+      const root = document.documentElement;
+      if (mode === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+    };
+
+    if (animate) {
+      runWithViewTransition(apply);
     } else {
-      root.classList.remove('dark');
+      apply();
     }
   }
 }
+

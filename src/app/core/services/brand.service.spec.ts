@@ -63,7 +63,7 @@ describe('BrandService', () => {
       expect(service.branding()).toEqual(mockBranding);
       expect(service.companyName()).toBe('Mi Empresa Custom');
       expect(service.tagline()).toBe('Soluciones Tecnológicas');
-      expect(service.logoUrl()).toBe('https://cdn.example.com/logo.webp');
+      expect(service.logoUrl()).toContain('https://cdn.example.com/logo.webp?v=');
       expect(service.primaryColor()).toBe('#10B981');
       expect(service.contact()?.email).toBe('info@empresa.com');
       expect(service.social()?.facebookUrl).toBe('https://facebook.com/empresa');
@@ -89,6 +89,10 @@ describe('BrandService', () => {
     const rootStyle = document.documentElement.style;
     expect(rootStyle.getPropertyValue('--primary-500')).toBeTruthy();
     expect(localStorage.setItem).toHaveBeenCalledWith('jd_brand_primary', '#F59E0B');
+
+    const styleEl = document.getElementById('mat-sys-dynamic-tokens');
+    expect(styleEl).toBeTruthy();
+    expect(styleEl?.textContent).toContain('--mat-sys-primary: #f59e0b;');
   });
 
   it('debe refrescar branding con refresh()', (done) => {
@@ -103,5 +107,36 @@ describe('BrandService', () => {
       expect(service.companyName()).toBe('Nombre Refrescado');
       done();
     });
+  });
+
+  it('debe actualizar de forma inmediata y optimista el branding con patchBrandLocally()', () => {
+    service.patchBrandLocally({
+      name: 'Super Inversiones',
+      tagline: 'Tecnología Avanzada',
+      logoUrl: 'https://cdn.example.com/nuevo-logo.png',
+      primaryColor: '#8B5CF6',
+    });
+
+    expect(service.companyName()).toBe('Super Inversiones');
+    expect(service.tagline()).toBe('Tecnología Avanzada');
+    expect(service.logoUrl()).toContain('https://cdn.example.com/nuevo-logo.png?v=');
+    expect(service.primaryColor()).toBe('#8B5CF6');
+  });
+
+  it('debe retornar logo.svg sin parámetro de versión cuando no hay logo personalizado', () => {
+    service.patchBrandLocally({ logoUrl: null });
+    expect(service.logoUrl()).toBe('logo.svg');
+  });
+
+  it('debe aplicar el color primario con animación de transición si animate es true', () => {
+    if ('startViewTransition' in document) {
+      spyOn<any>(document, 'startViewTransition').and.callFake((cb: () => void) => {
+        cb();
+        return {};
+      });
+    }
+    service.applyPrimaryColor('#10B981', true, true);
+    const rootStyle = document.documentElement.style;
+    expect(rootStyle.getPropertyValue('--primary-500')).toBeTruthy();
   });
 });
