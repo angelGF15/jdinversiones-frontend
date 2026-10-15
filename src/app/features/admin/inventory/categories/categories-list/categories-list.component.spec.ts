@@ -223,22 +223,20 @@ describe('CategoriesListComponent', () => {
     );
   });
 
-  it('debe abrir CategoryFormDialogComponent en onNewCategory()', () => {
-    dialogSpy.open.and.returnValue({
-      afterClosed: () => of(null),
-    } as MatDialogRef<any>);
-
+  it('debe navegar a la pantalla de nueva categoría en onNewCategory()', () => {
+    const router = TestBed.inject(Router);
     component.onNewCategory();
-    expect(dialogSpy.open).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/admin/inventory/categories/new']);
   });
 
-  it('debe abrir CategoryFormDialogComponent en onEditCategory()', () => {
-    dialogSpy.open.and.returnValue({
-      afterClosed: () => of(null),
-    } as MatDialogRef<any>);
-
+  it('debe navegar a la pantalla de edición de categoría en onEditCategory()', () => {
+    const router = TestBed.inject(Router);
     component.onEditCategory(mockCategories[0]);
-    expect(dialogSpy.open).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith([
+      '/admin/inventory/categories',
+      mockCategories[0].id,
+      'edit',
+    ]);
   });
 
   it('debe abrir CategoryImageDialogComponent en onUpdateImage() y actualizar imageUrl', () => {

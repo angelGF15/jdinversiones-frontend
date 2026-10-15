@@ -1,0 +1,71 @@
+/* ==========================================================================
+   CategoryFormComponent Styles — UI/UX Pro Max Polished
+   ========================================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* Centrado geométrico estricto para iconos Material */
+.mat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  line-height: 1;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Transiciones suaves de elevación de tarjetas */
+.form-section-card {
+  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.form-section-card:hover {
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+/* Estilizado e interactividad de campos de entrada */
+.input-field {
+  transition: border-color 0.15s ease,
+              box-shadow 0.15s ease,
+              background-color 0.15s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: rgb(var(--primary-500, 14 165 233));
+  box-shadow: 0 0 0 3px rgb(var(--primary-500, 14 165 233) / 0.12);
+}
+
+/* Tabla de subcategorías */
+.subcategories-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Respeto estricto a accesibilidad para usuarios con sensibilidad al movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

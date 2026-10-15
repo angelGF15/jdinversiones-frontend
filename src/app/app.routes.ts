@@ -132,6 +132,24 @@ export const routes: Routes = [
             './features/admin/inventory/categories/categories-list/categories-list.component'
           ).then((m) => m.CategoriesListComponent),
       },
+      {
+        path: 'inventory/categories/new',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'CATEGORY_CREATE' },
+        loadComponent: () =>
+          import(
+            './features/admin/inventory/categories/category-form/category-form.component'
+          ).then((m) => m.CategoryFormComponent),
+      },
+      {
+        path: 'inventory/categories/:id/edit',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'CATEGORY_EDIT' },
+        loadComponent: () =>
+          import(
+            './features/admin/inventory/categories/category-form/category-form.component'
+          ).then((m) => m.CategoryFormComponent),
+      },
     ],
   },
   {

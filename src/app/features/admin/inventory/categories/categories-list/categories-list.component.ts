@@ -37,7 +37,7 @@ import {
   ConfirmDialogComponent,
 } from '../../../../../shared/components';
 import { ListQueryState } from '../../../../../shared/utils/list-query-state';
-import { CategoryFormDialogComponent, CategoryImageDialogComponent } from '../dialogs';
+import { CategoryImageDialogComponent } from '../dialogs/category-image-dialog/category-image-dialog.component';
 
 @Component({
   selector: 'app-categories-list',
@@ -114,7 +114,6 @@ export class CategoriesListComponent implements OnInit {
     { key: 'imageUrl', header: 'Imagen', width: '80px', align: 'center' },
     { key: 'name', header: 'Categoría', width: '280px' },
     { key: 'parentId', header: 'Jerarquía', width: '220px' },
-    { key: 'childrenCount', header: 'Subcategorías', width: '130px', align: 'center' },
     { key: 'productCount', header: 'Productos', width: '120px', align: 'center' },
     { key: 'displayOrder', header: 'Orden', width: '90px', align: 'center' },
     { key: 'isActive', header: 'Estado', width: '120px', align: 'center' },
@@ -217,50 +216,17 @@ export class CategoriesListComponent implements OnInit {
   }
 
   /**
-   * Apertura del diálogo para crear una nueva categoría (Fase 4).
+   * Navegación a la pantalla para crear una nueva categoría.
    */
   public onNewCategory(): void {
-    const dialogRef = this.dialog.open(CategoryFormDialogComponent, {
-      width: '520px',
-      data: {
-        mode: 'create',
-        parents: this.parents(),
-      },
-    });
-
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((result) => {
-        if (result) {
-          this.retry();
-          this.loadParentsCatalog();
-        }
-      });
+    this.router.navigate(['/admin/inventory/categories/new']);
   }
 
   /**
-   * Apertura del diálogo para editar una categoría existente (Fase 4).
+   * Navegación a la pantalla para editar una categoría existente.
    */
   public onEditCategory(category: CategoryChild): void {
-    const dialogRef = this.dialog.open(CategoryFormDialogComponent, {
-      width: '520px',
-      data: {
-        mode: 'edit',
-        category,
-        parents: this.parents(),
-      },
-    });
-
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((result) => {
-        if (result) {
-          this.retry();
-          this.loadParentsCatalog();
-        }
-      });
+    this.router.navigate(['/admin/inventory/categories', category.id, 'edit']);
   }
 
   /**
@@ -328,8 +294,7 @@ export class CategoriesListComponent implements OnInit {
               )
             );
             this.snackBar.open(
-              `La categoría "${category.name}" ha sido ${
-                willBeActive ? 'activada' : 'desactivada'
+              `La categoría "${category.name}" ha sido ${willBeActive ? 'activada' : 'desactivada'
               } exitosamente.`,
               'Cerrar',
               { duration: 3500, horizontalPosition: 'right', verticalPosition: 'top' }
