@@ -77,12 +77,14 @@
           formControlName="name"
           maxlength="100"
           placeholder="Ej. Color, Memoria RAM, Talla, Capacidad"
+          [attr.aria-invalid]="form.controls.name.invalid && form.controls.name.touched"
+          [attr.aria-describedby]="form.controls.name.invalid && form.controls.name.touched ? 'attr-name-error' : null"
           class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all placeholder:text-slate-400"
           [class.border-danger]="form.controls.name.invalid && form.controls.name.touched"
         />
       </div>
       @if (form.controls.name.touched && form.controls.name.errors) {
-        <p class="text-xs text-danger mt-1">
+        <p id="attr-name-error" class="text-xs text-danger mt-1" role="alert">
           @if (form.controls.name.hasError('required')) {
             El nombre es obligatorio.
           } @else if (form.controls.name.hasError('minlength')) {
@@ -109,15 +111,17 @@
           step="1"
           formControlName="displayOrder"
           placeholder="0"
+          [attr.aria-invalid]="form.controls.displayOrder.invalid && form.controls.displayOrder.touched"
+          [attr.aria-describedby]="form.controls.displayOrder.invalid && form.controls.displayOrder.touched ? 'attr-order-desc attr-order-error' : 'attr-order-desc'"
           class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all placeholder:text-slate-400"
           [class.border-danger]="form.controls.displayOrder.invalid && form.controls.displayOrder.touched"
         />
       </div>
-      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+      <p id="attr-order-desc" class="text-xs text-slate-500 dark:text-slate-400 mt-1">
         Prioridad de posición en las especificaciones del producto (0 es la más alta).
       </p>
       @if (form.controls.displayOrder.touched && form.controls.displayOrder.errors) {
-        <p class="text-xs text-danger mt-1">
+        <p id="attr-order-error" class="text-xs text-danger mt-1" role="alert">
           @if (form.controls.displayOrder.hasError('required')) {
             El orden es obligatorio.
           } @else if (form.controls.displayOrder.hasError('min')) {

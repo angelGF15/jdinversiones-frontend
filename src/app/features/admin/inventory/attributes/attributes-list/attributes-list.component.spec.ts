@@ -247,6 +247,42 @@ describe('AttributesListComponent', () => {
       );
     });
 
+    it('debe abrir ConfirmDialogComponent y activar un atributo inactivo si el usuario confirma', () => {
+      const dialogRefSpy = {
+        afterClosed: () => of(true),
+      } as MatDialogRef<ConfirmDialogComponent>;
+      dialogSpy.open.and.returnValue(dialogRefSpy);
+
+      const targetAttribute = mockAttributes[1]; // Memoria RAM, isActive: false
+      const updatedAttribute: CatalogAttribute = {
+        ...targetAttribute,
+        isActive: true,
+      };
+      attributesServiceSpy.setStatus.and.returnValue(of(updatedAttribute));
+
+      component.onToggleStatus(targetAttribute);
+
+      expect(dialogSpy.open).toHaveBeenCalledWith(
+        ConfirmDialogComponent,
+        jasmine.objectContaining({
+          width: '440px',
+          data: jasmine.objectContaining({
+            title: 'Activar atributo',
+            confirmText: 'Activar',
+          }),
+        })
+      );
+      expect(attributesServiceSpy.setStatus).toHaveBeenCalledWith('attr-2', true);
+
+      const modified = component.items().find((a) => a.id === 'attr-2');
+      expect(modified?.isActive).toBeTrue();
+      expect(snackBarSpy.open).toHaveBeenCalledWith(
+        jasmine.stringMatching(/activado exitosamente/),
+        'Cerrar',
+        jasmine.any(Object)
+      );
+    });
+
     it('no debe llamar al servicio si el usuario cancela en el diálogo de confirmación', () => {
       const dialogRefSpy = {
         afterClosed: () => of(false),
