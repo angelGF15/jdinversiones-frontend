@@ -37,7 +37,7 @@ import {
   ConfirmDialogComponent,
 } from '../../../../../shared/components';
 import { ListQueryState } from '../../../../../shared/utils/list-query-state';
-import { CategoryFormDialogComponent } from '../dialogs';
+import { CategoryFormDialogComponent, CategoryImageDialogComponent } from '../dialogs';
 
 @Component({
   selector: 'app-categories-list',
@@ -266,8 +266,32 @@ export class CategoriesListComponent implements OnInit {
   /**
    * Apertura del diálogo de subida de imagen a Cloudinary (Fase 5).
    */
-  public onUpdateImage(_category: CategoryChild): void {
-    // Hook preparado para invocación del diálogo en Fase 5
+  public onUpdateImage(category: CategoryChild): void {
+    const dialogRef = this.dialog.open(CategoryImageDialogComponent, {
+      width: '460px',
+      data: { category },
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((updatedCategory: CategoryChild | null) => {
+        if (updatedCategory) {
+          this.brokenImageIds.update((set) => {
+            const next = new Set(set);
+            next.delete(updatedCategory.id);
+            return next;
+          });
+
+          this.items.update((list) =>
+            list.map((item) =>
+              item.id === updatedCategory.id
+                ? { ...item, imageUrl: updatedCategory.imageUrl }
+                : item
+            )
+          );
+        }
+      });
   }
 
   /**

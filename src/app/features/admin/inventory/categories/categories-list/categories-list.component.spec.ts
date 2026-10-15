@@ -217,4 +217,38 @@ describe('CategoriesListComponent', () => {
       jasmine.any(Object)
     );
   });
+
+  it('debe abrir CategoryFormDialogComponent en onNewCategory()', () => {
+    dialogSpy.open.and.returnValue({
+      afterClosed: () => of(null),
+    } as MatDialogRef<any>);
+
+    component.onNewCategory();
+    expect(dialogSpy.open).toHaveBeenCalled();
+  });
+
+  it('debe abrir CategoryFormDialogComponent en onEditCategory()', () => {
+    dialogSpy.open.and.returnValue({
+      afterClosed: () => of(null),
+    } as MatDialogRef<any>);
+
+    component.onEditCategory(mockCategories[0]);
+    expect(dialogSpy.open).toHaveBeenCalled();
+  });
+
+  it('debe abrir CategoryImageDialogComponent en onUpdateImage() y actualizar imageUrl', () => {
+    const updated = {
+      ...mockCategories[0],
+      imageUrl: 'https://res.cloudinary.com/demo/image/upload/new-image.jpg',
+    };
+    dialogSpy.open.and.returnValue({
+      afterClosed: () => of(updated),
+    } as MatDialogRef<any>);
+
+    component.onUpdateImage(mockCategories[0]);
+    expect(dialogSpy.open).toHaveBeenCalled();
+
+    const target = component.items().find((i) => i.id === 'cat-1');
+    expect(target?.imageUrl).toBe('https://res.cloudinary.com/demo/image/upload/new-image.jpg');
+  });
 });
