@@ -114,6 +114,15 @@ export const routes: Routes = [
             (m) => m.ConfigPageComponent
           ),
       },
+      {
+        path: 'inventory/attributes',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'ATTRIBUTE_VIEW' },
+        loadComponent: () =>
+          import(
+            './features/admin/inventory/attributes/attributes-list/attributes-list.component'
+          ).then((m) => m.AttributesListComponent),
+      },
     ],
   },
   {
