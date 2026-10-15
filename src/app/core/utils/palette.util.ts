@@ -246,11 +246,11 @@ export function deriveRamp(hex: string): PaletteRamp {
 }
 
 /**
- * Retorna el triplete RGB accesible ("255 255 255" o "15 23 42") para texto/iconos
+ * Retorna el triplete RGB accesible ("255 255 255" o "18 18 20") para texto/iconos
  * sobre el color de fondo hexadecimal especificado, garantizando contraste WCAG AA/AAA.
  */
 export function getOnColorTriplet(hex: string): string {
   const [r, g, b] = hexToRgb(hex);
   const contrast = calculateContrastAgainstWhite(r, g, b);
-  return contrast >= 4.5 ? '255 255 255' : '15 23 42';
+  return contrast >= 4.5 ? '255 255 255' : '18 18 20';
 }

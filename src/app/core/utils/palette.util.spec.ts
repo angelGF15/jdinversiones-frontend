@@ -91,9 +91,9 @@ describe('palette.util (deriveRamp)', () => {
     // Color oscuro (#032EDD) -> texto blanco
     expect(getOnColorTriplet('#032EDD')).toBe('255 255 255');
     // Color claro/amarillo (#FACC15) -> texto oscuro
-    expect(getOnColorTriplet('#FACC15')).toBe('15 23 42');
+    expect(getOnColorTriplet('#FACC15')).toBe('18 18 20');
     // Blanco puro -> texto oscuro
-    expect(getOnColorTriplet('#FFFFFF')).toBe('15 23 42');
+    expect(getOnColorTriplet('#FFFFFF')).toBe('18 18 20');
     // Negro puro -> texto blanco
     expect(getOnColorTriplet('#000000')).toBe('255 255 255');
   });

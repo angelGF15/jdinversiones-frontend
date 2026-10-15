@@ -126,7 +126,7 @@
 
 ::ng-deep .custom-user-menu.mat-mdc-menu-panel {
   background-color: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
+  border: 1px solid #e4e4e7 !important;
   border-radius: 0.75rem !important;
   min-width: 220px !important;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
@@ -134,29 +134,29 @@
 
 :host-context(.dark) ::ng-deep .custom-user-menu.mat-mdc-menu-panel,
 .dark ::ng-deep .custom-user-menu.mat-mdc-menu-panel {
-  background-color: #0f172a !important;
-  border-color: #334155 !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  background-color: #121214 !important;
+  border-color: #2e2e33 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
 }
 
 ::ng-deep .custom-user-menu .mat-mdc-menu-item {
-  color: #334155 !important;
+  color: #2e2e33 !important;
   font-size: 0.875rem !important;
 }
 
 :host-context(.dark) ::ng-deep .custom-user-menu .mat-mdc-menu-item,
 .dark ::ng-deep .custom-user-menu .mat-mdc-menu-item {
-  color: #cbd5e1 !important;
+  color: #d4d4d8 !important;
 }
 
 ::ng-deep .custom-user-menu .mat-mdc-menu-item:hover {
-  background-color: #f1f5f9 !important;
-  color: #0f172a !important;
+  background-color: #f4f4f5 !important;
+  color: #121214 !important;
 }
 
 :host-context(.dark) ::ng-deep .custom-user-menu .mat-mdc-menu-item:hover,
 .dark ::ng-deep .custom-user-menu .mat-mdc-menu-item:hover {
-  background-color: rgba(51, 65, 85, 0.5) !important;
+  background-color: rgba(46, 46, 51, 0.65) !important;
   color: #ffffff !important;
 }
 

@@ -15,11 +15,11 @@
 
 /* Fondo sólido de cabecera fija */
 thead th.sticky-end-col {
-  background-color: #f8fafc;
+  background-color: #fafafa;
 }
 
 :host-context(.dark) thead th.sticky-end-col {
-  background-color: #1e293b;
+  background-color: #1e1e22;
 }
 
 /* Fondo sólido de celdas del cuerpo */
@@ -28,16 +28,16 @@ tbody td.sticky-end-col {
 }
 
 :host-context(.dark) tbody td.sticky-end-col {
-  background-color: #0f172a;
+  background-color: #121214;
 }
 
 /* Al pasar el cursor por la fila, la celda sticky acompaña el hover */
 tr:hover td.sticky-end-col {
-  background-color: #f8fafc;
+  background-color: #fafafa;
 }
 
 :host-context(.dark) tr:hover td.sticky-end-col {
-  background-color: #1e293b;
+  background-color: #1e1e22;
 }
 
 /* Barra de desplazamiento suave y moderna */
@@ -50,20 +50,20 @@ tr:hover td.sticky-end-col {
 }
 
 .table-scroll-wrapper::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d4d4d8;
   border-radius: 9999px;
 }
 
 :host-context(.dark) .table-scroll-wrapper::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #2e2e33;
 }
 
 .table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #a1a1aa;
 }
 
 :host-context(.dark) .table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #45454c;
 }
 
 @media (prefers-reduced-motion: reduce) {

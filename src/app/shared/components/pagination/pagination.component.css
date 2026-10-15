@@ -13,11 +13,11 @@
 }
 
 .pagination-pill:hover {
-  border-color: #cbd5e1;
+  border-color: #d4d4d8;
 }
 
 :host-context(.dark) .pagination-pill:hover {
-  border-color: #475569;
+  border-color: #45454c;
 }
 
 .pagination-pill:focus-visible {

@@ -22,9 +22,9 @@ describe('material-palette.util', () => {
   });
 
   describe('Verificación de contraste en colores extremos (WCAG AA/AAA)', () => {
-    it('para amarillo #FACC15, on-primary debe ser texto oscuro (#0f172a) para garantizar contraste accesible', () => {
+    it('para amarillo #FACC15, on-primary debe ser texto oscuro (#121214) para garantizar contraste accesible', () => {
       const palette = generateMaterialPalette('#FACC15');
-      expect(palette.light['--mat-sys-on-primary']).toBe('#0f172a');
+      expect(palette.light['--mat-sys-on-primary']).toBe('#121214');
       expect(palette.light['--mat-sys-primary']).toBe('#facc15');
     });
 
@@ -41,14 +41,14 @@ describe('material-palette.util', () => {
     });
   });
 
-  describe('Superficies en Modo Oscuro (Armonía con Slate)', () => {
-    it('debe utilizar tonos slate oscuros y evitar negro puro en fondos y superficies', () => {
+  describe('Superficies en Modo Oscuro (Escala Carbon y Grises Neutros)', () => {
+    it('debe utilizar tonos grises y negros neutros evitando matices azulados en fondos y superficies', () => {
       const palette = generateMaterialPalette('#032EDD');
-      expect(palette.dark['--mat-sys-background']).toBe('#0f172a');
-      expect(palette.dark['--mat-sys-surface']).toBe('#0f172a');
-      expect(palette.dark['--mat-sys-surface-variant']).toBe('#1e293b');
-      expect(palette.dark['--mat-sys-surface-container']).toBe('#1e293b');
-      expect(palette.dark['--mat-sys-surface-container-highest']).toBe('#334155');
+      expect(palette.dark['--mat-sys-background']).toBe('#121214');
+      expect(palette.dark['--mat-sys-surface']).toBe('#121214');
+      expect(palette.dark['--mat-sys-surface-variant']).toBe('#1e1e22');
+      expect(palette.dark['--mat-sys-surface-container']).toBe('#1e1e22');
+      expect(palette.dark['--mat-sys-surface-container-highest']).toBe('#2e2e33');
       expect(palette.dark['--mat-sys-inverse-primary']).toBe('#032edd');
     });
   });

@@ -36,7 +36,7 @@ export function generateMaterialPalette(hex: string): MaterialPaletteResult {
 
   // Contraste accesible para on-primary en modo claro
   const contrastVsWhite = calculateContrastAgainstWhite(baseR, baseG, baseB);
-  const onPrimaryLight = contrastVsWhite >= 4.5 ? '#ffffff' : '#0f172a';
+  const onPrimaryLight = contrastVsWhite >= 4.5 ? '#ffffff' : '#121214';
 
   // --- Modo Claro ---
   const light: Record<string, string> = {
@@ -78,31 +78,31 @@ export function generateMaterialPalette(hex: string): MaterialPaletteResult {
     '--mat-sys-on-error-container': '#410002',
 
     // Fondo y Superficies (16 tokens)
-    '--mat-sys-background': '#f8fafc',
-    '--mat-sys-on-background': '#0f172a',
+    '--mat-sys-background': '#fafafa',
+    '--mat-sys-on-background': '#121214',
     '--mat-sys-surface': '#ffffff',
-    '--mat-sys-on-surface': '#0f172a',
-    '--mat-sys-surface-variant': '#f1f5f9',
-    '--mat-sys-on-surface-variant': '#64748b',
+    '--mat-sys-on-surface': '#121214',
+    '--mat-sys-surface-variant': '#f4f4f5',
+    '--mat-sys-on-surface-variant': '#71717a',
     '--mat-sys-surface-tint': toHex(baseR, baseG, baseB),
-    '--mat-sys-inverse-surface': '#0f172a',
-    '--mat-sys-inverse-on-surface': '#f8fafc',
-    '--mat-sys-surface-dim': '#e2e8f0',
+    '--mat-sys-inverse-surface': '#121214',
+    '--mat-sys-inverse-on-surface': '#fafafa',
+    '--mat-sys-surface-dim': '#e4e4e7',
     '--mat-sys-surface-bright': '#ffffff',
     '--mat-sys-surface-container-lowest': '#ffffff',
-    '--mat-sys-surface-container-low': '#f8fafc',
-    '--mat-sys-surface-container': '#f1f5f9',
-    '--mat-sys-surface-container-high': '#e2e8f0',
-    '--mat-sys-surface-container-highest': '#cbd5e1',
+    '--mat-sys-surface-container-low': '#fafafa',
+    '--mat-sys-surface-container': '#f4f4f5',
+    '--mat-sys-surface-container-high': '#e4e4e7',
+    '--mat-sys-surface-container-highest': '#d4d4d8',
 
     // Contorno y Sombra (4 tokens)
-    '--mat-sys-outline': '#94a3b8',
-    '--mat-sys-outline-variant': '#e2e8f0',
+    '--mat-sys-outline': '#a1a1aa',
+    '--mat-sys-outline-variant': '#e4e4e7',
     '--mat-sys-shadow': '#000000',
     '--mat-sys-scrim': '#000000',
   };
 
-  // --- Modo Oscuro ---
+  // --- Modo Oscuro (Carbon & Neutral Gray/Black) ---
   const primaryDark = toneHex(0.78, Math.min(C * 0.65, 0.16), H);
   const dark: Record<string, string> = {
     // Primario (9 tokens)
@@ -142,27 +142,27 @@ export function generateMaterialPalette(hex: string): MaterialPaletteResult {
     '--mat-sys-error-container': '#93000a',
     '--mat-sys-on-error-container': '#ffdad6',
 
-    // Fondo y Superficies (16 tokens)
-    '--mat-sys-background': '#0f172a',
-    '--mat-sys-on-background': '#f8fafc',
-    '--mat-sys-surface': '#0f172a',
-    '--mat-sys-on-surface': '#f1f5f9',
-    '--mat-sys-surface-variant': '#1e293b',
-    '--mat-sys-on-surface-variant': '#94a3b8',
+    // Fondo y Superficies (16 tokens - Escala Carbon & Neutral Gray/Black)
+    '--mat-sys-background': '#121214',
+    '--mat-sys-on-background': '#fafafa',
+    '--mat-sys-surface': '#121214',
+    '--mat-sys-on-surface': '#f4f4f5',
+    '--mat-sys-surface-variant': '#1e1e22',
+    '--mat-sys-on-surface-variant': '#a1a1aa',
     '--mat-sys-surface-tint': primaryDark,
-    '--mat-sys-inverse-surface': '#f8fafc',
-    '--mat-sys-inverse-on-surface': '#0f172a',
-    '--mat-sys-surface-dim': '#0b1120',
-    '--mat-sys-surface-bright': '#1e293b',
-    '--mat-sys-surface-container-lowest': '#090e17',
-    '--mat-sys-surface-container-low': '#0f172a',
-    '--mat-sys-surface-container': '#1e293b',
-    '--mat-sys-surface-container-high': '#243147',
-    '--mat-sys-surface-container-highest': '#334155',
+    '--mat-sys-inverse-surface': '#fafafa',
+    '--mat-sys-inverse-on-surface': '#121214',
+    '--mat-sys-surface-dim': '#0a0a0b',
+    '--mat-sys-surface-bright': '#26262b',
+    '--mat-sys-surface-container-lowest': '#070708',
+    '--mat-sys-surface-container-low': '#121214',
+    '--mat-sys-surface-container': '#1e1e22',
+    '--mat-sys-surface-container-high': '#26262b',
+    '--mat-sys-surface-container-highest': '#2e2e33',
 
     // Contorno y Sombra (4 tokens)
-    '--mat-sys-outline': '#64748b',
-    '--mat-sys-outline-variant': '#334155',
+    '--mat-sys-outline': '#71717a',
+    '--mat-sys-outline-variant': '#2e2e33',
     '--mat-sys-shadow': '#000000',
     '--mat-sys-scrim': '#000000',
   };
