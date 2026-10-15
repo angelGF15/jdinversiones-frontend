@@ -1,0 +1,5 @@
+/* Estilos específicos para CategoriesListComponent */
+:host {
+  display: block;
+  width: 100%;
+}
