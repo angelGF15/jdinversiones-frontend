@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
 
 import { CategoryFormComponent } from './category-form.component';
-import { CategoriesService } from '../../../../../core/services/categories.service';
+import { CategoriesService } from '../../../../../core/services/categories/categories.service';
 import { AuthState } from '../../../../../core/auth/auth.state';
 import { Category, CategoryChild } from '../../../../../core/models/category.models';
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';

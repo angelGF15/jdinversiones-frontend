@@ -3,8 +3,8 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { MenuService } from './menu.service';
-import { environment } from '../../../environments/environment';
-import { MenuResponse } from '../models/menu.models';
+import { environment } from '../../../../environments/environment';
+import { MenuResponse } from '../../models/menu.models';
 
 describe('MenuService', () => {
   let service: MenuService;

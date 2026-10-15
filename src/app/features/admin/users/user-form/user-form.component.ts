@@ -22,7 +22,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { UsersService } from '../../../../core/services/users.service';
+import { UsersService } from '../../../../core/services/users/users.service';
 import {
   ActiveRole,
   CreateUserRequest,

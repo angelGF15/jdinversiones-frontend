@@ -9,7 +9,7 @@ import {
   CategoryImageDialogComponent,
   CategoryImageDialogData,
 } from './category-image-dialog.component';
-import { CategoriesService } from '../../../../../../core/services/categories.service';
+import { CategoriesService } from '../../../../../../core/services/categories/categories.service';
 import { Category, CategoryChild } from '../../../../../../core/models/category.models';
 
 describe('CategoryImageDialogComponent', () => {

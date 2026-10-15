@@ -13,7 +13,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { routes } from './app.routes';
 import { authInterceptor, refreshTokenInterceptor } from './core/interceptors';
-import { BrandService } from './core/services/brand.service';
+import { BrandService } from './core/services/brand/brand.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

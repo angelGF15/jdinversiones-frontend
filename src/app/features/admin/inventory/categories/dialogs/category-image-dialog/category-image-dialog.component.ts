@@ -15,7 +15,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { CategoriesService } from '../../../../../../core/services/categories.service';
+import { CategoriesService } from '../../../../../../core/services/categories/categories.service';
 import { Category, CategoryChild } from '../../../../../../core/models/category.models';
 
 export interface CategoryImageDialogData {

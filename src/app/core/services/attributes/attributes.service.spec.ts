@@ -3,14 +3,14 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AttributesService } from './attributes.service';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import {
   AttributeListQuery,
   AttributeListResponse,
   CatalogAttribute,
   CreateAttributeRequest,
   UpdateAttributeRequest,
-} from '../models/attribute.models';
+} from '../../models/attribute.models';
 
 describe('AttributesService', () => {
   let service: AttributesService;

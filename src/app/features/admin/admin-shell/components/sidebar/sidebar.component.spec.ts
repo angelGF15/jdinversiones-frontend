@@ -4,10 +4,10 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { SidebarComponent } from './sidebar.component';
 import { AuthState } from '../../../../../core/auth/auth.state';
-import { MenuService } from '../../../../../core/services/menu.service';
+import { MenuService } from '../../../../../core/services/menu/menu.service';
 import { MenuItem } from '../../../../../core/models/menu.models';
 
-import { BrandService } from '../../../../../core/services/brand.service';
+import { BrandService } from '../../../../../core/services/brand/brand.service';
 
 describe('SidebarComponent', () => {
   let component: SidebarComponent;

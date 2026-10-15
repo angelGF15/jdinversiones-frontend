@@ -3,8 +3,8 @@ import { Title } from '@angular/platform-browser';
 import { provideZonelessChangeDetection, PLATFORM_ID, TransferState } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { BrandService } from './brand.service';
-import { ConfigService } from './config.service';
-import { PublicBranding } from '../models/config.models';
+import { ConfigService } from '../config/config.service';
+import { PublicBranding } from '../../models/config.models';
 
 describe('BrandService', () => {
   let service: BrandService;

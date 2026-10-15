@@ -9,8 +9,8 @@ import {
   LogoUploadDialogComponent,
   LogoUploadDialogData,
 } from './logo-upload-dialog.component';
-import { ConfigService } from '../../../core/services/config.service';
-import { BrandService } from '../../../core/services/brand.service';
+import { ConfigService } from '../../../core/services/config/config.service';
+import { BrandService } from '../../../core/services/brand/brand.service';
 
 describe('LogoUploadDialogComponent', () => {
   let component: LogoUploadDialogComponent;

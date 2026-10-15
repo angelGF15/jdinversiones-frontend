@@ -1,8 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, catchError, map, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { MenuItem, MenuResponse } from '../models/menu.models';
+import { environment } from '../../../../environments/environment';
+import { MenuItem, MenuResponse } from '../../models/menu.models';
 
 @Injectable({
   providedIn: 'root',

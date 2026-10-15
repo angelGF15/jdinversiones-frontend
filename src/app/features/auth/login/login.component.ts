@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
-import { BrandService } from '../../../core/services/brand.service';
+import { BrandService } from '../../../core/services/brand/brand.service';
 
 export type LoginErrorType = 'validation' | 'credentials' | 'suspended' | 'rate-limit' | 'network' | null;
 

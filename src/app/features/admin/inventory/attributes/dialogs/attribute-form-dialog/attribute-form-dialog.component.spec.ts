@@ -9,7 +9,7 @@ import {
   AttributeFormDialogComponent,
   AttributeFormData,
 } from './attribute-form-dialog.component';
-import { AttributesService } from '../../../../../../core/services/attributes.service';
+import { AttributesService } from '../../../../../../core/services/attributes/attributes.service';
 import { CatalogAttribute } from '../../../../../../core/models/attribute.models';
 
 describe('AttributeFormDialogComponent', () => {

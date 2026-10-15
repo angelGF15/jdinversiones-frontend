@@ -19,7 +19,7 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 import { HasPermissionDirective } from '../../../../../core/directives/has-permission.directive';
-import { AttributesService } from '../../../../../core/services/attributes.service';
+import { AttributesService } from '../../../../../core/services/attributes/attributes.service';
 import {
   CatalogAttribute,
   AttributeListQuery,

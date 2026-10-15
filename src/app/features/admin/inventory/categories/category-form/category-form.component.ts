@@ -20,7 +20,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { CategoriesService } from '../../../../../core/services/categories.service';
+import { CategoriesService } from '../../../../../core/services/categories/categories.service';
 import {
   Category,
   CategoryChild,

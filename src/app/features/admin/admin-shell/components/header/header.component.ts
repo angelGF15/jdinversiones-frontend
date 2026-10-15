@@ -8,8 +8,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuthState } from '../../../../../core/auth/auth.state';
-import { ThemeService } from '../../../../../core/services/theme.service';
-import { BrandService } from '../../../../../core/services/brand.service';
+import { ThemeService } from '../../../../../core/services/theme/theme.service';
+import { BrandService } from '../../../../../core/services/brand/brand.service';
 import { AvatarUploadDialogComponent } from '../../../../../shared/components/avatar-upload-dialog/avatar-upload-dialog.component';
 
 @Component({

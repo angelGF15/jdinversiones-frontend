@@ -20,8 +20,8 @@ import { filter, map } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 import { AuthState } from '../../../../../core/auth/auth.state';
-import { MenuService } from '../../../../../core/services/menu.service';
-import { BrandService } from '../../../../../core/services/brand.service';
+import { MenuService } from '../../../../../core/services/menu/menu.service';
+import { BrandService } from '../../../../../core/services/brand/brand.service';
 import { MenuItem } from '../../../../../core/models/menu.models';
 
 export type NavItem = MenuItem;

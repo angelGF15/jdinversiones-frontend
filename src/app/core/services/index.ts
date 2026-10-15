@@ -1,12 +1,13 @@
-export * from './loading.service';
-export * from './theme.service';
-export * from './menu.service';
-export * from './users.service';
-export * from './roles.service';
-export * from './permissions.service';
-export * from './config.service';
-export * from './attributes.service';
-export * from './categories.service';
+export * from './loading/loading.service';
+export * from './theme/theme.service';
+export * from './menu/menu.service';
+export * from './users/users.service';
+export * from './roles/roles.service';
+export * from './permissions/permissions.service';
+export * from './config/config.service';
+export * from './brand/brand.service';
+export * from './attributes/attributes.service';
+export * from './categories/categories.service';
 export * from '../models/menu.models';
 export * from '../models/user.models';
 export * from '../models/role.models';
@@ -14,4 +15,3 @@ export * from '../models/permission.models';
 export * from '../models/config.models';
 export * from '../models/attribute.models';
 export * from '../models/category.models';
-

@@ -6,8 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { of, throwError } from 'rxjs';
 
 import { ConfigGeneralComponent } from './config-general.component';
-import { ConfigService } from '../../../../core/services/config.service';
-import { BrandService } from '../../../../core/services/brand.service';
+import { ConfigService } from '../../../../core/services/config/config.service';
+import { BrandService } from '../../../../core/services/brand/brand.service';
 import { AuthState } from '../../../../core/auth/auth.state';
 import { ConfigGroup, Setting } from '../../../../core/models/config.models';
 

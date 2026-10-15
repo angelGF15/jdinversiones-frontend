@@ -19,7 +19,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 import { AuthState } from '../../../../core/auth/auth.state';
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
-import { UsersService } from '../../../../core/services/users.service';
+import { UsersService } from '../../../../core/services/users/users.service';
 import { User, UserListQuery } from '../../../../core/models/user.models';
 import {
   DataTableColumn,

@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 
 import { ConfigPageComponent } from './config-page.component';
 import { AuthState } from '../../../../core/auth/auth.state';
-import { ConfigService } from '../../../../core/services/config.service';
+import { ConfigService } from '../../../../core/services/config/config.service';
 
 describe('ConfigPageComponent', () => {
   let component: ConfigPageComponent;

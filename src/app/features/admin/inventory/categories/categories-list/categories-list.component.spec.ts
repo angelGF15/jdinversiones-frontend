@@ -7,7 +7,7 @@ import { of, throwError, Subject } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { CategoriesListComponent } from './categories-list.component';
-import { CategoriesService } from '../../../../../core/services/categories.service';
+import { CategoriesService } from '../../../../../core/services/categories/categories.service';
 import { AuthState } from '../../../../../core/auth/auth.state';
 import {
   CategoryChild,

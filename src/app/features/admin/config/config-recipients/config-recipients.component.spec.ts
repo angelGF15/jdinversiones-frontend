@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
 
 import { ConfigRecipientsComponent } from './config-recipients.component';
-import { ConfigService } from '../../../../core/services/config.service';
+import { ConfigService } from '../../../../core/services/config/config.service';
 import { AuthState } from '../../../../core/auth/auth.state';
 import {
   NotificationChannel,

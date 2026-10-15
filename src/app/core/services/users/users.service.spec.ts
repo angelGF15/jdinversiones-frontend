@@ -3,7 +3,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { UsersService } from './users.service';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import {
   ActiveRoleRawResponse,
   CreateUserRequest,
@@ -13,7 +13,7 @@ import {
   User,
   UserListQuery,
   UserListResponse,
-} from '../models/user.models';
+} from '../../models/user.models';
 
 describe('UsersService', () => {
   let service: UsersService;

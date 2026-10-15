@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import {
   CloneRoleRequest,
   CreateRoleRequest,
@@ -12,7 +12,7 @@ import {
   RoleListResponse,
   SetRoleStatusRequest,
   UpdateRoleRequest,
-} from '../models/role.models';
+} from '../../models/role.models';
 
 @Injectable({
   providedIn: 'root',

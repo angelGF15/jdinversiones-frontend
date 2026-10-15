@@ -15,7 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { AttributesService } from '../../../../../../core/services/attributes.service';
+import { AttributesService } from '../../../../../../core/services/attributes/attributes.service';
 import {
   CatalogAttribute,
   CreateAttributeRequest,

@@ -15,8 +15,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { ConfigService } from '../../../core/services/config.service';
-import { BrandService } from '../../../core/services/brand.service';
+import { ConfigService } from '../../../core/services/config/config.service';
+import { BrandService } from '../../../core/services/brand/brand.service';
 
 export interface LogoUploadDialogData {
   currentLogoUrl?: string | null;

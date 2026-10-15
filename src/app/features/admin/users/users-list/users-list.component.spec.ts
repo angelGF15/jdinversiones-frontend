@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError, Subject } from 'rxjs';
 
 import { UsersListComponent } from './users-list.component';
-import { UsersService } from '../../../../core/services/users.service';
+import { UsersService } from '../../../../core/services/users/users.service';
 import { AuthState } from '../../../../core/auth/auth.state';
 import {
   User,

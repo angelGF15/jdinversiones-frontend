@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { UserFormComponent } from './user-form.component';
-import { UsersService } from '../../../../core/services/users.service';
+import { UsersService } from '../../../../core/services/users/users.service';
 import { ActiveRole, CreateUserResponse, User } from '../../../../core/models/user.models';
 import { CredentialsDialogComponent } from '../dialogs/credentials-dialog/credentials-dialog.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';

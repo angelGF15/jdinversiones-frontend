@@ -8,9 +8,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AdminShellComponent } from './admin-shell.component';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
-import { MenuService } from '../../../core/services/menu.service';
+import { MenuService } from '../../../core/services/menu/menu.service';
 
-import { BrandService } from '../../../core/services/brand.service';
+import { BrandService } from '../../../core/services/brand/brand.service';
 
 describe('AdminShellComponent', () => {
   let component: AdminShellComponent;

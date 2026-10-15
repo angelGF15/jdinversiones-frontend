@@ -12,11 +12,11 @@ import { isPlatformBrowser } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-import { ConfigService } from './config.service';
-import { PublicBranding, Brand } from '../models/config.models';
-import { deriveRamp, getOnColorTriplet } from '../utils/palette.util';
-import { runWithViewTransition } from '../utils/view-transition.util';
-import { applyMaterialTokens } from '../utils/material-palette.util';
+import { ConfigService } from '../config/config.service';
+import { PublicBranding, Brand } from '../../models/config.models';
+import { deriveRamp, getOnColorTriplet } from '../../utils/palette.util';
+import { runWithViewTransition } from '../../utils/view-transition.util';
+import { applyMaterialTokens } from '../../utils/material-palette.util';
 
 const BRANDING_TRANSFER_KEY = makeStateKey<PublicBranding>('jd_brand_state');
 const COLOR_STORAGE_KEY = 'jd_brand_primary';

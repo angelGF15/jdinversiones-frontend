@@ -25,8 +25,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
 
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
-import { ConfigService } from '../../../../core/services/config.service';
-import { BrandService } from '../../../../core/services/brand.service';
+import { ConfigService } from '../../../../core/services/config/config.service';
+import { BrandService } from '../../../../core/services/brand/brand.service';
 import {
   ConfigGroup,
   Setting,

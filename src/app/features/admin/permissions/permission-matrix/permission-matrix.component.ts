@@ -16,8 +16,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
-import { RolesService } from '../../../../core/services/roles.service';
-import { PermissionsService } from '../../../../core/services/permissions.service';
+import { RolesService } from '../../../../core/services/roles/roles.service';
+import { PermissionsService } from '../../../../core/services/permissions/permissions.service';
 import { RoleListItem } from '../../../../core/models/role.models';
 import {
   PermissionMatrixModule,

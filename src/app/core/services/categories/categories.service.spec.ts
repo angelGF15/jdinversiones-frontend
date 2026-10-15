@@ -3,7 +3,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { CategoriesService } from './categories.service';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import {
   Category,
   CategoryChild,
@@ -11,7 +11,7 @@ import {
   CategoryListResponse,
   CreateCategoryRequest,
   UpdateCategoryRequest,
-} from '../models/category.models';
+} from '../../models/category.models';
 
 describe('CategoriesService', () => {
   let service: CategoriesService;

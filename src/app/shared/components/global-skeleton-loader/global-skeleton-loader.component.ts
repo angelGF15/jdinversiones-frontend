@@ -1,6 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SkeletonVariant } from '../../../core/services/loading.service';
+import { SkeletonVariant } from '../../../core/services/loading/loading.service';
 
 @Component({
   selector: 'app-global-skeleton-loader',

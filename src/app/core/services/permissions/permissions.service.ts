@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import {
   PermissionMatrixResponse,
   UpdatePermissionMatrixRequest,
   UpdatePermissionMatrixResponse,
-} from '../models/permission.models';
+} from '../../models/permission.models';
 
 @Injectable({
   providedIn: 'root',

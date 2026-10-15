@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { runWithViewTransition } from '../utils/view-transition.util';
+import { runWithViewTransition } from '../../utils/view-transition.util';
 
 export type ThemeMode = 'light' | 'dark';
 

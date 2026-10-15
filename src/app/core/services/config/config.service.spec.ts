@@ -3,14 +3,14 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ConfigService } from './config.service';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import {
   Currency,
   NotificationRecipient,
   PublicBranding,
   Setting,
   SettingListResponse,
-} from '../models/config.models';
+} from '../../models/config.models';
 
 describe('ConfigService', () => {
   let service: ConfigService;

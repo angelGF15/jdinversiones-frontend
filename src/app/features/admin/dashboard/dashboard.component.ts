@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthState } from '../../../core/auth/auth.state';
 import { HasPermissionDirective } from '../../../core/directives/has-permission.directive';
-import { LoadingService } from '../../../core/services/loading.service';
+import { LoadingService } from '../../../core/services/loading/loading.service';
 
 export interface DashboardKpi {
   id: string;

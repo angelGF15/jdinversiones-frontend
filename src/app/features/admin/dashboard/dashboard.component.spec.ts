@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { DashboardComponent } from './dashboard.component';
 import { AuthState } from '../../../core/auth/auth.state';
-import { LoadingService } from '../../../core/services/loading.service';
+import { LoadingService } from '../../../core/services/loading/loading.service';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;

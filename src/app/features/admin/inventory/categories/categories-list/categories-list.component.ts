@@ -19,7 +19,7 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 import { HasPermissionDirective } from '../../../../../core/directives/has-permission.directive';
-import { CategoriesService } from '../../../../../core/services/categories.service';
+import { CategoriesService } from '../../../../../core/services/categories/categories.service';
 import {
   CategoryChild,
   CategoryListQuery,

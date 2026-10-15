@@ -16,7 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
-import { UsersService } from '../../../core/services/users.service';
+import { UsersService } from '../../../core/services/users/users.service';
 
 export interface AvatarUploadDialogData {
   avatarUrl?: string | null;

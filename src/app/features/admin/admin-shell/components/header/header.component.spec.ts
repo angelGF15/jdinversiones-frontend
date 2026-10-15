@@ -3,9 +3,9 @@ import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { HeaderComponent } from './header.component';
 import { AuthState } from '../../../../../core/auth/auth.state';
-import { ThemeService } from '../../../../../core/services/theme.service';
+import { ThemeService } from '../../../../../core/services/theme/theme.service';
 
-import { BrandService } from '../../../../../core/services/brand.service';
+import { BrandService } from '../../../../../core/services/brand/brand.service';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;

@@ -18,7 +18,7 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
-import { ConfigService } from '../../../../core/services/config.service';
+import { ConfigService } from '../../../../core/services/config/config.service';
 import {
   CreateNotificationRecipientRequest,
   NotificationChannel,

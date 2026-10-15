@@ -7,7 +7,7 @@ import { of, throwError, Subject } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { AttributesListComponent } from './attributes-list.component';
-import { AttributesService } from '../../../../../core/services/attributes.service';
+import { AttributesService } from '../../../../../core/services/attributes/attributes.service';
 import { AuthState } from '../../../../../core/auth/auth.state';
 import {
   CatalogAttribute,

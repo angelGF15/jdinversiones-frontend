@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { LoadingService } from './core/services/loading.service';
+import { LoadingService } from './core/services/loading/loading.service';
 import { GlobalSkeletonLoaderComponent } from './shared/components/global-skeleton-loader/global-skeleton-loader.component';
 
 @Component({
