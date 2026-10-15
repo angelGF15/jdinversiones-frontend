@@ -14,6 +14,7 @@ import {
   AttributeListResponse,
 } from '../../../../../core/models/attribute.models';
 import { ConfirmDialogComponent } from '../../../../../shared/components';
+import { AttributeFormDialogComponent } from '../dialogs';
 
 describe('AttributesListComponent', () => {
   let component: AttributesListComponent;
@@ -256,6 +257,117 @@ describe('AttributesListComponent', () => {
 
       expect(dialogSpy.open).toHaveBeenCalled();
       expect(attributesServiceSpy.setStatus).not.toHaveBeenCalled();
+    });
+
+    it('debe desplegar modal de advertencia ante error 409 Conflict (atributo en uso)', () => {
+      const confirmRefSpy = {
+        afterClosed: () => of(true),
+      } as MatDialogRef<ConfirmDialogComponent>;
+      dialogSpy.open.and.returnValue(confirmRefSpy);
+
+      const conflictResponse = new HttpErrorResponse({
+        error: {
+          message:
+            'No se puede desactivar el atributo porque está en uso por uno o más productos',
+        },
+        status: 409,
+        statusText: 'Conflict',
+      });
+      attributesServiceSpy.setStatus.and.returnValue(throwError(() => conflictResponse));
+
+      component.onToggleStatus(mockAttributes[0]);
+
+      // Primer llamado: confirmación; Segundo llamado: modal de advertencia 409
+      expect(dialogSpy.open).toHaveBeenCalledTimes(2);
+      expect(dialogSpy.open).toHaveBeenCalledWith(
+        ConfirmDialogComponent,
+        jasmine.objectContaining({
+          data: jasmine.objectContaining({
+            title: 'No se puede desactivar el atributo',
+            message:
+              'No se puede desactivar el atributo porque está en uso por uno o más productos',
+            icon: 'warning',
+          }),
+        })
+      );
+      // El atributo en la lista debe mantenerse intacto (activo)
+      expect(component.items()[0].isActive).toBeTrue();
+    });
+
+    it('debe mostrar snackbar cuando ocurre un error genérico en setStatus', () => {
+      const confirmRefSpy = {
+        afterClosed: () => of(true),
+      } as MatDialogRef<ConfirmDialogComponent>;
+      dialogSpy.open.and.returnValue(confirmRefSpy);
+
+      const errorResponse = new HttpErrorResponse({
+        error: { message: 'Fallo interno al actualizar estado' },
+        status: 500,
+        statusText: 'Internal Server Error',
+      });
+      attributesServiceSpy.setStatus.and.returnValue(throwError(() => errorResponse));
+
+      component.onToggleStatus(mockAttributes[0]);
+
+      expect(dialogSpy.open).toHaveBeenCalledTimes(1);
+      expect(snackBarSpy.open).toHaveBeenCalledWith(
+        'Fallo interno al actualizar estado',
+        'Cerrar',
+        jasmine.any(Object)
+      );
+    });
+  });
+
+  describe('diálogos de creación y edición (onNewAttribute / onEditAttribute)', () => {
+    it('debe abrir AttributeFormDialogComponent en modo creación e insertar el nuevo elemento', () => {
+      const newAttr: CatalogAttribute = {
+        id: 'new-attr-100',
+        name: 'Garantía',
+        description: 'Meses de garantía del fabricante',
+        displayOrder: 10,
+        isActive: true,
+      };
+
+      const dialogRefSpy = {
+        afterClosed: () => of(newAttr),
+      } as MatDialogRef<any>;
+      dialogSpy.open.and.returnValue(dialogRefSpy);
+
+      component.onNewAttribute();
+
+      expect(dialogSpy.open).toHaveBeenCalledWith(
+        AttributeFormDialogComponent,
+        jasmine.objectContaining({
+          width: '520px',
+          data: { mode: 'create' },
+        })
+      );
+      expect(component.items().length).toBe(4);
+      expect(component.items()[0]).toEqual(newAttr);
+      expect(component.total()).toBe(4);
+    });
+
+    it('debe abrir AttributeFormDialogComponent en modo edición y actualizar el elemento en items', () => {
+      const updatedAttr: CatalogAttribute = {
+        ...mockAttributes[0],
+        name: 'Color Metálico',
+      };
+
+      const dialogRefSpy = {
+        afterClosed: () => of(updatedAttr),
+      } as MatDialogRef<any>;
+      dialogSpy.open.and.returnValue(dialogRefSpy);
+
+      component.onEditAttribute(mockAttributes[0]);
+
+      expect(dialogSpy.open).toHaveBeenCalledWith(
+        AttributeFormDialogComponent,
+        jasmine.objectContaining({
+          width: '520px',
+          data: { mode: 'edit', attribute: mockAttributes[0] },
+        })
+      );
+      expect(component.items()[0].name).toBe('Color Metálico');
     });
   });
 });

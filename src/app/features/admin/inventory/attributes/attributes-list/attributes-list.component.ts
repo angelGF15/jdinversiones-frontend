@@ -36,6 +36,7 @@ import {
   ConfirmDialogComponent,
 } from '../../../../../shared/components';
 import { ListQueryState } from '../../../../../shared/utils/list-query-state';
+import { AttributeFormDialogComponent } from '../dialogs';
 
 @Component({
   selector: 'app-attributes-list',
@@ -188,24 +189,46 @@ export class AttributesListComponent implements OnInit {
   }
 
   /**
-   * Abre el formulario para registrar un nuevo atributo.
-   * Se conectará completamente al diálogo modal en la Fase 4.
+   * Abre el formulario modal para registrar un nuevo atributo.
+   * Inserta reactivamente el nuevo registro en la lista local si se crea con éxito.
    */
   public onNewAttribute(): void {
-    // Listo para invocación de AttributeFormDialogComponent en Fase 4
+    const dialogRef = this.dialog.open(AttributeFormDialogComponent, {
+      width: '520px',
+      data: { mode: 'create' },
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((created: CatalogAttribute | null) => {
+      if (!created) return;
+      this.items.update((list) => [created, ...list]);
+      this.total.update((t) => t + 1);
+    });
   }
 
   /**
-   * Abre el formulario para editar el atributo seleccionado.
-   * Se conectará completamente al diálogo modal en la Fase 4.
+   * Abre el formulario modal para editar el atributo seleccionado.
+   * Actualiza reactivamente el registro en la lista local si se guarda con éxito.
    */
   public onEditAttribute(attribute: CatalogAttribute): void {
-    // Listo para invocación de AttributeFormDialogComponent en Fase 4
+    const dialogRef = this.dialog.open(AttributeFormDialogComponent, {
+      width: '520px',
+      data: { mode: 'edit', attribute },
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((updated: CatalogAttribute | null) => {
+      if (!updated) return;
+      this.items.update((list) =>
+        list.map((item) => (item.id === updated.id ? updated : item))
+      );
+    });
   }
 
   /**
    * Solicita confirmación y alterna el estado activo/inactivo del atributo.
-   * En la Fase 5 se extenderá con captura especializada de 409 Conflict si está en uso.
+   * Si se intenta desactivar un atributo en uso por productos existentes (409 Conflict),
+   * despliega un modal informativo de advertencia con el mensaje del servidor sin alterar la UI.
    */
   public onToggleStatus(attribute: CatalogAttribute): void {
     const willBeActive = !attribute.isActive;
@@ -215,7 +238,7 @@ export class AttributesListComponent implements OnInit {
         title: willBeActive ? 'Activar atributo' : 'Desactivar atributo',
         message: willBeActive
           ? `¿Deseas activar el atributo "${attribute.name}"? Estará disponible inmediatamente para asignar a productos.`
-          : `¿Deseas desactivar el atributo "${attribute.name}"?`,
+          : `¿Deseas desactivar el atributo "${attribute.name}"? Los productos que ya lo tengan asignado no se verán afectados, pero no se podrá asignar a nuevos productos.`,
         confirmText: willBeActive ? 'Activar' : 'Desactivar',
         isDestructive: !willBeActive,
         icon: willBeActive ? 'check_circle' : 'block',
@@ -244,11 +267,26 @@ export class AttributesListComponent implements OnInit {
           const errorMsg = Array.isArray(err?.error?.message)
             ? err.error.message.join(' · ')
             : err?.error?.message ?? 'Ocurrió un error al cambiar el estado del atributo.';
-          this.snackBar.open(errorMsg, 'Cerrar', {
-            duration: 5000,
-            horizontalPosition: 'right',
-            verticalPosition: 'top',
-          });
+
+          if (err.status === 409) {
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '460px',
+              data: {
+                title: 'No se puede desactivar el atributo',
+                message: errorMsg,
+                confirmText: 'Entendido',
+                cancelText: 'Cerrar',
+                isDestructive: false,
+                icon: 'warning',
+              },
+            });
+          } else {
+            this.snackBar.open(errorMsg, 'Cerrar', {
+              duration: 5000,
+              horizontalPosition: 'right',
+              verticalPosition: 'top',
+            });
+          }
         },
       });
     });

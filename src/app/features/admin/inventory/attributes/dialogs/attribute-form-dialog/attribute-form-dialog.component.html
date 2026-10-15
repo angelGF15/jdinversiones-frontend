@@ -1,0 +1,174 @@
+<div
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="attr-dialog-title"
+  class="attribute-form-dialog-container p-6 bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full"
+>
+  <div class="flex items-start gap-4">
+    <!-- Icono de Cabecera -->
+    <div
+      aria-hidden="true"
+      class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm"
+      [ngClass]="{
+        'bg-primary-50 text-primary dark:bg-primary-950/40 dark:text-primary-400 border border-primary-100 dark:border-primary-900/40': !isEdit,
+        'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-100 dark:border-amber-900/40': isEdit
+      }"
+    >
+      <span class="mat-icon text-2xl select-none">{{ isEdit ? 'edit' : 'tune' }}</span>
+    </div>
+
+    <!-- Título y Descripción -->
+    <div class="flex-1 space-y-1 pt-0.5">
+      <h2 id="attr-dialog-title" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">
+        {{ isEdit ? 'Editar Atributo' : 'Nuevo Atributo Maestro' }}
+      </h2>
+      <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+        @if (isEdit) {
+          Modifica el nombre, descripción o prioridad de visualización del atributo.
+        } @else {
+          Define una nueva característica o especificación asignable a los productos del catálogo.
+        }
+      </p>
+    </div>
+  </div>
+
+  <!-- Alerta de Error del Servidor -->
+  @if (serverErrorMessage()) {
+    <div
+      role="alert"
+      class="mt-4 p-3 rounded-xl bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800/40 text-danger-700 dark:text-danger-300 text-xs flex items-center gap-2"
+    >
+      <span class="mat-icon text-base select-none" aria-hidden="true">error_outline</span>
+      <span>{{ serverErrorMessage() }}</span>
+    </div>
+  }
+
+  <!-- Formulario -->
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-5 space-y-4">
+    <!-- Chips de sugerencias comunes (solo en modo creación) -->
+    @if (!isEdit) {
+      <div class="space-y-1.5">
+        <span class="block text-xs font-medium text-slate-500 dark:text-slate-400">
+          Sugerencias rápidas:
+        </span>
+        <div class="flex flex-wrap gap-1.5">
+          @for (sugg of commonSuggestions; track sugg) {
+            <button
+              type="button"
+              (click)="applySuggestion(sugg)"
+              class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 hover:bg-primary-50 text-slate-700 hover:text-primary dark:bg-slate-800 dark:hover:bg-primary-950/40 dark:text-slate-300 dark:hover:text-primary-300 border border-slate-200/80 dark:border-slate-700/80 transition-colors cursor-pointer"
+            >
+              + {{ sugg }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Campo: Nombre -->
+    <div>
+      <label for="attr-name" class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
+        Nombre del atributo <span class="text-danger">*</span>
+      </label>
+      <div class="relative">
+        <input
+          id="attr-name"
+          type="text"
+          formControlName="name"
+          maxlength="100"
+          placeholder="Ej. Color, Memoria RAM, Talla, Capacidad"
+          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all placeholder:text-slate-400"
+          [class.border-danger]="form.controls.name.invalid && form.controls.name.touched"
+        />
+      </div>
+      @if (form.controls.name.touched && form.controls.name.errors) {
+        <p class="text-xs text-danger mt-1">
+          @if (form.controls.name.hasError('required')) {
+            El nombre es obligatorio.
+          } @else if (form.controls.name.hasError('minlength')) {
+            Debe tener al menos 2 caracteres.
+          } @else if (form.controls.name.hasError('maxlength')) {
+            No puede exceder los 100 caracteres.
+          } @else if (form.controls.name.hasError('serverConflict')) {
+            {{ form.controls.name.getError('serverConflict') }}
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Campo: Orden de visualización -->
+    <div>
+      <label for="attr-order" class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
+        Orden de visualización <span class="text-danger">*</span>
+      </label>
+      <div class="relative">
+        <input
+          id="attr-order"
+          type="number"
+          min="0"
+          step="1"
+          formControlName="displayOrder"
+          placeholder="0"
+          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all placeholder:text-slate-400"
+          [class.border-danger]="form.controls.displayOrder.invalid && form.controls.displayOrder.touched"
+        />
+      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        Prioridad de posición en las especificaciones del producto (0 es la más alta).
+      </p>
+      @if (form.controls.displayOrder.touched && form.controls.displayOrder.errors) {
+        <p class="text-xs text-danger mt-1">
+          @if (form.controls.displayOrder.hasError('required')) {
+            El orden es obligatorio.
+          } @else if (form.controls.displayOrder.hasError('min')) {
+            El orden debe ser mayor o igual a 0.
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Campo: Descripción -->
+    <div>
+      <label for="attr-description" class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
+        Descripción <span class="text-slate-400 font-normal">(opcional)</span>
+      </label>
+      <textarea
+        id="attr-description"
+        formControlName="description"
+        rows="3"
+        maxlength="500"
+        placeholder="Describe el propósito o valores esperados para esta característica..."
+        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-white dark:focus-visible:bg-slate-900 transition-all placeholder:text-slate-400 resize-none"
+      ></textarea>
+      <div class="flex justify-between items-center text-xs text-slate-400 mt-1">
+        <span>Máximo 500 caracteres</span>
+        <span>{{ form.controls.description.value?.length || 0 }}/500</span>
+      </div>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="mt-6 flex items-center justify-end gap-3 pt-2">
+      <button
+        type="button"
+        (click)="onCancel()"
+        [disabled]="isSubmitting()"
+        class="inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-900 cursor-pointer disabled:opacity-50"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        [disabled]="form.invalid || isSubmitting()"
+        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] text-xs sm:text-sm font-semibold rounded-xl text-white bg-primary hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer"
+      >
+        @if (isSubmitting()) {
+          <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-hidden="true"></span>
+          <span>Guardando...</span>
+        } @else {
+          <span class="mat-icon text-lg select-none">{{ isEdit ? 'save' : 'add' }}</span>
+          <span>{{ isEdit ? 'Guardar Cambios' : 'Crear Atributo' }}</span>
+        }
+      </button>
+    </div>
+  </form>
+</div>
