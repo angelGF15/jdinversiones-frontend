@@ -191,7 +191,7 @@ describe('CategoriesListComponent', () => {
     );
   });
 
-  it('debe mostrar mensaje de error en snackbar si la desactivación falla con 409', () => {
+  it('debe abrir modal informativo de conflicto si la desactivación falla con 409', () => {
     const dialogRefSpy = {
       afterClosed: () => of(true),
     } as MatDialogRef<ConfirmDialogComponent>;
@@ -211,10 +211,15 @@ describe('CategoriesListComponent', () => {
 
     component.onToggleStatus(mockCategories[0]);
 
-    expect(snackBarSpy.open).toHaveBeenCalledWith(
-      'No se puede desactivar la categoría porque tiene productos asociados activos',
-      'Cerrar',
-      jasmine.any(Object)
+    expect(dialogSpy.open).toHaveBeenCalledTimes(2);
+    expect(dialogSpy.open).toHaveBeenCalledWith(
+      ConfirmDialogComponent,
+      jasmine.objectContaining({
+        data: jasmine.objectContaining({
+          title: 'No se puede desactivar la categoría',
+          message: jasmine.stringContaining('No se puede desactivar la categoría'),
+        }),
+      })
     );
   });
 

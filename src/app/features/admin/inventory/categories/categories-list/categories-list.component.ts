@@ -339,11 +339,26 @@ export class CategoriesListComponent implements OnInit {
             const msg = Array.isArray(err.error?.message)
               ? err.error.message.join(' · ')
               : err.error?.message ?? 'No se pudo actualizar el estado de la categoría.';
-            this.snackBar.open(msg, 'Cerrar', {
-              duration: 5000,
-              horizontalPosition: 'right',
-              verticalPosition: 'top',
-            });
+
+            if (err.status === 409) {
+              this.dialog.open(ConfirmDialogComponent, {
+                width: '460px',
+                data: {
+                  title: 'No se puede desactivar la categoría',
+                  message: `${msg}\n\nDebes desvincular o archivar los productos vinculados antes de poder desactivar esta categoría del catálogo.`,
+                  confirmText: 'Entendido',
+                  cancelText: 'Cerrar',
+                  icon: 'warning',
+                  isDestructive: false,
+                },
+              });
+            } else {
+              this.snackBar.open(msg, 'Cerrar', {
+                duration: 5000,
+                horizontalPosition: 'right',
+                verticalPosition: 'top',
+              });
+            }
           },
         });
       });
