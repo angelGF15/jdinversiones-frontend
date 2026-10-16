@@ -143,6 +143,52 @@ describe('ProductFormComponent', () => {
       expect(component.form.controls.slug.value).toBe('iphone-16-pro-max-256gb');
     });
 
+    it('debe calcular la tasa de completación del formulario en modo creación y actualizarse reactivamente', () => {
+      // Estado inicial (0 campos válidos)
+      expect(component.formCompletion().percentage).toBe(0);
+      expect(component.formCompletion().completedCount).toBe(0);
+      expect(component.formCompletion().isComplete).toBeFalse();
+      expect(component.formCompletion().pendingFields).toEqual([
+        'Nombre',
+        'SKU',
+        'Categoría',
+        'Marca',
+        'Precio',
+      ]);
+
+      // Llenamos el nombre (1 de 5 = 20%)
+      component.form.controls.name.setValue('Laptop HP Pavilion');
+      expect(component.formCompletion().completedCount).toBe(1);
+      expect(component.formCompletion().percentage).toBe(20);
+
+      // Llenamos SKU y Categoría (3 de 5 = 60%)
+      component.form.controls.sku.setValue('HP-PAV-15');
+      component.form.controls.categoryId.setValue('cat-1');
+      expect(component.formCompletion().completedCount).toBe(3);
+      expect(component.formCompletion().percentage).toBe(60);
+      expect(component.formCompletion().pendingFields).toEqual(['Marca', 'Precio']);
+
+      // Llenamos Marca y Precio (5 de 5 = 100%)
+      component.form.controls.brandId.setValue('brand-1');
+      component.form.controls.price.setValue(18500);
+      expect(component.formCompletion().completedCount).toBe(5);
+      expect(component.formCompletion().percentage).toBe(100);
+      expect(component.formCompletion().isComplete).toBeTrue();
+      expect(component.formCompletion().pendingFields.length).toBe(0);
+    });
+
+    it('debe restablecer la barra de completación al descartar el formulario en modo creación', () => {
+      component.form.controls.name.setValue('Laptop HP Pavilion');
+      component.form.controls.sku.setValue('HP-PAV-15');
+      expect(component.formCompletion().percentage).toBe(40);
+
+      component.discard();
+
+      expect(component.formCompletion().percentage).toBe(0);
+      expect(component.formCompletion().completedCount).toBe(0);
+      expect(component.formCompletion().isComplete).toBeFalse();
+    });
+
     it('debe calcular reactivamente el margen bruto y utilidad unitaria', () => {
       component.form.patchValue({
         price: 1000,

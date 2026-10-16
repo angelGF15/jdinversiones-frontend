@@ -5,3 +5,4 @@ export * from './filters/list-filters.component';
 export * from './pagination/pagination.component';
 export * from './avatar-upload-dialog/avatar-upload-dialog.component';
 export * from './confirm-dialog/confirm-dialog.component';
+export * from './form-actions-dock/form-actions-dock.component';

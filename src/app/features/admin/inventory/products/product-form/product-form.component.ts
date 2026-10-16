@@ -16,7 +16,7 @@ import {
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { of } from 'rxjs';
+import { of, merge } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -49,6 +49,17 @@ export function slugifyProduct(text: string): string {
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/[\s_-]+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Estado y métricas reactivas de completación del formulario de producto.
+ */
+export interface FormCompletionState {
+  percentage: number;
+  completedCount: number;
+  totalCount: number;
+  pendingFields: string[];
+  isComplete: boolean;
 }
 
 @Component({
@@ -87,6 +98,13 @@ export class ProductFormComponent implements OnInit {
   public readonly isImageBroken = signal<boolean>(false);
   public readonly currentAttributes = signal<ProductAttributeInput[] | null>(null);
   public readonly queuedImages = signal<File[]>([]);
+  public readonly formCompletion = signal<FormCompletionState>({
+    percentage: 0,
+    completedCount: 0,
+    totalCount: 5,
+    pendingFields: ['Nombre', 'SKU', 'Categoría', 'Marca', 'Precio'],
+    isComplete: false,
+  });
 
   // --- Catálogos Maestros Activos ---
   public readonly availableCategories = signal<CategoryChild[]>([]);
@@ -167,6 +185,14 @@ export class ProductFormComponent implements OnInit {
             });
           }
         });
+
+      // Monitoreo en tiempo real del progreso de completación del formulario (Solo modo crear)
+      this.updateFormCompletion();
+      merge(this.form.valueChanges, this.form.statusChanges)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          this.updateFormCompletion();
+        });
     }
   }
 
@@ -202,7 +228,7 @@ export class ProductFormComponent implements OnInit {
         next: (statuses) => {
           this.availableStatuses.set(statuses);
         },
-        error: () => {},
+        error: () => { },
       });
   }
 
@@ -293,7 +319,51 @@ export class ProductFormComponent implements OnInit {
         metaDescription: '',
       });
       this.currentAttributes.set([]);
+      this.updateFormCompletion();
     }
+  }
+
+  /**
+   * Calcula la tasa de completación del formulario basada en los campos
+   * obligatorios requeridos para la creación de un nuevo producto.
+   */
+  public updateFormCompletion(): void {
+    const controls = this.form.controls;
+    const pending: string[] = [];
+
+    const isNameValid = !controls.name.invalid && !!controls.name.value?.trim();
+    if (!isNameValid) pending.push('Nombre');
+
+    const isSkuValid = !controls.sku.invalid && !!controls.sku.value?.trim();
+    if (!isSkuValid) pending.push('SKU');
+
+    const isCategoryValid = !controls.categoryId.invalid && !!controls.categoryId.value;
+    if (!isCategoryValid) pending.push('Categoría');
+
+    const isBrandValid = !controls.brandId.invalid && !!controls.brandId.value;
+    if (!isBrandValid) pending.push('Marca');
+
+    const rawPrice = controls.price.value;
+    const isPriceValid =
+      !controls.price.invalid &&
+      rawPrice !== null &&
+      rawPrice !== undefined &&
+      String(rawPrice).trim() !== '' &&
+      Number(rawPrice) >= 0;
+    if (!isPriceValid) pending.push('Precio');
+
+    const totalCount = 5;
+    const completedCount = totalCount - pending.length;
+    const isComplete = completedCount === totalCount && this.form.valid;
+    const percentage = isComplete ? 100 : Math.round((completedCount / totalCount) * 100);
+
+    this.formCompletion.set({
+      percentage,
+      completedCount,
+      totalCount,
+      pendingFields: pending,
+      isComplete,
+    });
   }
 
   /**

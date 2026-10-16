@@ -1,10 +1,8 @@
 <div class="product-form-page flex flex-col gap-6 w-full mx-auto">
   <!-- Navegación Superior / Breadcrumbs (Espejo de UserFormComponent) -->
   <nav aria-label="Ruta de navegación" class="flex items-center gap-2 text-xs font-medium">
-    <a
-      routerLink="/admin/inventory/products"
-      class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary-300 hover:bg-white dark:hover:bg-slate-900 border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-    >
+    <a routerLink="/admin/inventory/products"
+      class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary-300 hover:bg-white dark:hover:bg-slate-900 border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
       <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">arrow_back</span>
       <span>Productos</span>
     </a>
@@ -15,12 +13,11 @@
   </nav>
 
   <!-- Cabecera de la Pantalla -->
-  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-200/60 dark:border-slate-800/60">
+  <header
+    class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-200/60 dark:border-slate-800/60">
     <div class="flex items-center gap-3">
-      <div
-        aria-hidden="true"
-        class="w-11 h-11 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm flex-shrink-0"
-      >
+      <div aria-hidden="true"
+        class="w-11 h-11 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm flex-shrink-0">
         <span class="mat-icon text-2xl select-none leading-none">
           {{ isEditMode() ? 'edit_square' : 'add_box' }}
         </span>
@@ -31,9 +28,7 @@
             {{ isEditMode() ? 'Editar Producto' : 'Nuevo Producto' }}
           </h1>
           @if (isEditMode() && product()) {
-            <span
-              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
-              [ngClass]="{
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
                 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-transparent':
                   (form.controls.statusCode.value || product()?.statusCode) === 'active',
                 'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-transparent':
@@ -41,54 +36,44 @@
                 'bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-transparent':
                   (form.controls.statusCode.value || product()?.statusCode) !== 'active' &&
                   (form.controls.statusCode.value || product()?.statusCode) !== 'draft'
-              }"
-            >
-              <span
-                class="w-1.5 h-1.5 rounded-full"
-                [ngClass]="{
+              }">
+            <span class="w-1.5 h-1.5 rounded-full" [ngClass]="{
                   'bg-emerald-500': (form.controls.statusCode.value || product()?.statusCode) === 'active',
                   'bg-amber-500': (form.controls.statusCode.value || product()?.statusCode) === 'draft',
                   'bg-slate-400':
                     (form.controls.statusCode.value || product()?.statusCode) !== 'active' &&
                     (form.controls.statusCode.value || product()?.statusCode) !== 'draft'
-                }"
-              ></span>
-              <span>{{ getStatusLabel(form.controls.statusCode.value || product()?.statusCode) }}</span>
-            </span>
+                }"></span>
+            <span>{{ getStatusLabel(form.controls.statusCode.value || product()?.statusCode) }}</span>
+          </span>
           }
         </div>
         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
           {{
-            isEditMode()
-              ? 'Actualiza la identidad comercial, estructura de precios, rentabilidad y metadatos SEO.'
-              : 'Registra una nueva referencia en el catálogo con control de precios, márgenes y SEO.'
+          isEditMode()
+          ? 'Actualiza la identidad comercial, estructura de precios, rentabilidad y metadatos SEO.'
+          : 'Registra una nueva referencia en el catálogo con control de precios, márgenes y SEO.'
           }}
         </p>
       </div>
     </div>
 
     <!-- Botones de Acción Superiores -->
-    <div class="flex items-center gap-2.5 self-end sm:self-auto">
-      <a
-        routerLink="/admin/inventory/products"
-        class="inline-flex items-center justify-center px-4 py-2 min-h-[42px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 shadow-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-      >
+    <div class="flex items-center gap-2.5 self-end sm:self-auto w-full sm:w-auto">
+      <a routerLink="/admin/inventory/products"
+        class="inline-flex items-center justify-center px-4 py-2 min-h-[42px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 shadow-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary flex-1 sm:flex-initial">
         Cancelar
       </a>
-      <button
-        type="button"
-        (click)="onSubmit()"
-        [disabled]="isSubmitting() || isLoading()"
-        class="inline-flex items-center justify-center gap-2 px-5 py-2 min-h-[42px] text-xs sm:text-sm font-semibold rounded-xl bg-primary hover:bg-primary-700 text-white shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer"
-      >
+      <button type="button" (click)="onSubmit()" [disabled]="isSubmitting() || isLoading()"
+        class="inline-flex items-center justify-center gap-2 px-5 py-2 min-h-[42px] text-xs sm:text-sm font-semibold rounded-xl bg-primary hover:bg-primary-700 active:scale-[0.99] text-white shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer flex-1 sm:flex-initial">
         @if (isSubmitting()) {
-          <span class="mat-icon text-base animate-spin select-none flex-shrink-0" aria-hidden="true">refresh</span>
-          <span>Guardando...</span>
+        <span class="mat-icon text-base animate-spin select-none flex-shrink-0" aria-hidden="true">refresh</span>
+        <span>Guardando...</span>
         } @else {
-          <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">
-            {{ isEditMode() ? 'save' : 'add_box' }}
-          </span>
-          <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Producto' }}</span>
+        <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">
+          {{ isEditMode() ? 'save' : 'add_box' }}
+        </span>
+        <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Producto' }}</span>
         }
       </button>
     </div>
@@ -96,754 +81,763 @@
 
   <!-- Banner de error si la API retorna una excepción (ej. 409 SKU/slug duplicado o 400 dependencia inactiva) -->
   @if (errorMessage()) {
-    <div
-      role="alert"
-      aria-live="assertive"
-      class="flex items-center justify-between p-4 rounded-xl bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800/40 text-danger-700 dark:text-danger-300 text-sm animate-shake"
-    >
-      <div class="flex items-center gap-3">
-        <span class="mat-icon text-xl text-danger-500 select-none flex-shrink-0" aria-hidden="true">error_outline</span>
-        <span class="font-medium">{{ errorMessage() }}</span>
-      </div>
-      <button
-        type="button"
-        (click)="errorMessage.set(null)"
-        class="text-danger-500 hover:text-danger-700 dark:hover:text-danger-300 transition-colors p-1.5 rounded-lg flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 cursor-pointer"
-        aria-label="Cerrar alerta"
-      >
-        <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">close</span>
-      </button>
+  <div role="alert" aria-live="assertive"
+    class="flex items-center justify-between p-4 rounded-xl bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800/40 text-danger-700 dark:text-danger-300 text-sm animate-shake">
+    <div class="flex items-center gap-3">
+      <span class="mat-icon text-xl text-danger-500 select-none flex-shrink-0" aria-hidden="true">error_outline</span>
+      <span class="font-medium">{{ errorMessage() }}</span>
     </div>
+    <button type="button" (click)="errorMessage.set(null)"
+      class="text-danger-500 hover:text-danger-700 dark:hover:text-danger-300 transition-colors p-1.5 rounded-lg flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 cursor-pointer"
+      aria-label="Cerrar alerta">
+      <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">close</span>
+    </button>
+  </div>
   }
 
   <!-- Vista Esqueleto durante la carga de datos del producto -->
   @if (isLoading()) {
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-pulse">
-      <div class="lg:col-span-8 flex flex-col gap-6">
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
-          <div class="h-5 w-52 rounded bg-slate-200 dark:bg-slate-800"></div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
-            <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
-          </div>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-pulse">
+    <div class="lg:col-span-8 flex flex-col gap-6">
+      <div
+        class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
+        <div class="h-5 w-52 rounded bg-slate-200 dark:bg-slate-800"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
           <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
         </div>
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
-          <div class="h-5 w-48 rounded bg-slate-200 dark:bg-slate-800"></div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
-            <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
-          </div>
-          <div class="h-20 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
-        </div>
+        <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
       </div>
-      <div class="lg:col-span-4 flex flex-col gap-6">
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 flex flex-col items-center space-y-4">
-          <div class="w-24 h-24 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
-          <div class="h-4 w-36 rounded bg-slate-200 dark:bg-slate-800"></div>
-          <div class="h-3 w-48 rounded bg-slate-100 dark:bg-slate-800/60"></div>
+      <div
+        class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
+        <div class="h-5 w-48 rounded bg-slate-200 dark:bg-slate-800"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
+          <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
         </div>
+        <div class="h-20 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
       </div>
     </div>
+    <div class="lg:col-span-4 flex flex-col gap-6">
+      <div
+        class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 flex flex-col items-center space-y-4">
+        <div class="w-24 h-24 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
+        <div class="h-4 w-36 rounded bg-slate-200 dark:bg-slate-800"></div>
+        <div class="h-3 w-48 rounded bg-slate-100 dark:bg-slate-800/60"></div>
+      </div>
+    </div>
+  </div>
   } @else {
-    <!-- Formulario Principal -->
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="w-full pb-24" novalidate>
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+  <!-- Formulario Principal -->
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="w-full flex flex-col gap-6" novalidate>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-        <!-- ==================== COLUMNA PRINCIPAL (8 columnas) ==================== -->
-        <div class="lg:col-span-8 flex flex-col gap-6">
+      <!-- ==================== COLUMNA PRINCIPAL (8 columnas) ==================== -->
+      <div class="lg:col-span-8 flex flex-col gap-6">
 
-          <!-- Tarjeta 1: Información General y Clasificación -->
-          <section class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
-            <div class="pb-3 border-b border-slate-100 dark:border-slate-800">
-              <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                Información General
-              </h2>
-            </div>
+        <!-- Tarjeta 1: Información General y Clasificación -->
+        <section
+          class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
+          <div class="pb-3 border-b border-slate-100 dark:border-slate-800">
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+              Información General
+            </h2>
+          </div>
 
-            <!-- Fila 1: Nombre del Producto y SKU -->
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-5">
-              <!-- Campo: Nombre del Producto (8 cols) -->
-              <div class="sm:col-span-8 space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <label for="prod-name" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Nombre del Producto <span class="text-danger-500" aria-hidden="true">*</span>
-                  </label>
-                  <span class="text-[11px] text-slate-400 font-mono">
-                    {{ form.controls.name.value?.length || 0 }}/200
-                  </span>
-                </div>
-
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
-                    <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">shopping_bag</span>
-                  </div>
-                  <input
-                    id="prod-name"
-                    type="text"
-                    formControlName="name"
-                    maxlength="200"
-                    placeholder="Ej. MacBook Pro 16 M3 Max 36GB / 1TB SSD"
-                    aria-required="true"
-                    [attr.aria-invalid]="form.controls.name.invalid && form.controls.name.touched"
-                    [attr.aria-describedby]="form.controls.name.invalid && form.controls.name.touched ? 'prod-name-error' : null"
-                    class="input-field w-full pl-10 pr-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all"
-                    [class.border-danger-300]="form.controls.name.invalid && form.controls.name.touched"
-                  />
-                </div>
-
-                @if (form.controls.name.invalid && form.controls.name.touched) {
-                  <p id="prod-name-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
-                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
-                    @if (form.controls.name.errors?.['required']) {
-                      <span>El nombre del producto es obligatorio.</span>
-                    } @else if (form.controls.name.errors?.['minlength']) {
-                      <span>Mínimo 2 caracteres requeridos.</span>
-                    } @else if (form.controls.name.errors?.['maxlength']) {
-                      <span>Máximo 200 caracteres permitidos.</span>
-                    }
-                  </p>
-                }
-              </div>
-
-              <!-- Campo: SKU (4 cols) -->
-              <div class="sm:col-span-4 space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <label for="prod-sku" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Código SKU <span class="text-danger-500" aria-hidden="true">*</span>
-                  </label>
-                  <button
-                    type="button"
-                    (click)="normalizeSkuUppercase()"
-                    class="text-[11px] font-mono text-primary dark:text-primary-400 hover:underline cursor-pointer"
-                    matTooltip="Convertir SKU a mayúsculas"
-                  >
-                    MAYÚS
-                  </button>
-                </div>
-
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
-                    <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">qr_code_2</span>
-                  </div>
-                  <input
-                    id="prod-sku"
-                    type="text"
-                    formControlName="sku"
-                    maxlength="50"
-                    placeholder="LAP-MBP16-M3"
-                    aria-required="true"
-                    [attr.aria-invalid]="form.controls.sku.invalid && form.controls.sku.touched"
-                    [attr.aria-describedby]="form.controls.sku.invalid && form.controls.sku.touched ? 'prod-sku-error' : null"
-                    class="input-field w-full pl-10 pr-3.5 py-2.5 text-sm font-mono font-semibold rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all"
-                    [class.border-danger-300]="form.controls.sku.invalid && form.controls.sku.touched"
-                  />
-                </div>
-
-                @if (form.controls.sku.invalid && form.controls.sku.touched) {
-                  <p id="prod-sku-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
-                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
-                    @if (form.controls.sku.errors?.['required']) {
-                      <span>El SKU es obligatorio.</span>
-                    } @else if (form.controls.sku.errors?.['minlength']) {
-                      <span>Mínimo 2 caracteres requeridos.</span>
-                    } @else if (form.controls.sku.errors?.['maxlength']) {
-                      <span>Máximo 50 caracteres permitidos.</span>
-                    } @else if (form.controls.sku.errors?.['pattern']) {
-                      <span>Solo letras, números y guiones sin espacios.</span>
-                    } @else if (form.controls.sku.errors?.['serverConflict']) {
-                      <span>{{ form.controls.sku.getError('serverConflict') }}</span>
-                    }
-                  </p>
-                }
-              </div>
-            </div>
-
-            <!-- Fila 2: Slug Inteligente para URL -->
-            <div class="space-y-1.5">
+          <!-- Fila 1: Nombre del Producto y SKU -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-5">
+            <!-- Campo: Nombre del Producto (8 cols) -->
+            <div class="sm:col-span-8 space-y-1.5">
               <div class="flex items-center justify-between">
-                <label for="prod-slug" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Slug para URL
-                  <span class="text-slate-400 font-normal">
-                    ({{ isCustomSlug() ? 'personalizado' : 'autogenerado' }})
-                  </span>
+                <label for="prod-name" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Nombre del Producto <span class="text-danger-500" aria-hidden="true">*</span>
                 </label>
-                <button
-                  type="button"
-                  (click)="toggleCustomSlug()"
-                  class="text-xs text-primary dark:text-primary-400 hover:underline cursor-pointer font-medium inline-flex items-center gap-1"
-                >
-                  <span class="mat-icon text-xs select-none">{{ isCustomSlug() ? 'sync' : 'edit' }}</span>
-                  <span>{{ isCustomSlug() ? 'Autogenerar desde el nombre' : 'Personalizar manualmente' }}</span>
-                </button>
-              </div>
-
-              <div class="flex items-stretch rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-primary transition-all">
-                <span class="inline-flex items-center px-3 text-xs font-mono text-slate-400 bg-slate-50 dark:bg-slate-800/60 border-r border-slate-200 dark:border-slate-800 select-none">
-                  /productos/
+                <span class="text-[11px] text-slate-400 font-mono">
+                  {{ form.controls.name.value?.length || 0 }}/200
                 </span>
-                <input
-                  id="prod-slug"
-                  type="text"
-                  formControlName="slug"
-                  maxlength="220"
-                  [readonly]="!isCustomSlug()"
-                  placeholder="macbook-pro-16-m3-max"
-                  [attr.aria-invalid]="form.controls.slug.invalid && form.controls.slug.touched"
-                  [attr.aria-describedby]="form.controls.slug.invalid && form.controls.slug.touched ? 'prod-slug-error' : 'prod-slug-desc'"
-                  class="input-field flex-1 min-w-0 px-3.5 py-2.5 text-sm font-mono border-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
-                  [class.opacity-75]="!isCustomSlug()"
-                  [class.bg-slate-50]="!isCustomSlug()"
-                  [class.dark:bg-slate-800/40]="!isCustomSlug()"
-                />
               </div>
 
-              <p id="prod-slug-desc" class="text-[11px] text-slate-500 dark:text-slate-400">
-                Dirección amigable para buscadores (minúsculas, números y guiones simples).
-              </p>
+              <div class="relative">
+                <div
+                  class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
+                  <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">shopping_bag</span>
+                </div>
+                <input id="prod-name" type="text" formControlName="name" maxlength="200"
+                  placeholder="Ej. MacBook Pro 16 M3 Max 36GB / 1TB SSD" aria-required="true"
+                  [attr.aria-invalid]="form.controls.name.invalid && form.controls.name.touched"
+                  [attr.aria-describedby]="form.controls.name.invalid && form.controls.name.touched ? 'prod-name-error' : null"
+                  class="input-field w-full pl-10 pr-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all"
+                  [class.border-danger-300]="form.controls.name.invalid && form.controls.name.touched" />
+              </div>
 
-              @if (form.controls.slug.touched && form.controls.slug.errors) {
-                <p id="prod-slug-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
-                  <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
-                  @if (form.controls.slug.hasError('pattern')) {
-                    <span>El slug solo puede contener minúsculas, números y guiones intermedios.</span>
-                  } @else if (form.controls.slug.hasError('maxlength')) {
-                    <span>Máximo 220 caracteres permitidos.</span>
-                  } @else if (form.controls.slug.hasError('serverConflict')) {
-                    <span>{{ form.controls.slug.getError('serverConflict') }}</span>
-                  }
-                </p>
+              @if (form.controls.name.invalid && form.controls.name.touched) {
+              <p id="prod-name-error" role="alert"
+                class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                @if (form.controls.name.errors?.['required']) {
+                <span>El nombre del producto es obligatorio.</span>
+                } @else if (form.controls.name.errors?.['minlength']) {
+                <span>Mínimo 2 caracteres requeridos.</span>
+                } @else if (form.controls.name.errors?.['maxlength']) {
+                <span>Máximo 200 caracteres permitidos.</span>
+                }
+              </p>
               }
             </div>
 
-            <!-- Fila 3: Categoría y Marca Comercial -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <!-- Select: Categoría Activa -->
-              <div class="space-y-1.5">
-                <label for="prod-category" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Categoría <span class="text-danger-500" aria-hidden="true">*</span>
+            <!-- Campo: SKU (4 cols) -->
+            <div class="sm:col-span-4 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label for="prod-sku" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Código SKU <span class="text-danger-500" aria-hidden="true">*</span>
                 </label>
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
-                    <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">category</span>
-                  </div>
-                  <select
-                    id="prod-category"
-                    formControlName="categoryId"
-                    aria-required="true"
-                    [attr.aria-invalid]="form.controls.categoryId.invalid && form.controls.categoryId.touched"
-                    class="input-field w-full pl-10 pr-9 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-all cursor-pointer appearance-none"
-                    [class.border-danger-300]="form.controls.categoryId.invalid && form.controls.categoryId.touched"
-                  >
-                    <option value="">Selecciona una categoría activa...</option>
-                    @for (cat of availableCategories(); track cat.id) {
-                      <option [value]="cat.id">{{ cat.name }}</option>
-                    }
-                  </select>
-                  <span class="mat-icon text-lg text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none select-none">
-                    expand_more
-                  </span>
-                </div>
-
-                @if (form.controls.categoryId.invalid && form.controls.categoryId.touched) {
-                  <p role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
-                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
-                    <span>Debes asignar una categoría activa al producto.</span>
-                  </p>
-                }
+                <button type="button" (click)="normalizeSkuUppercase()"
+                  class="text-[11px] font-mono text-primary dark:text-primary-400 hover:underline cursor-pointer"
+                  matTooltip="Convertir SKU a mayúsculas">
+                  MAYÚS
+                </button>
               </div>
 
-              <!-- Select: Marca Comercial Activa -->
-              <div class="space-y-1.5">
-                <label for="prod-brand" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Marca Comercial <span class="text-danger-500" aria-hidden="true">*</span>
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
-                    <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">verified</span>
-                  </div>
-                  <select
-                    id="prod-brand"
-                    formControlName="brandId"
-                    aria-required="true"
-                    [attr.aria-invalid]="form.controls.brandId.invalid && form.controls.brandId.touched"
-                    class="input-field w-full pl-10 pr-9 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-all cursor-pointer appearance-none"
-                    [class.border-danger-300]="form.controls.brandId.invalid && form.controls.brandId.touched"
-                  >
-                    <option value="">Selecciona una marca activa...</option>
-                    @for (brand of availableBrands(); track brand.id) {
-                      <option [value]="brand.id">{{ brand.name }}</option>
-                    }
-                  </select>
-                  <span class="mat-icon text-lg text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none select-none">
-                    expand_more
-                  </span>
+              <div class="relative">
+                <div
+                  class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
+                  <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">qr_code_2</span>
                 </div>
-
-                @if (form.controls.brandId.invalid && form.controls.brandId.touched) {
-                  <p role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
-                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
-                    <span>Debes asignar una marca comercial activa.</span>
-                  </p>
-                }
+                <input id="prod-sku" type="text" formControlName="sku" maxlength="50" placeholder="LAP-MBP16-M3"
+                  aria-required="true" [attr.aria-invalid]="form.controls.sku.invalid && form.controls.sku.touched"
+                  [attr.aria-describedby]="form.controls.sku.invalid && form.controls.sku.touched ? 'prod-sku-error' : null"
+                  class="input-field w-full pl-10 pr-3.5 py-2.5 text-sm font-mono font-semibold rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all"
+                  [class.border-danger-300]="form.controls.sku.invalid && form.controls.sku.touched" />
               </div>
+
+              @if (form.controls.sku.invalid && form.controls.sku.touched) {
+              <p id="prod-sku-error" role="alert"
+                class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                @if (form.controls.sku.errors?.['required']) {
+                <span>El SKU es obligatorio.</span>
+                } @else if (form.controls.sku.errors?.['minlength']) {
+                <span>Mínimo 2 caracteres requeridos.</span>
+                } @else if (form.controls.sku.errors?.['maxlength']) {
+                <span>Máximo 50 caracteres permitidos.</span>
+                } @else if (form.controls.sku.errors?.['pattern']) {
+                <span>Solo letras, números y guiones sin espacios.</span>
+                } @else if (form.controls.sku.errors?.['serverConflict']) {
+                <span>{{ form.controls.sku.getError('serverConflict') }}</span>
+                }
+              </p>
+              }
+            </div>
+          </div>
+
+          <!-- Fila 2: Slug Inteligente para URL -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label for="prod-slug" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Slug para URL
+                <span class="text-slate-400 font-normal">
+                  ({{ isCustomSlug() ? 'personalizado' : 'autogenerado' }})
+                </span>
+              </label>
+              <button type="button" (click)="toggleCustomSlug()"
+                class="text-xs text-primary dark:text-primary-400 hover:underline cursor-pointer font-medium inline-flex items-center gap-1">
+                <span class="mat-icon text-xs select-none">{{ isCustomSlug() ? 'sync' : 'edit' }}</span>
+                <span>{{ isCustomSlug() ? 'Autogenerar desde el nombre' : 'Personalizar manualmente' }}</span>
+              </button>
             </div>
 
-            <!-- Fila 4: Estado de Publicación y Switch de Producto Destacado -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-1">
-              <!-- Select: Estado del Producto -->
-              <div class="space-y-1.5">
-                <label for="prod-status" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Estado de Publicación <span class="text-danger-500" aria-hidden="true">*</span>
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
-                    <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">toggle_on</span>
-                  </div>
-                  <select
-                    id="prod-status"
-                    formControlName="statusCode"
-                    class="input-field w-full pl-10 pr-9 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-all cursor-pointer appearance-none"
-                  >
-                    @if (availableStatuses().length > 0) {
-                      @for (st of availableStatuses(); track st.id) {
-                        <option [value]="st.code">{{ getStatusLabel(st.code) }}</option>
-                      }
-                    } @else {
-                      <option value="active">Activo</option>
-                      <option value="draft">Borrador</option>
-                      <option value="inactive">Inactivo</option>
-                    }
-                  </select>
-                  <span class="mat-icon text-lg text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none select-none">
-                    expand_more
-                  </span>
+            <div
+              class="flex items-stretch rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-primary transition-all">
+              <span
+                class="inline-flex items-center px-3 text-xs font-mono text-slate-400 bg-slate-50 dark:bg-slate-800/60 border-r border-slate-200 dark:border-slate-800 select-none">
+                /productos/
+              </span>
+              <input id="prod-slug" type="text" formControlName="slug" maxlength="220" [readonly]="!isCustomSlug()"
+                placeholder="macbook-pro-16-m3-max"
+                [attr.aria-invalid]="form.controls.slug.invalid && form.controls.slug.touched"
+                [attr.aria-describedby]="form.controls.slug.invalid && form.controls.slug.touched ? 'prod-slug-error' : 'prod-slug-desc'"
+                class="input-field flex-1 min-w-0 px-3.5 py-2.5 text-sm font-mono border-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
+                [class.opacity-75]="!isCustomSlug()" [class.bg-slate-50]="!isCustomSlug()"
+                [class.dark:bg-slate-800/40]="!isCustomSlug()" />
+            </div>
+
+            <p id="prod-slug-desc" class="text-[11px] text-slate-500 dark:text-slate-400">
+              Dirección amigable para buscadores (minúsculas, números y guiones simples).
+            </p>
+
+            @if (form.controls.slug.touched && form.controls.slug.errors) {
+            <p id="prod-slug-error" role="alert"
+              class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+              <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+              @if (form.controls.slug.hasError('pattern')) {
+              <span>El slug solo puede contener minúsculas, números y guiones intermedios.</span>
+              } @else if (form.controls.slug.hasError('maxlength')) {
+              <span>Máximo 220 caracteres permitidos.</span>
+              } @else if (form.controls.slug.hasError('serverConflict')) {
+              <span>{{ form.controls.slug.getError('serverConflict') }}</span>
+              }
+            </p>
+            }
+          </div>
+
+          <!-- Fila 3: Categoría y Marca Comercial -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <!-- Select: Categoría Activa -->
+            <div class="space-y-1.5">
+              <label for="prod-category" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Categoría <span class="text-danger-500" aria-hidden="true">*</span>
+              </label>
+              <div class="relative">
+                <div
+                  class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
+                  <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">category</span>
                 </div>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400">
-                  Los productos en Borrador o Inactivos no son visibles en la tienda pública.
-                </p>
+                <select id="prod-category" formControlName="categoryId" aria-required="true"
+                  [attr.aria-invalid]="form.controls.categoryId.invalid && form.controls.categoryId.touched"
+                  class="input-field w-full pl-10 pr-9 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-all cursor-pointer appearance-none"
+                  [class.border-danger-300]="form.controls.categoryId.invalid && form.controls.categoryId.touched">
+                  <option value="">Selecciona una categoría activa...</option>
+                  @for (cat of availableCategories(); track cat.id) {
+                  <option [value]="cat.id">{{ cat.name }}</option>
+                  }
+                </select>
+                <span
+                  class="mat-icon text-lg text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none select-none">
+                  expand_more
+                </span>
               </div>
 
-              <!-- Tarjeta Interactiva: Producto Destacado (isFeatured) -->
-              <div class="space-y-1.5">
-                <span class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Visibilidad en Portada
-                </span>
+              @if (form.controls.categoryId.invalid && form.controls.categoryId.touched) {
+              <p role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                <span>Debes asignar una categoría activa al producto.</span>
+              </p>
+              }
+            </div>
+
+            <!-- Select: Marca Comercial Activa -->
+            <div class="space-y-1.5">
+              <label for="prod-brand" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Marca Comercial <span class="text-danger-500" aria-hidden="true">*</span>
+              </label>
+              <div class="relative">
                 <div
-                  role="switch"
-                  tabindex="0"
-                  [attr.aria-checked]="!!form.controls.isFeatured.value"
-                  aria-label="Marcar como producto destacado"
-                  (click)="toggleFeatured()"
-                  (keydown)="onKeyDownFeatured($event)"
-                  class="featured-card group p-3 rounded-xl border text-left cursor-pointer select-none transition-all flex items-center justify-between gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  [class.is-featured]="!!form.controls.isFeatured.value"
-                >
-                  <div class="flex items-center gap-3 min-w-0">
-                    <div
-                      aria-hidden="true"
-                      class="w-9 h-9 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
-                      [ngClass]="
+                  class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
+                  <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">verified</span>
+                </div>
+                <select id="prod-brand" formControlName="brandId" aria-required="true"
+                  [attr.aria-invalid]="form.controls.brandId.invalid && form.controls.brandId.touched"
+                  class="input-field w-full pl-10 pr-9 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-all cursor-pointer appearance-none"
+                  [class.border-danger-300]="form.controls.brandId.invalid && form.controls.brandId.touched">
+                  <option value="">Selecciona una marca activa...</option>
+                  @for (brand of availableBrands(); track brand.id) {
+                  <option [value]="brand.id">{{ brand.name }}</option>
+                  }
+                </select>
+                <span
+                  class="mat-icon text-lg text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none select-none">
+                  expand_more
+                </span>
+              </div>
+
+              @if (form.controls.brandId.invalid && form.controls.brandId.touched) {
+              <p role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                <span>Debes asignar una marca comercial activa.</span>
+              </p>
+              }
+            </div>
+          </div>
+
+          <!-- Fila 4: Estado de Publicación y Switch de Producto Destacado -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-1">
+            <!-- Select: Estado del Producto -->
+            <div class="space-y-1.5">
+              <label for="prod-status" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Estado de Publicación <span class="text-danger-500" aria-hidden="true">*</span>
+              </label>
+              <div class="relative">
+                <div
+                  class="absolute inset-y-0 left-0 pl-3.5 flex items-center justify-center pointer-events-none text-slate-400 dark:text-slate-500">
+                  <span class="mat-icon text-lg select-none flex-shrink-0" aria-hidden="true">toggle_on</span>
+                </div>
+                <select id="prod-status" formControlName="statusCode"
+                  class="input-field w-full pl-10 pr-9 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-all cursor-pointer appearance-none">
+                  @if (availableStatuses().length > 0) {
+                  @for (st of availableStatuses(); track st.id) {
+                  <option [value]="st.code">{{ getStatusLabel(st.code) }}</option>
+                  }
+                  } @else {
+                  <option value="active">Activo</option>
+                  <option value="draft">Borrador</option>
+                  <option value="inactive">Inactivo</option>
+                  }
+                </select>
+                <span
+                  class="mat-icon text-lg text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none select-none">
+                  expand_more
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                Los productos en Borrador o Inactivos no son visibles en la tienda pública.
+              </p>
+            </div>
+
+            <!-- Tarjeta Interactiva: Producto Destacado (isFeatured) -->
+            <div class="space-y-1.5">
+              <span class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Visibilidad en Portada
+              </span>
+              <div role="switch" tabindex="0" [attr.aria-checked]="!!form.controls.isFeatured.value"
+                aria-label="Marcar como producto destacado" (click)="toggleFeatured()"
+                (keydown)="onKeyDownFeatured($event)"
+                class="featured-card group p-3 rounded-xl border text-left cursor-pointer select-none transition-all flex items-center justify-between gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                [class.is-featured]="!!form.controls.isFeatured.value">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div aria-hidden="true"
+                    class="w-9 h-9 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
+                    [ngClass]="
                         form.controls.isFeatured.value
                           ? 'bg-amber-500 text-white shadow-2xs'
                           : 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
-                      "
-                    >
-                      <span class="mat-icon text-lg select-none">star</span>
-                    </div>
-                    <div class="min-w-0">
-                      <span class="text-xs font-bold block text-slate-900 dark:text-white">
-                        Producto Destacado
-                      </span>
-                      <span class="text-[11px] text-slate-500 dark:text-slate-400 block truncate">
-                        Priorizar en vitrinas y promociones
-                      </span>
-                    </div>
+                      ">
+                    <span class="mat-icon text-lg select-none">star</span>
                   </div>
+                  <div class="min-w-0">
+                    <span class="text-xs font-bold block text-slate-900 dark:text-white">
+                      Producto Destacado
+                    </span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+                      Priorizar en vitrinas y promociones
+                    </span>
+                  </div>
+                </div>
 
-                  <!-- Switch visual -->
-                  <div
-                    aria-hidden="true"
-                    class="w-10 h-5 rounded-full transition-colors p-0.5 flex items-center flex-shrink-0"
-                    [ngClass]="
+                <!-- Switch visual -->
+                <div aria-hidden="true"
+                  class="w-10 h-5 rounded-full transition-colors p-0.5 flex items-center flex-shrink-0" [ngClass]="
                       form.controls.isFeatured.value
                         ? 'bg-amber-500 justify-end'
                         : 'bg-slate-200 dark:bg-slate-700 justify-start'
-                    "
-                  >
-                    <span class="w-4 h-4 rounded-full bg-white shadow-2xs block"></span>
-                  </div>
+                    ">
+                  <span class="w-4 h-4 rounded-full bg-white shadow-2xs block"></span>
                 </div>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          <!-- Tarjeta 2: Descripción Comercial y Optimización SEO (con Vista Previa SERP) -->
-          <section class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
-            <div class="pb-3 border-b border-slate-100 dark:border-slate-800">
-              <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                Descripción y Posicionamiento SEO
-              </h2>
+        <!-- Tarjeta 2: Descripción Comercial y Optimización SEO (con Vista Previa SERP) -->
+        <section
+          class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
+          <div class="pb-3 border-b border-slate-100 dark:border-slate-800">
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+              Descripción y Posicionamiento SEO
+            </h2>
+          </div>
+
+          <!-- Resumen corto (shortDescription) -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label for="prod-short-desc" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Resumen corto <span class="text-slate-400 font-normal">(opcional)</span>
+              </label>
+              <span class="text-[11px] text-slate-400 font-mono">
+                {{ form.controls.shortDescription.value?.length || 0 }}/500
+              </span>
             </div>
+            <textarea id="prod-short-desc" rows="2" maxlength="500" formControlName="shortDescription"
+              placeholder="Síntesis de 1 o 2 líneas que destaca los beneficios clave junto al botón de compra..."
+              class="input-field w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all resize-none"></textarea>
+          </div>
 
-            <!-- Resumen corto (shortDescription) -->
+          <!-- Descripción detallada -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label for="prod-desc" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Descripción detallada <span class="text-slate-400 font-normal">(opcional)</span>
+              </label>
+              <span class="text-[11px] text-slate-400 font-mono">
+                {{ form.controls.description.value?.length || 0 }}/5000
+              </span>
+            </div>
+            <textarea id="prod-desc" rows="4" maxlength="5000" formControlName="description"
+              placeholder="Describe las características completas, contenido de la caja, garantía y usos recomendados..."
+              class="input-field w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all resize-y"></textarea>
+          </div>
+
+          <!-- Campos Meta Title y Meta Description -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2 border-t border-slate-100 dark:border-slate-800">
             <div class="space-y-1.5">
               <div class="flex items-center justify-between">
-                <label for="prod-short-desc" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Resumen corto <span class="text-slate-400 font-normal">(opcional)</span>
+                <label for="prod-meta-title" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Meta Title (SEO)
                 </label>
                 <span class="text-[11px] text-slate-400 font-mono">
-                  {{ form.controls.shortDescription.value?.length || 0 }}/500
+                  {{ form.controls.metaTitle.value?.length || 0 }}/100
                 </span>
               </div>
-              <textarea
-                id="prod-short-desc"
-                rows="2"
-                maxlength="500"
-                formControlName="shortDescription"
-                placeholder="Síntesis de 1 o 2 líneas que destaca los beneficios clave junto al botón de compra..."
-                class="input-field w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all resize-none"
-              ></textarea>
+              <input id="prod-meta-title" type="text" maxlength="100" formControlName="metaTitle"
+                placeholder="Título optimizado para buscadores..."
+                class="input-field w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all" />
             </div>
 
-            <!-- Descripción detallada -->
             <div class="space-y-1.5">
               <div class="flex items-center justify-between">
-                <label for="prod-desc" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Descripción detallada <span class="text-slate-400 font-normal">(opcional)</span>
+                <label for="prod-meta-desc" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Meta Description (SEO)
                 </label>
                 <span class="text-[11px] text-slate-400 font-mono">
-                  {{ form.controls.description.value?.length || 0 }}/5000
+                  {{ form.controls.metaDescription.value?.length || 0 }}/255
                 </span>
               </div>
-              <textarea
-                id="prod-desc"
-                rows="4"
-                maxlength="5000"
-                formControlName="description"
-                placeholder="Describe las características completas, contenido de la caja, garantía y usos recomendados..."
-                class="input-field w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all resize-y"
-              ></textarea>
+              <input id="prod-meta-desc" type="text" maxlength="255" formControlName="metaDescription"
+                placeholder="Descripción breve para el resultado en Google..."
+                class="input-field w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all" />
+            </div>
+          </div>
+
+          <!-- Tarjeta de Previsualización SERP en Tiempo Real -->
+          <div
+            class="serp-preview-card p-4 rounded-xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 pb-1">
+              <span class="font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                <span class="mat-icon text-sm text-primary select-none" aria-hidden="true">search</span>
+                <span>Vista previa en motores de búsqueda (SERP)</span>
+              </span>
+              <span class="font-mono">Google Search</span>
             </div>
 
-            <!-- Campos Meta Title y Meta Description -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <label for="prod-meta-title" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Meta Title (SEO)
-                  </label>
-                  <span class="text-[11px] text-slate-400 font-mono">
-                    {{ form.controls.metaTitle.value?.length || 0 }}/100
-                  </span>
-                </div>
-                <input
-                  id="prod-meta-title"
-                  type="text"
-                  maxlength="100"
-                  formControlName="metaTitle"
-                  placeholder="Título optimizado para buscadores..."
-                  class="input-field w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all"
-                />
+            <div
+              class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/80 space-y-1 shadow-2xs">
+              <div class="text-xs text-emerald-700 dark:text-emerald-400 font-mono truncate">
+                https://jdinversiones.com › productos › {{ serpSlug }}
               </div>
-
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <label for="prod-meta-desc" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Meta Description (SEO)
-                  </label>
-                  <span class="text-[11px] text-slate-400 font-mono">
-                    {{ form.controls.metaDescription.value?.length || 0 }}/255
-                  </span>
-                </div>
-                <input
-                  id="prod-meta-desc"
-                  type="text"
-                  maxlength="255"
-                  formControlName="metaDescription"
-                  placeholder="Descripción breve para el resultado en Google..."
-                  class="input-field w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all"
-                />
+              <div class="text-base font-semibold text-indigo-700 dark:text-indigo-400 truncate">
+                {{ serpTitle }}
               </div>
+              @if (form.controls.price.value && form.controls.price.value > 0) {
+              <div class="text-xs font-mono font-semibold text-slate-700 dark:text-slate-300">
+                L {{ form.controls.price.value | number: '1.2-2' }} · Disponible en catálogo
+              </div>
+              }
+              <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                {{ serpDescription }}
+              </p>
             </div>
+          </div>
+        </section>
 
-            <!-- Tarjeta de Previsualización SERP en Tiempo Real -->
-            <div class="serp-preview-card p-4 rounded-xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
-              <div class="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 pb-1">
-                <span class="font-semibold uppercase tracking-wider flex items-center gap-1.5">
-                  <span class="mat-icon text-sm text-primary select-none" aria-hidden="true">search</span>
-                  <span>Vista previa en motores de búsqueda (SERP)</span>
-                </span>
-                <span class="font-mono">Google Search</span>
-              </div>
+        <!-- ==================== SECCIÓN 4: GALERÍA DE IMÁGENES ==================== -->
+        <section aria-label="Galería de imágenes"
+          class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+          <app-product-gallery [productId]="productId()" [images]="product()?.images ?? []"
+            (imagesChange)="onGalleryImagesChange($event)" (productUpdated)="onProductUpdated($event)"
+            (localQueueChange)="onLocalQueueChange($event)"></app-product-gallery>
+        </section>
+      </div>
 
-              <div class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/80 space-y-1 shadow-2xs">
-                <div class="text-xs text-emerald-700 dark:text-emerald-400 font-mono truncate">
-                  https://jdinversiones.com › productos › {{ serpSlug }}
-                </div>
-                <div class="text-base font-semibold text-indigo-700 dark:text-indigo-400 truncate">
-                  {{ serpTitle }}
-                </div>
-                @if (form.controls.price.value && form.controls.price.value > 0) {
-                  <div class="text-xs font-mono font-semibold text-slate-700 dark:text-slate-300">
-                    L {{ form.controls.price.value | number: '1.2-2' }} · Disponible en catálogo
-                  </div>
-                }
-                <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                  {{ serpDescription }}
-                </p>
-              </div>
-            </div>
-          </section>
+      <!-- ==================== COLUMNA LATERAL (4 columnas) ==================== -->
+      <aside class="lg:col-span-4 flex flex-col gap-6">
 
-          <!-- ==================== SECCIÓN 4: GALERÍA DE IMÁGENES ==================== -->
-          <section
-            aria-label="Galería de imágenes"
-            class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm"
-          >
-            <app-product-gallery
-              [productId]="productId()"
-              [images]="product()?.images ?? []"
-              (imagesChange)="onGalleryImagesChange($event)"
-              (productUpdated)="onProductUpdated($event)"
-              (localQueueChange)="onLocalQueueChange($event)"
-            ></app-product-gallery>
-          </section>
-        </div>
+        <!-- ==================== SECCIÓN 1 LATERAL: PRECIOS Y MÁRGENES ==================== -->
+        <section
+          class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
+          <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+              Precios y Márgenes
+            </h2>
 
-        <!-- ==================== COLUMNA LATERAL (4 columnas) ==================== -->
-        <aside class="lg:col-span-4 flex flex-col gap-6">
-
-          <!-- ==================== SECCIÓN 1 LATERAL: PRECIOS Y MÁRGENES ==================== -->
-          <section class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
-            <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-              <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                Precios y Márgenes
-              </h2>
-
-              <!-- Badge instantáneo de Margen Bruto -->
-              @if (grossMarginPercent !== null) {
-                <span
-                  aria-live="polite"
-                  class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold border flex-shrink-0"
-                  [ngClass]="{
+            <!-- Badge instantáneo de Margen Bruto -->
+            @if (grossMarginPercent !== null) {
+            <span aria-live="polite"
+              class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold border flex-shrink-0"
+              [ngClass]="{
                     'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/30':
                       marginHealth === 'high',
                     'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/30':
                       marginHealth === 'medium' || marginHealth === 'low',
                     'bg-danger-50 text-danger-700 border-danger-200 dark:bg-danger-500/10 dark:text-danger-300 dark:border-danger-500/30':
                       marginHealth === 'negative'
-                  }"
-                >
-                  <span class="mat-icon text-xs select-none" aria-hidden="true">
-                    {{ marginHealth === 'negative' ? 'trending_down' : 'trending_up' }}
-                  </span>
-                  <span>{{ grossMarginPercent | number: '1.1-1' }}%</span>
+                  }">
+              <span class="mat-icon text-xs select-none" aria-hidden="true">
+                {{ marginHealth === 'negative' ? 'trending_down' : 'trending_up' }}
+              </span>
+              <span>{{ grossMarginPercent | number: '1.1-1' }}%</span>
+            </span>
+            }
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+            <!-- Campo: Precio de Venta al Público (PVP) -->
+            <div class="space-y-1.5">
+              <label for="prod-price" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Precio de Venta (PVP) <span class="text-danger-500" aria-hidden="true">*</span>
+              </label>
+
+              <div
+                class="relative flex items-stretch rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-primary transition-all"
+                [class.border-danger-300]="form.controls.price.invalid && form.controls.price.touched">
+                <span
+                  class="inline-flex items-center px-3.5 text-sm font-mono font-bold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-800 select-none">
+                  L
                 </span>
+                <input id="prod-price" type="number" min="0" step="0.01" formControlName="price" placeholder="0.00"
+                  aria-required="true" [attr.aria-invalid]="form.controls.price.invalid && form.controls.price.touched"
+                  [attr.aria-describedby]="form.controls.price.invalid && form.controls.price.touched ? 'prod-price-error' : null"
+                  class="input-field flex-1 min-w-0 px-3.5 py-2.5 text-sm font-mono font-bold tabular-nums border-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none" />
+              </div>
+
+              @if (form.controls.price.invalid && form.controls.price.touched) {
+              <p id="prod-price-error" role="alert"
+                class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                @if (form.controls.price.errors?.['required']) {
+                <span>El precio de venta es obligatorio.</span>
+                } @else if (form.controls.price.errors?.['min']) {
+                <span>El precio no puede ser negativo.</span>
+                }
+              </p>
               }
             </div>
 
-            <div class="grid grid-cols-1 gap-4">
-              <!-- Campo: Precio de Venta al Público (PVP) -->
-              <div class="space-y-1.5">
-                <label for="prod-price" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Precio de Venta (PVP) <span class="text-danger-500" aria-hidden="true">*</span>
+            <!-- Campo: Precio de Costo Referencial -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label for="prod-cost" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Costo Referencial
                 </label>
-
-                <div
-                  class="relative flex items-stretch rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-primary transition-all"
-                  [class.border-danger-300]="form.controls.price.invalid && form.controls.price.touched"
-                >
-                  <span class="inline-flex items-center px-3.5 text-sm font-mono font-bold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-800 select-none">
-                    L
-                  </span>
-                  <input
-                    id="prod-price"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    formControlName="price"
-                    placeholder="0.00"
-                    aria-required="true"
-                    [attr.aria-invalid]="form.controls.price.invalid && form.controls.price.touched"
-                    [attr.aria-describedby]="form.controls.price.invalid && form.controls.price.touched ? 'prod-price-error' : null"
-                    class="input-field flex-1 min-w-0 px-3.5 py-2.5 text-sm font-mono font-bold tabular-nums border-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
-                  />
-                </div>
-
-                @if (form.controls.price.invalid && form.controls.price.touched) {
-                  <p id="prod-price-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
-                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
-                    @if (form.controls.price.errors?.['required']) {
-                      <span>El precio de venta es obligatorio.</span>
-                    } @else if (form.controls.price.errors?.['min']) {
-                      <span>El precio no puede ser negativo.</span>
-                    }
-                  </p>
-                }
+                <span class="text-[11px] text-slate-400 dark:text-slate-500">Opcional</span>
               </div>
 
-              <!-- Campo: Precio de Costo Referencial -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <label for="prod-cost" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Costo Referencial
-                  </label>
-                  <span class="text-[11px] text-slate-400 dark:text-slate-500">Opcional</span>
-                </div>
-
-                <div
-                  class="relative flex items-stretch rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-primary transition-all"
-                  [class.border-danger-300]="form.controls.costPrice.invalid && form.controls.costPrice.touched"
-                >
-                  <span class="inline-flex items-center px-3.5 text-sm font-mono font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-800 select-none">
-                    L
-                  </span>
-                  <input
-                    id="prod-cost"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    formControlName="costPrice"
-                    placeholder="0.00"
-                    [attr.aria-invalid]="form.controls.costPrice.invalid && form.controls.costPrice.touched"
-                    [attr.aria-describedby]="form.controls.costPrice.invalid && form.controls.costPrice.touched ? 'prod-cost-error' : null"
-                    class="input-field flex-1 min-w-0 px-3.5 py-2.5 text-sm font-mono tabular-nums border-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
-                  />
-                </div>
-
-                @if (form.controls.costPrice.invalid && form.controls.costPrice.touched) {
-                  <p id="prod-cost-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
-                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
-                    <span>El costo referencial debe ser mayor o igual a 0.</span>
-                  </p>
-                }
+              <div
+                class="relative flex items-stretch rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-primary transition-all"
+                [class.border-danger-300]="form.controls.costPrice.invalid && form.controls.costPrice.touched">
+                <span
+                  class="inline-flex items-center px-3.5 text-sm font-mono font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-800 select-none">
+                  L
+                </span>
+                <input id="prod-cost" type="number" min="0" step="0.01" formControlName="costPrice" placeholder="0.00"
+                  [attr.aria-invalid]="form.controls.costPrice.invalid && form.controls.costPrice.touched"
+                  [attr.aria-describedby]="form.controls.costPrice.invalid && form.controls.costPrice.touched ? 'prod-cost-error' : null"
+                  class="input-field flex-1 min-w-0 px-3.5 py-2.5 text-sm font-mono tabular-nums border-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none" />
               </div>
+
+              @if (form.controls.costPrice.invalid && form.controls.costPrice.touched) {
+              <p id="prod-cost-error" role="alert"
+                class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                <span>El costo referencial debe ser mayor o igual a 0.</span>
+              </p>
+              }
+            </div>
+          </div>
+
+          <!-- Panel de Telemetría de Rentabilidad en Vivo -->
+          <div
+            class="margin-telemetry-panel p-3.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-1.5">
+                <span class="mat-icon text-sm text-slate-500 dark:text-slate-400 select-none" aria-hidden="true">
+                  analytics
+                </span>
+                <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Rentabilidad
+                </span>
+              </div>
+
+              @if (grossMarginPercent !== null && unitProfit !== null) {
+              <div class="flex items-center gap-3 font-mono text-xs tabular-nums">
+                <div>
+                  <span class="text-slate-400 dark:text-slate-500 mr-1 font-sans text-[11px]">Utilidad:</span>
+                  <span class="font-bold"
+                    [ngClass]="unitProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-danger-600 dark:text-danger-400'">
+                    L {{ unitProfit | number: '1.2-2' }}
+                  </span>
+                </div>
+              </div>
+              } @else {
+              <span class="text-[11px] text-slate-400 dark:text-slate-500">
+                Ingresa PVP y Costo
+              </span>
+              }
             </div>
 
-            <!-- Panel de Telemetría de Rentabilidad en Vivo -->
-            <div class="margin-telemetry-panel p-3.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-2.5">
-              <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-1.5">
-                  <span class="mat-icon text-sm text-slate-500 dark:text-slate-400 select-none" aria-hidden="true">
-                    analytics
-                  </span>
-                  <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Rentabilidad
-                  </span>
-                </div>
-
-                @if (grossMarginPercent !== null && unitProfit !== null) {
-                  <div class="flex items-center gap-3 font-mono text-xs tabular-nums">
-                    <div>
-                      <span class="text-slate-400 dark:text-slate-500 mr-1 font-sans text-[11px]">Utilidad:</span>
-                      <span
-                        class="font-bold"
-                        [ngClass]="unitProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-danger-600 dark:text-danger-400'"
-                      >
-                        L {{ unitProfit | number: '1.2-2' }}
-                      </span>
-                    </div>
-                  </div>
-                } @else {
-                  <span class="text-[11px] text-slate-400 dark:text-slate-500">
-                    Ingresa PVP y Costo
-                  </span>
-                }
-              </div>
-
-              <!-- Barra de progreso visual del margen -->
-              <div class="w-full h-2 rounded-full bg-slate-200/80 dark:bg-slate-700/60 overflow-hidden">
-                <div
-                  class="h-full rounded-full transition-all duration-300"
-                  [style.width.%]="marginBarWidth"
-                  [ngClass]="{
+            <!-- Barra de progreso visual del margen -->
+            <div class="w-full h-2 rounded-full bg-slate-200/80 dark:bg-slate-700/60 overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-300" [style.width.%]="marginBarWidth" [ngClass]="{
                     'bg-emerald-500': marginHealth === 'high',
                     'bg-amber-500': marginHealth === 'medium' || marginHealth === 'low',
                     'bg-danger-500': marginHealth === 'negative',
                     'bg-slate-300 dark:bg-slate-600': marginHealth === 'neutral'
-                  }"
-                ></div>
-              </div>
+                  }"></div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          <!-- ==================== SECCIÓN 2 LATERAL: ESPECIFICACIONES TÉCNICAS Y ATRIBUTOS ==================== -->
-          <section
-            aria-label="Especificaciones y atributos técnicos"
-            class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm"
-          >
-            <app-product-attributes-editor
-              [attributes]="product()?.attributes ?? []"
-              (attributesChange)="onAttributesChange($event)"
-            ></app-product-attributes-editor>
-          </section>
+        <!-- ==================== SECCIÓN 2 LATERAL: ESPECIFICACIONES TÉCNICAS Y ATRIBUTOS ==================== -->
+        <section aria-label="Especificaciones y atributos técnicos"
+          class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+          <app-product-attributes-editor [attributes]="product()?.attributes ?? []"
+            (attributesChange)="onAttributesChange($event)"></app-product-attributes-editor>
+        </section>
 
-        </aside>
+      </aside>
 
-      </div>
+    </div>
 
-      <!-- Footer Flotante de Acciones (Espejo de PermissionMatrix) -->
+    <!-- Barra Inferior Flotante de Acciones (Dock Premium Desacoplado) -->
+    <footer
+      class="sticky bottom-4 sm:bottom-6 z-20 mt-6 mb-2 rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/80 shadow-2xl shadow-slate-900/10 dark:shadow-black/50 ring-1 ring-slate-900/5 dark:ring-white/10 p-3.5 sm:p-5 lg:px-6 lg:py-4 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 lg:gap-6 relative overflow-hidden transition-all duration-300 floating-actions-dock">
+      <!-- Reflejo specular superior para profundidad vítrea -->
       <div
-        class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 md:right-8 z-30 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 sm:p-4 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-xl max-w-3xl ml-auto"
-      >
-        <div class="flex-1 flex items-center gap-2 text-xs">
+        class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-300/60 dark:via-white/15 to-transparent pointer-events-none"
+        aria-hidden="true"></div>
+
+      @if (!isEditMode()) {
+      <!-- Barra de Completación del Formulario (Solo modo crear) -->
+      <div class="flex-1 flex flex-col gap-2 min-w-0 max-w-2xl">
+        <!-- Cabecera del Progreso: Icono, Estado y Porcentaje -->
+        <div class="flex items-center justify-between gap-3 text-xs sm:text-sm">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div
+              class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300"
+              [ngClass]="
+                    formCompletion().isComplete
+                      ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400 ring-1 ring-emerald-500/25'
+                      : 'bg-primary-50 text-primary dark:bg-primary-500/15 dark:text-primary-300 ring-1 ring-primary-500/25'
+                  ">
+              <span class="mat-icon text-base sm:text-lg select-none" aria-hidden="true">
+                {{ formCompletion().isComplete ? 'check_circle' : 'pending_actions' }}
+              </span>
+            </div>
+            <div class="min-w-0">
+              <span class="font-semibold text-slate-800 dark:text-slate-100 truncate block text-xs sm:text-sm">
+                {{ formCompletion().isComplete ? 'Formulario completo' : 'Progreso del producto' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Badge de porcentaje minimalista con indicador pulsante -->
           <span
-            class="mat-icon text-base select-none"
-            [class.text-amber-500]="isDirty() || !form.valid"
-            [class.text-emerald-500]="!isDirty() && form.valid"
-          >
-            {{ !isDirty() && form.valid ? 'check_circle' : 'pending' }}
-          </span>
-          <span class="text-slate-600 dark:text-slate-300">
-            Estado:
-            <strong
-              class="font-semibold"
-              [class.text-emerald-600]="form.valid"
-              [class.dark:text-emerald-400]="form.valid"
-              [class.text-amber-600]="!form.valid"
-              [class.dark:text-amber-400]="!form.valid"
-            >
-              {{ form.valid ? 'Listo para guardar' : 'Campos pendientes' }}
-            </strong>
-            @if (isDirty()) {
-              <span class="font-semibold text-amber-600 dark:text-amber-400">· Cambios sin guardar</span>
-            }
+            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold font-mono tracking-tight tabular-nums transition-all duration-300 border shadow-xs"
+            [ngClass]="
+                  formCompletion().isComplete
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200/90 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20'
+                    : 'bg-primary-50 text-primary-700 border-primary-200/90 dark:bg-primary-500/10 dark:text-primary-300 dark:border-primary-500/20'
+                ">
+            <span class="w-1.5 h-1.5 rounded-full transition-colors"
+              [ngClass]="formCompletion().isComplete ? 'bg-emerald-500' : 'bg-primary animate-pulse'"></span>
+            {{ formCompletion().percentage }}%
           </span>
         </div>
 
-        <div class="flex items-center gap-2 justify-end">
-          <button
-            type="button"
-            (click)="discard()"
-            [disabled]="!isDirty() || isSubmitting() || isLoading()"
-            class="px-3.5 py-2 min-h-[40px] rounded-xl text-xs font-medium border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-          >
-            Descartar
-          </button>
-          <a
-            routerLink="/admin/inventory/products"
-            class="px-3.5 py-2 min-h-[40px] inline-flex items-center rounded-xl text-xs font-medium border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          >
-            Volver a Productos
-          </a>
-          <button
-            type="submit"
-            [disabled]="isSubmitting() || isLoading()"
-            class="inline-flex items-center gap-2 px-4 py-2 min-h-[40px] rounded-xl bg-primary hover:bg-primary-700 text-white font-semibold text-xs shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer"
-          >
-            @if (isSubmitting()) {
-              <span class="mat-icon text-base animate-spin select-none" aria-hidden="true">refresh</span>
-              <span>Guardando...</span>
-            } @else {
-              <span class="mat-icon text-base select-none" aria-hidden="true">
-                {{ isEditMode() ? 'save' : 'add_box' }}
-              </span>
-              <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Producto' }}</span>
-            }
-          </button>
+        <!-- Pista y Barra de Progreso Minimalista Premium -->
+        <div
+          class="w-full h-2 bg-slate-100 dark:bg-slate-800/80 rounded-full overflow-hidden p-[2px] ring-1 ring-inset ring-slate-200/70 dark:ring-slate-700/60 transition-all"
+          role="progressbar" [attr.aria-valuenow]="formCompletion().percentage" aria-valuemin="0" aria-valuemax="100"
+          [attr.aria-valuetext]="formCompletion().percentage + '% completado'">
+          <div class="h-full rounded-full transition-all duration-700 ease-out relative overflow-hidden" [ngClass]="
+                  formCompletion().isComplete
+                    ? 'bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.35)]'
+                    : 'bg-gradient-to-r from-primary via-primary-500 to-indigo-500 shadow-[0_0_10px_rgba(var(--primary-500)/0.3)]'
+                " [style.width.%]="formCompletion().percentage">
+            <!-- Brillo sutil de acabado vidrio -->
+            <div class="absolute inset-0 bg-gradient-to-b from-white/25 to-transparent rounded-full" aria-hidden="true">
+            </div>
+          </div>
+        </div>
+
+        <!-- Detalle de campos obligatorios completados y pendientes -->
+        <div class="flex items-center justify-between text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 gap-3">
+          <span class="flex-shrink-0 font-medium inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full"
+              [ngClass]="formCompletion().isComplete ? 'bg-emerald-500' : 'bg-slate-400 dark:bg-slate-600'"></span>
+            {{ formCompletion().completedCount }} de {{ formCompletion().totalCount }} campos requeridos
+          </span>
+          @if (!formCompletion().isComplete && formCompletion().pendingFields.length > 0) {
+          <span
+            class="truncate text-amber-600 dark:text-amber-400 font-medium text-right inline-flex items-center gap-1 min-w-0"
+            [title]="'Faltan: ' + formCompletion().pendingFields.join(', ')">
+            <span class="mat-icon text-xs select-none flex-shrink-0" aria-hidden="true">info</span>
+            <span class="truncate">Falta: {{ formCompletion().pendingFields.join(', ') }}</span>
+          </span>
+          } @else {
+          <span
+            class="text-emerald-600 dark:text-emerald-400 font-semibold flex-shrink-0 inline-flex items-center gap-1">
+            <span class="mat-icon text-sm select-none" aria-hidden="true">check</span>
+            Listo para crear producto
+          </span>
+          }
         </div>
       </div>
-    </form>
+      } @else {
+      <!-- Modo Edición: Resumen de Estado Convencional Estilizado -->
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
+          [ngClass]="
+                !isDirty() && form.valid
+                  ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400 ring-1 ring-emerald-500/25'
+                  : 'bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400 ring-1 ring-amber-500/25'
+              ">
+          <span class="mat-icon text-lg sm:text-xl select-none" aria-hidden="true">
+            {{ !isDirty() && form.valid ? 'check_circle' : 'pending_actions' }}
+          </span>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+              {{ form.valid ? 'Ficha técnica lista' : 'Campos pendientes de validación' }}
+            </span>
+            @if (isDirty()) {
+            <span
+              class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+              Cambios sin guardar
+            </span>
+            } @else if (form.valid) {
+            <span
+              class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              Sincronizado
+            </span>
+            }
+          </div>
+          <span class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
+            {{ isDirty() ? 'Guarda las modificaciones para aplicarlas al catálogo' : 'No hay cambios pendientes de
+            sincronizar' }}
+          </span>
+        </div>
+      </div>
+      }
+
+      <!-- Grupo de Botones de Acción -->
+      <div
+        class="flex items-center gap-2.5 sm:gap-3 w-full lg:w-auto justify-end flex-wrap sm:flex-nowrap flex-shrink-0">
+        <button type="button" (click)="discard()" [disabled]="!isDirty() || isSubmitting() || isLoading()"
+          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-[0.98] cursor-pointer">
+          <span class="mat-icon text-base select-none" aria-hidden="true">undo</span>
+          <span>Descartar cambios</span>
+        </button>
+        <a routerLink="/admin/inventory/products"
+          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-all active:scale-[0.98]">
+
+          <span>Volver a Productos</span>
+        </a>
+        <button type="submit" [disabled]="isSubmitting() || isLoading()"
+          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 min-h-[44px] rounded-xl bg-primary hover:bg-primary-700 active:scale-[0.98] text-white font-semibold text-xs sm:text-sm shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer">
+          @if (isSubmitting()) {
+          <span class="mat-icon text-lg animate-spin select-none" aria-hidden="true">refresh</span>
+          <span>Guardando...</span>
+          } @else {
+          <span class="mat-icon text-lg select-none" aria-hidden="true">
+            {{ isEditMode() ? 'save' : 'add_box' }}
+          </span>
+          <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Producto' }}</span>
+          }
+        </button>
+      </div>
+    </footer>
+  </form>
   }
 </div>
