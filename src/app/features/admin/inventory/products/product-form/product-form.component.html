@@ -147,7 +147,7 @@
     </div>
   } @else {
     <!-- Formulario Principal -->
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="w-full" novalidate>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="w-full pb-24" novalidate>
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         <!-- ==================== COLUMNA PRINCIPAL (8 columnas) ==================== -->
@@ -155,21 +155,10 @@
 
           <!-- Tarjeta 1: Información General y Clasificación -->
           <section class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
-            <div class="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div
-                aria-hidden="true"
-                class="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-900/50 flex-shrink-0"
-              >
-                <span class="mat-icon text-lg select-none leading-none">inventory_2</span>
-              </div>
-              <div>
-                <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                  Información General
-                </h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400">
-                  Identificación de inventario (SKU), nombre comercial, taxonomía y estado de publicación.
-                </p>
-              </div>
+            <div class="pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                Información General
+              </h2>
             </div>
 
             <!-- Fila 1: Nombre del Producto y SKU -->
@@ -489,201 +478,12 @@
             </div>
           </section>
 
-          <!-- Tarjeta 2: Estructura de Precios y Telemetría de Rentabilidad (Signature Element) -->
+          <!-- Tarjeta 2: Descripción Comercial y Optimización SEO (con Vista Previa SERP) -->
           <section class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
-            <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div class="flex items-center gap-3">
-                <div
-                  aria-hidden="true"
-                  class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-100 dark:border-emerald-900/50 flex-shrink-0"
-                >
-                  <span class="mat-icon text-lg select-none leading-none">payments</span>
-                </div>
-                <div>
-                  <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                    Precios y Márgenes
-                  </h2>
-                  <p class="text-xs text-slate-500 dark:text-slate-400">
-                    Precio de venta al público (PVP en Lempiras) y cálculo de margen bruto en tiempo real.
-                  </p>
-                </div>
-              </div>
-
-              <!-- Badge instantáneo de Margen Bruto -->
-              @if (grossMarginPercent !== null) {
-                <span
-                  aria-live="polite"
-                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold border"
-                  [ngClass]="{
-                    'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/30':
-                      marginHealth === 'high',
-                    'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/30':
-                      marginHealth === 'medium' || marginHealth === 'low',
-                    'bg-danger-50 text-danger-700 border-danger-200 dark:bg-danger-500/10 dark:text-danger-300 dark:border-danger-500/30':
-                      marginHealth === 'negative'
-                  }"
-                >
-                  <span class="mat-icon text-xs select-none" aria-hidden="true">
-                    {{ marginHealth === 'negative' ? 'trending_down' : 'trending_up' }}
-                  </span>
-                  <span>Margen: {{ grossMarginPercent | number: '1.1-1' }}%</span>
-                </span>
-              }
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <!-- Campo: Precio de Venta al Público (PVP) -->
-              <div class="space-y-1.5">
-                <label for="prod-price" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Precio de Venta (PVP) <span class="text-danger-500" aria-hidden="true">*</span>
-                </label>
-
-                <div class="relative flex items-stretch rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-primary transition-all"
-                  [class.border-danger-300]="form.controls.price.invalid && form.controls.price.touched"
-                >
-                  <span class="inline-flex items-center px-3.5 text-sm font-mono font-bold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-800 select-none">
-                    L
-                  </span>
-                  <input
-                    id="prod-price"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    formControlName="price"
-                    placeholder="0.00"
-                    aria-required="true"
-                    [attr.aria-invalid]="form.controls.price.invalid && form.controls.price.touched"
-                    [attr.aria-describedby]="form.controls.price.invalid && form.controls.price.touched ? 'prod-price-error' : null"
-                    class="input-field flex-1 min-w-0 px-3.5 py-2.5 text-sm font-mono font-bold tabular-nums border-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
-                  />
-                </div>
-
-                @if (form.controls.price.invalid && form.controls.price.touched) {
-                  <p id="prod-price-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
-                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
-                    @if (form.controls.price.errors?.['required']) {
-                      <span>El precio de venta es obligatorio.</span>
-                    } @else if (form.controls.price.errors?.['min']) {
-                      <span>El precio no puede ser negativo.</span>
-                    }
-                  </p>
-                }
-              </div>
-
-              <!-- Campo: Precio de Costo Referencial -->
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <label for="prod-cost" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Costo Referencial
-                  </label>
-                  <span class="text-[11px] text-slate-400 dark:text-slate-500">Opcional · Uso interno</span>
-                </div>
-
-                <div class="relative flex items-stretch rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-primary transition-all"
-                  [class.border-danger-300]="form.controls.costPrice.invalid && form.controls.costPrice.touched"
-                >
-                  <span class="inline-flex items-center px-3.5 text-sm font-mono font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-800 select-none">
-                    L
-                  </span>
-                  <input
-                    id="prod-cost"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    formControlName="costPrice"
-                    placeholder="0.00"
-                    [attr.aria-invalid]="form.controls.costPrice.invalid && form.controls.costPrice.touched"
-                    [attr.aria-describedby]="form.controls.costPrice.invalid && form.controls.costPrice.touched ? 'prod-cost-error' : null"
-                    class="input-field flex-1 min-w-0 px-3.5 py-2.5 text-sm font-mono tabular-nums border-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
-                  />
-                </div>
-
-                @if (form.controls.costPrice.invalid && form.controls.costPrice.touched) {
-                  <p id="prod-cost-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
-                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
-                    <span>El costo referencial debe ser mayor o igual a 0.</span>
-                  </p>
-                }
-              </div>
-            </div>
-
-            <!-- Panel de Telemetría de Rentabilidad en Vivo -->
-            <div class="margin-telemetry-panel p-4 rounded-xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-3">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <div class="flex items-center gap-2">
-                  <span class="mat-icon text-base text-slate-500 dark:text-slate-400 select-none" aria-hidden="true">
-                    analytics
-                  </span>
-                  <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Simulador de Rentabilidad Unitaria
-                  </span>
-                </div>
-
-                @if (grossMarginPercent !== null && unitProfit !== null) {
-                  <div class="flex items-center gap-4 font-mono text-xs tabular-nums">
-                    <div>
-                      <span class="text-slate-400 dark:text-slate-500 mr-1 font-sans">Utilidad:</span>
-                      <span
-                        class="font-bold"
-                        [ngClass]="unitProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-danger-600 dark:text-danger-400'"
-                      >
-                        L {{ unitProfit | number: '1.2-2' }}
-                      </span>
-                    </div>
-                    <div>
-                      <span class="text-slate-400 dark:text-slate-500 mr-1 font-sans">Margen Bruto:</span>
-                      <span
-                        class="font-bold"
-                        [ngClass]="{
-                          'text-emerald-600 dark:text-emerald-400': marginHealth === 'high',
-                          'text-amber-600 dark:text-amber-400': marginHealth === 'medium' || marginHealth === 'low',
-                          'text-danger-600 dark:text-danger-400': marginHealth === 'negative'
-                        }"
-                      >
-                        {{ grossMarginPercent | number: '1.2-2' }}%
-                      </span>
-                    </div>
-                  </div>
-                } @else {
-                  <span class="text-xs text-slate-400 dark:text-slate-500">
-                    Ingresa PVP y Costo para calcular el margen bruto
-                  </span>
-                }
-              </div>
-
-              <!-- Barra de progreso visual del margen -->
-              <div class="w-full h-2 rounded-full bg-slate-200/80 dark:bg-slate-700/60 overflow-hidden">
-                <div
-                  class="h-full rounded-full transition-all duration-300"
-                  [style.width.%]="marginBarWidth"
-                  [ngClass]="{
-                    'bg-emerald-500': marginHealth === 'high',
-                    'bg-amber-500': marginHealth === 'medium' || marginHealth === 'low',
-                    'bg-danger-500': marginHealth === 'negative',
-                    'bg-slate-300 dark:bg-slate-600': marginHealth === 'neutral'
-                  }"
-                ></div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Tarjeta 3: Descripción Comercial y Optimización SEO (con Vista Previa SERP) -->
-          <section class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
-            <div class="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div
-                aria-hidden="true"
-                class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-100 dark:border-purple-900/50 flex-shrink-0"
-              >
-                <span class="mat-icon text-lg select-none leading-none">travel_explore</span>
-              </div>
-              <div>
-                <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                  Descripción y Posicionamiento SEO
-                </h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400">
-                  Argumentos de venta, ficha descriptiva y previsualización en buscadores (SERP).
-                </p>
-              </div>
+            <div class="pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                Descripción y Posicionamiento SEO
+              </h2>
             </div>
 
             <!-- Resumen corto (shortDescription) -->
@@ -809,8 +609,166 @@
               (localQueueChange)="onLocalQueueChange($event)"
             ></app-product-gallery>
           </section>
+        </div>
 
-          <!-- ==================== SECCIÓN 5: ESPECIFICACIONES TÉCNICAS Y ATRIBUTOS ==================== -->
+        <!-- ==================== COLUMNA LATERAL (4 columnas) ==================== -->
+        <aside class="lg:col-span-4 flex flex-col gap-6">
+
+          <!-- ==================== SECCIÓN 1 LATERAL: PRECIOS Y MÁRGENES ==================== -->
+          <section class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
+            <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                Precios y Márgenes
+              </h2>
+
+              <!-- Badge instantáneo de Margen Bruto -->
+              @if (grossMarginPercent !== null) {
+                <span
+                  aria-live="polite"
+                  class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold border flex-shrink-0"
+                  [ngClass]="{
+                    'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/30':
+                      marginHealth === 'high',
+                    'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/30':
+                      marginHealth === 'medium' || marginHealth === 'low',
+                    'bg-danger-50 text-danger-700 border-danger-200 dark:bg-danger-500/10 dark:text-danger-300 dark:border-danger-500/30':
+                      marginHealth === 'negative'
+                  }"
+                >
+                  <span class="mat-icon text-xs select-none" aria-hidden="true">
+                    {{ marginHealth === 'negative' ? 'trending_down' : 'trending_up' }}
+                  </span>
+                  <span>{{ grossMarginPercent | number: '1.1-1' }}%</span>
+                </span>
+              }
+            </div>
+
+            <div class="grid grid-cols-1 gap-4">
+              <!-- Campo: Precio de Venta al Público (PVP) -->
+              <div class="space-y-1.5">
+                <label for="prod-price" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Precio de Venta (PVP) <span class="text-danger-500" aria-hidden="true">*</span>
+                </label>
+
+                <div
+                  class="relative flex items-stretch rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-primary transition-all"
+                  [class.border-danger-300]="form.controls.price.invalid && form.controls.price.touched"
+                >
+                  <span class="inline-flex items-center px-3.5 text-sm font-mono font-bold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-800 select-none">
+                    L
+                  </span>
+                  <input
+                    id="prod-price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    formControlName="price"
+                    placeholder="0.00"
+                    aria-required="true"
+                    [attr.aria-invalid]="form.controls.price.invalid && form.controls.price.touched"
+                    [attr.aria-describedby]="form.controls.price.invalid && form.controls.price.touched ? 'prod-price-error' : null"
+                    class="input-field flex-1 min-w-0 px-3.5 py-2.5 text-sm font-mono font-bold tabular-nums border-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
+                  />
+                </div>
+
+                @if (form.controls.price.invalid && form.controls.price.touched) {
+                  <p id="prod-price-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                    @if (form.controls.price.errors?.['required']) {
+                      <span>El precio de venta es obligatorio.</span>
+                    } @else if (form.controls.price.errors?.['min']) {
+                      <span>El precio no puede ser negativo.</span>
+                    }
+                  </p>
+                }
+              </div>
+
+              <!-- Campo: Precio de Costo Referencial -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label for="prod-cost" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Costo Referencial
+                  </label>
+                  <span class="text-[11px] text-slate-400 dark:text-slate-500">Opcional</span>
+                </div>
+
+                <div
+                  class="relative flex items-stretch rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-primary transition-all"
+                  [class.border-danger-300]="form.controls.costPrice.invalid && form.controls.costPrice.touched"
+                >
+                  <span class="inline-flex items-center px-3.5 text-sm font-mono font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/70 border-r border-slate-200 dark:border-slate-800 select-none">
+                    L
+                  </span>
+                  <input
+                    id="prod-cost"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    formControlName="costPrice"
+                    placeholder="0.00"
+                    [attr.aria-invalid]="form.controls.costPrice.invalid && form.controls.costPrice.touched"
+                    [attr.aria-describedby]="form.controls.costPrice.invalid && form.controls.costPrice.touched ? 'prod-cost-error' : null"
+                    class="input-field flex-1 min-w-0 px-3.5 py-2.5 text-sm font-mono tabular-nums border-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
+                  />
+                </div>
+
+                @if (form.controls.costPrice.invalid && form.controls.costPrice.touched) {
+                  <p id="prod-cost-error" role="alert" class="text-xs text-danger-600 dark:text-danger-400 flex items-center gap-1.5 pt-0.5">
+                    <span class="mat-icon text-sm select-none flex-shrink-0">error</span>
+                    <span>El costo referencial debe ser mayor o igual a 0.</span>
+                  </p>
+                }
+              </div>
+            </div>
+
+            <!-- Panel de Telemetría de Rentabilidad en Vivo -->
+            <div class="margin-telemetry-panel p-3.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-2.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5">
+                  <span class="mat-icon text-sm text-slate-500 dark:text-slate-400 select-none" aria-hidden="true">
+                    analytics
+                  </span>
+                  <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Rentabilidad
+                  </span>
+                </div>
+
+                @if (grossMarginPercent !== null && unitProfit !== null) {
+                  <div class="flex items-center gap-3 font-mono text-xs tabular-nums">
+                    <div>
+                      <span class="text-slate-400 dark:text-slate-500 mr-1 font-sans text-[11px]">Utilidad:</span>
+                      <span
+                        class="font-bold"
+                        [ngClass]="unitProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-danger-600 dark:text-danger-400'"
+                      >
+                        L {{ unitProfit | number: '1.2-2' }}
+                      </span>
+                    </div>
+                  </div>
+                } @else {
+                  <span class="text-[11px] text-slate-400 dark:text-slate-500">
+                    Ingresa PVP y Costo
+                  </span>
+                }
+              </div>
+
+              <!-- Barra de progreso visual del margen -->
+              <div class="w-full h-2 rounded-full bg-slate-200/80 dark:bg-slate-700/60 overflow-hidden">
+                <div
+                  class="h-full rounded-full transition-all duration-300"
+                  [style.width.%]="marginBarWidth"
+                  [ngClass]="{
+                    'bg-emerald-500': marginHealth === 'high',
+                    'bg-amber-500': marginHealth === 'medium' || marginHealth === 'low',
+                    'bg-danger-500': marginHealth === 'negative',
+                    'bg-slate-300 dark:bg-slate-600': marginHealth === 'neutral'
+                  }"
+                ></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================== SECCIÓN 2 LATERAL: ESPECIFICACIONES TÉCNICAS Y ATRIBUTOS ==================== -->
           <section
             aria-label="Especificaciones y atributos técnicos"
             class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm"
@@ -820,214 +778,71 @@
               (attributesChange)="onAttributesChange($event)"
             ></app-product-attributes-editor>
           </section>
-        </div>
 
-        <!-- ==================== COLUMNA LATERAL (4 columnas) ==================== -->
-        <aside class="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-4">
-
-          <!-- Modo Edición: Ficha de Identidad Visual del Producto -->
-          @if (isEditMode()) {
-            <section
-              aria-label="Resumen técnico del producto"
-              class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col items-center text-center space-y-4"
-            >
-              <!-- Imagen Principal del Producto -->
-              <div class="w-24 h-24 rounded-2xl overflow-hidden shadow-sm border-2 border-primary/20 dark:border-primary/40 p-0.5 bg-white dark:bg-slate-800">
-                @if (product()?.primaryImageUrl && !isImageBroken()) {
-                  <img
-                    [src]="product()?.primaryImageUrl!"
-                    [alt]="product()?.name || 'Imagen del producto'"
-                    (error)="onMainImageError()"
-                    class="w-full h-full object-cover rounded-xl"
-                  />
-                } @else {
-                  <div
-                    aria-hidden="true"
-                    class="w-full h-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300 flex items-center justify-center font-bold text-2xl select-none rounded-xl"
-                  >
-                    <span class="mat-icon text-3xl select-none">inventory_2</span>
-                  </div>
-                }
-              </div>
-
-              <!-- Nombre y SKU en tiempo real -->
-              <div class="space-y-1.5 w-full overflow-hidden px-2">
-                <h3 class="text-base font-bold text-slate-900 dark:text-white truncate">
-                  {{ form.controls.name.value || product()?.name || 'Producto' }}
-                </h3>
-                <div class="flex items-center justify-center gap-2">
-                  <span class="px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
-                    {{ form.controls.sku.value || product()?.sku || 'SKU' }}
-                  </span>
-                  @if (form.controls.isFeatured.value) {
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
-                      <span class="mat-icon text-xs text-amber-500 select-none">star</span>
-                      <span>Destacado</span>
-                    </span>
-                  }
-                </div>
-              </div>
-
-              <!-- Metadatos del producto -->
-              <div class="w-full pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5 text-left text-xs">
-                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                  <span class="text-slate-400 dark:text-slate-500">Categoría</span>
-                  <span class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[160px]">
-                    {{ getSelectedCategoryName() }}
-                  </span>
-                </div>
-
-                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                  <span class="text-slate-400 dark:text-slate-500">Marca</span>
-                  <span class="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[160px]">
-                    {{ getSelectedBrandName() }}
-                  </span>
-                </div>
-
-                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                  <span class="text-slate-400 dark:text-slate-500">Imágenes en galería</span>
-                  <span class="font-mono font-semibold text-slate-700 dark:text-slate-300">
-                    {{ product()?.images?.length ?? 0 }}
-                  </span>
-                </div>
-
-                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                  <span class="text-slate-400 dark:text-slate-500">Atributos técnicos</span>
-                  <span class="font-mono font-semibold text-slate-700 dark:text-slate-300">
-                    {{ product()?.attributes?.length ?? 0 }}
-                  </span>
-                </div>
-
-                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                  <span class="text-slate-400 dark:text-slate-500">Registrado</span>
-                  <span class="font-medium text-slate-700 dark:text-slate-300">{{ formattedCreatedAt }}</span>
-                </div>
-
-                <div class="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                  <span class="text-slate-400 dark:text-slate-500">ID de Producto</span>
-                  <button
-                    type="button"
-                    (click)="copyProductId()"
-                    matTooltip="Copiar UUID"
-                    class="font-mono text-[11px] text-primary hover:underline inline-flex items-center gap-1.5 cursor-pointer focus:outline-none"
-                  >
-                    <span>{{ productId() ? (productId()!.substring(0, 8) + '...') : '---' }}</span>
-                    <span class="mat-icon text-xs select-none flex-shrink-0">content_copy</span>
-                  </button>
-                </div>
-              </div>
-            </section>
-          }
-
-          <!-- Modo Creación: Guía de Alta de Producto (Espejo de UserFormComponent) -->
-          @if (!isEditMode()) {
-            <section
-              aria-label="Guía de registro de producto"
-              class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4"
-            >
-              <div class="flex items-center gap-2.5 text-primary dark:text-primary-300">
-                <span class="mat-icon text-xl select-none flex-shrink-0" aria-hidden="true">help_outline</span>
-                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
-                  Guía de Alta Comercial
-                </h3>
-              </div>
-
-              <div class="space-y-3 text-xs text-slate-600 dark:text-slate-300">
-                <div class="flex items-start gap-2.5">
-                  <div class="w-5 h-5 rounded-full bg-primary-50 dark:bg-primary-950/50 text-primary dark:text-primary-300 flex items-center justify-center font-bold text-[11px] flex-shrink-0 mt-0.5 leading-none">
-                    1
-                  </div>
-                  <div>
-                    <strong class="font-semibold text-slate-800 dark:text-slate-200">Código SKU único:</strong>
-                    <p class="text-slate-500 dark:text-slate-400 mt-0.5">
-                      Asigna un identificador alfanumérico único para trazabilidad en facturación y bodega.
-                    </p>
-                  </div>
-                </div>
-
-                <div class="flex items-start gap-2.5">
-                  <div class="w-5 h-5 rounded-full bg-primary-50 dark:bg-primary-950/50 text-primary dark:text-primary-300 flex items-center justify-center font-bold text-[11px] flex-shrink-0 mt-0.5 leading-none">
-                    2
-                  </div>
-                  <div>
-                    <strong class="font-semibold text-slate-800 dark:text-slate-200">Dependencias activas:</strong>
-                    <p class="text-slate-500 dark:text-slate-400 mt-0.5">
-                      Tanto la categoría como la marca seleccionadas deben encontrarse activas en el catálogo.
-                    </p>
-                  </div>
-                </div>
-
-                <div class="flex items-start gap-2.5">
-                  <div class="w-5 h-5 rounded-full bg-primary-50 dark:bg-primary-950/50 text-primary dark:text-primary-300 flex items-center justify-center font-bold text-[11px] flex-shrink-0 mt-0.5 leading-none">
-                    3
-                  </div>
-                  <div>
-                    <strong class="font-semibold text-slate-800 dark:text-slate-200">Control de márgenes:</strong>
-                    <p class="text-slate-500 dark:text-slate-400 mt-0.5">
-                      Registra el costo referencial para monitorear la rentabilidad bruta antes de publicar.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="p-3 rounded-xl bg-primary-50/70 dark:bg-primary-950/20 border border-primary-100 dark:border-primary-900/40 text-[11px] text-primary-800 dark:text-primary-200 flex items-start gap-2">
-                <span class="mat-icon text-base text-primary-600 dark:text-primary-400 select-none flex-shrink-0 mt-0.5" aria-hidden="true">verified</span>
-                <span>Puedes guardar primero en estado Borrador mientras completas la ficha comercial.</span>
-              </div>
-            </section>
-          }
-
-          <!-- Tarjeta de Guardado y Estado del Formulario -->
-          <section
-            aria-label="Panel de acciones del formulario"
-            class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4"
-          >
-            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-              <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                Estado del Formulario
-              </span>
-              @if (form.valid) {
-                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                  <span class="mat-icon text-sm select-none flex-shrink-0">check_circle</span>
-                  <span>Listo</span>
-                </span>
-              } @else {
-                <span class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
-                  <span class="mat-icon text-sm select-none flex-shrink-0">pending</span>
-                  <span>Pendiente</span>
-                </span>
-              }
-            </div>
-
-            <div class="space-y-2.5 pt-1">
-              <!-- Botón Principal Guardar -->
-              <button
-                type="submit"
-                [disabled]="isSubmitting() || isLoading()"
-                class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[46px] text-sm font-semibold rounded-xl bg-primary hover:bg-primary-700 text-white shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer"
-              >
-                @if (isSubmitting()) {
-                  <span class="mat-icon text-base animate-spin select-none flex-shrink-0" aria-hidden="true">refresh</span>
-                  <span>Guardando...</span>
-                } @else {
-                  <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">
-                    {{ isEditMode() ? 'save' : 'add_box' }}
-                  </span>
-                  <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Producto' }}</span>
-                }
-              </button>
-
-              <!-- Botón Secundario Cancelar -->
-              <a
-                routerLink="/admin/inventory/products"
-                class="w-full inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-900"
-              >
-                Cancelar y Volver
-              </a>
-            </div>
-          </section>
         </aside>
 
+      </div>
+
+      <!-- Footer Flotante de Acciones (Espejo de PermissionMatrix) -->
+      <div
+        class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 md:right-8 z-30 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 sm:p-4 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-xl max-w-3xl ml-auto"
+      >
+        <div class="flex-1 flex items-center gap-2 text-xs">
+          <span
+            class="mat-icon text-base select-none"
+            [class.text-amber-500]="isDirty() || !form.valid"
+            [class.text-emerald-500]="!isDirty() && form.valid"
+          >
+            {{ !isDirty() && form.valid ? 'check_circle' : 'pending' }}
+          </span>
+          <span class="text-slate-600 dark:text-slate-300">
+            Estado:
+            <strong
+              class="font-semibold"
+              [class.text-emerald-600]="form.valid"
+              [class.dark:text-emerald-400]="form.valid"
+              [class.text-amber-600]="!form.valid"
+              [class.dark:text-amber-400]="!form.valid"
+            >
+              {{ form.valid ? 'Listo para guardar' : 'Campos pendientes' }}
+            </strong>
+            @if (isDirty()) {
+              <span class="font-semibold text-amber-600 dark:text-amber-400">· Cambios sin guardar</span>
+            }
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 justify-end">
+          <button
+            type="button"
+            (click)="discard()"
+            [disabled]="!isDirty() || isSubmitting() || isLoading()"
+            class="px-3.5 py-2 min-h-[40px] rounded-xl text-xs font-medium border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            Descartar
+          </button>
+          <a
+            routerLink="/admin/inventory/products"
+            class="px-3.5 py-2 min-h-[40px] inline-flex items-center rounded-xl text-xs font-medium border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          >
+            Volver a Productos
+          </a>
+          <button
+            type="submit"
+            [disabled]="isSubmitting() || isLoading()"
+            class="inline-flex items-center gap-2 px-4 py-2 min-h-[40px] rounded-xl bg-primary hover:bg-primary-700 text-white font-semibold text-xs shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer"
+          >
+            @if (isSubmitting()) {
+              <span class="mat-icon text-base animate-spin select-none" aria-hidden="true">refresh</span>
+              <span>Guardando...</span>
+            } @else {
+              <span class="mat-icon text-base select-none" aria-hidden="true">
+                {{ isEditMode() ? 'save' : 'add_box' }}
+              </span>
+              <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Producto' }}</span>
+            }
+          </button>
+        </div>
       </div>
     </form>
   }

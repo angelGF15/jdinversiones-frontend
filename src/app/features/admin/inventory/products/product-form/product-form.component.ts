@@ -248,6 +248,55 @@ export class ProductFormComponent implements OnInit {
   }
 
   /**
+   * Determina si el formulario tiene cambios sin guardar.
+   */
+  public isDirty(): boolean {
+    return this.form.dirty;
+  }
+
+  /**
+   * Descarta los cambios pendientes y restablece el formulario a su estado original.
+   */
+  public discard(): void {
+    if (this.isEditMode() && this.product()) {
+      const p = this.product()!;
+      this.form.reset({
+        sku: p.sku,
+        name: p.name,
+        slug: p.slug,
+        categoryId: p.categoryId,
+        brandId: p.brandId ?? '',
+        statusCode: p.statusCode || 'active',
+        isFeatured: !!p.isFeatured,
+        price: p.price,
+        costPrice: p.costPrice ?? null,
+        shortDescription: p.shortDescription ?? '',
+        description: p.description ?? '',
+        metaTitle: p.metaTitle ?? '',
+        metaDescription: p.metaDescription ?? '',
+      });
+      this.currentAttributes.set(p.attributes ?? []);
+    } else {
+      this.form.reset({
+        sku: '',
+        name: '',
+        slug: '',
+        categoryId: '',
+        brandId: '',
+        statusCode: 'active',
+        isFeatured: false,
+        price: null,
+        costPrice: null,
+        shortDescription: '',
+        description: '',
+        metaTitle: '',
+        metaDescription: '',
+      });
+      this.currentAttributes.set([]);
+    }
+  }
+
+  /**
    * Alterna entre el modo de slug autogenerado o personalizado manualmente.
    */
   public toggleCustomSlug(): void {
