@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
+import { FormActionsDockComponent } from '../../../../shared/components/form-actions-dock/form-actions-dock.component';
 import { RolesService } from '../../../../core/services/roles/roles.service';
 import {
   CreateRoleRequest,
@@ -31,6 +32,7 @@ import {
     ReactiveFormsModule,
     MatTooltipModule,
     HasPermissionDirective,
+    FormActionsDockComponent,
   ],
   templateUrl: './role-form.component.html',
   styleUrls: ['./role-form.component.css'],
@@ -91,6 +93,25 @@ export class RoleFormComponent implements OnInit {
           this.errorMessage.set(msg);
         },
       });
+  }
+
+  public isDirty(): boolean {
+    return this.form.dirty;
+  }
+
+  public discard(): void {
+    if (this.isEditMode() && this.role()) {
+      const r = this.role()!;
+      this.form.reset({
+        name: r.name,
+        description: r.description ?? '',
+      });
+    } else {
+      this.form.reset({
+        name: '',
+        description: '',
+      });
+    }
   }
 
   public onSubmit(): void {

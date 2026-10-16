@@ -303,45 +303,22 @@
             </section>
           }
 
-          <!-- Tarjeta de Estado y Acciones Rápidas -->
-          <section class="form-section-card p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-3">
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-slate-500 dark:text-slate-400">Estado del formulario:</span>
-              <span
-                class="font-semibold inline-flex items-center gap-1"
-                [class.text-emerald-600]="form.valid"
-                [class.text-amber-600]="form.invalid"
-              >
-                <span class="mat-icon text-xs select-none">
-                  {{ form.valid ? 'check_circle' : 'pending' }}
-                </span>
-                <span>{{ form.valid ? 'Listo' : 'Pendiente' }}</span>
-              </span>
-            </div>
-
-            <button
-              type="submit"
-              [disabled]="isSubmitting() || form.invalid"
-              class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-primary hover:bg-primary-700 text-white font-medium text-xs sm:text-sm shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
-            >
-              @if (isSubmitting()) {
-                <span class="mat-icon text-base animate-spin select-none" aria-hidden="true">refresh</span>
-                <span>Guardando...</span>
-              } @else {
-                <span class="mat-icon text-base select-none" aria-hidden="true">save</span>
-                <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Rol' }}</span>
-              }
-            </button>
-
-            <a
-              routerLink="/admin/roles"
-              class="w-full inline-flex items-center justify-center px-4 py-2 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
-            >
-              Cancelar y volver
-            </a>
-          </section>
         </aside>
       </div>
+
+      <!-- Barra Inferior Flotante de Acciones Global -->
+      <app-form-actions-dock
+        [isEditMode]="isEditMode()"
+        [isSubmitting]="isSubmitting()"
+        [isLoading]="isLoading()"
+        [isDirty]="isDirty()"
+        [isValid]="form.valid"
+        backRoute="/admin/roles"
+        backLabel="Volver a Roles"
+        [submitLabel]="isEditMode() ? 'Guardar Cambios' : 'Crear Rol'"
+        [submitIcon]="isEditMode() ? 'save' : 'add_box'"
+        (discardTriggered)="discard()"
+      ></app-form-actions-dock>
     </form>
   }
 </div>

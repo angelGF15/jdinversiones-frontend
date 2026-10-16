@@ -33,6 +33,7 @@ import { HasPermissionDirective } from '../../../../core/directives/has-permissi
 import { AvatarUploadDialogComponent } from '../../../../shared/components/avatar-upload-dialog/avatar-upload-dialog.component';
 import { CredentialsDialogComponent } from '../dialogs/credentials-dialog/credentials-dialog.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { FormActionsDockComponent } from '../../../../shared/components/form-actions-dock/form-actions-dock.component';
 
 @Component({
   selector: 'app-user-form',
@@ -43,6 +44,7 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
     ReactiveFormsModule,
     MatTooltipModule,
     HasPermissionDirective,
+    FormActionsDockComponent,
   ],
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.css'],
@@ -170,6 +172,32 @@ export class UserFormComponent implements OnInit {
     this.form.controls.roleIds.setValue(current);
     this.form.controls.roleIds.markAsDirty();
     this.form.controls.roleIds.markAsTouched();
+  }
+
+  public isDirty(): boolean {
+    return this.form.dirty;
+  }
+
+  public discard(): void {
+    if (this.isEditMode() && this.user()) {
+      const u = this.user()!;
+      const roleIds = u.roles ? u.roles.map((r) => r.id) : [];
+      this.form.reset({
+        email: u.email,
+        firstName: u.firstName,
+        lastName: u.lastName,
+        phone: u.phone ?? '',
+        roleIds,
+      });
+    } else {
+      this.form.reset({
+        email: '',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        roleIds: [],
+      });
+    }
   }
 
   public onSubmit(): void {

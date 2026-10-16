@@ -30,6 +30,7 @@ import {
 import { HasPermissionDirective } from '../../../../../core/directives/has-permission.directive';
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { CategoryImageDialogComponent } from '../dialogs/category-image-dialog/category-image-dialog.component';
+import { FormActionsDockComponent } from '../../../../../shared/components/form-actions-dock/form-actions-dock.component';
 
 /**
  * Convierte una cadena de texto en un slug URL-friendly normalizado.
@@ -55,6 +56,7 @@ function slugify(text: string): string {
     ReactiveFormsModule,
     MatTooltipModule,
     HasPermissionDirective,
+    FormActionsDockComponent,
   ],
   templateUrl: './category-form.component.html',
   styleUrls: ['./category-form.component.css'],
@@ -213,6 +215,31 @@ export class CategoryFormComponent implements OnInit {
       const name = this.form.controls.name.value || '';
       this.form.controls.slug.setValue(slugify(name));
       this.form.controls.slug.markAsDirty();
+    }
+  }
+
+  public isDirty(): boolean {
+    return this.form.dirty;
+  }
+
+  public discard(): void {
+    if (this.isEditMode() && this.category()) {
+      const cat = this.category()!;
+      this.form.reset({
+        name: cat.name,
+        slug: cat.slug,
+        description: cat.description ?? '',
+        parentId: cat.parentId ?? null,
+        displayOrder: cat.displayOrder ?? 0,
+      });
+    } else {
+      this.form.reset({
+        name: '',
+        slug: '',
+        description: '',
+        parentId: null,
+        displayOrder: 0,
+      });
     }
   }
 
