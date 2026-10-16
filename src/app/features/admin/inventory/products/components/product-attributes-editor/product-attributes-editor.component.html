@@ -1,205 +1,162 @@
 <div class="product-attributes-container flex flex-col gap-5">
   <!-- Cabecera de la Sección de Atributos -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+  <div
+    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
     <div class="flex items-center gap-2">
       <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
         Especificaciones y Atributos Técnicos
       </h3>
-      <span
-        class="px-2 py-0.5 rounded-full text-xs font-mono font-semibold"
-        [ngClass]="{
-          'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60':
-            rows().length > 0,
-          'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400':
-            rows().length === 0
-        }"
-      >
-        {{ rows().length }} {{ rows().length === 1 ? 'atributo' : 'atributos' }}
-      </span>
+
     </div>
 
     <!-- Botón Agregar Característica -->
     @if (!readonly()) {
-      <button
-        type="button"
-        (click)="onAddRow()"
-        [disabled]="availableMasterAttributes().length === 0 || isLoadingAttributes()"
-        class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 shadow-sm cursor-pointer transition-all hover:shadow disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:ring-2 focus:ring-primary self-start sm:self-auto"
-      >
-        <span class="mat-icon text-base select-none leading-none">add</span>
-        <span>Añadir Especificación</span>
-      </button>
+    <button type="button" (click)="onAddRow()"
+      [disabled]="availableMasterAttributes().length === 0 || isLoadingAttributes()"
+      class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 shadow-sm cursor-pointer transition-all hover:shadow disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:ring-2 focus:ring-primary self-start sm:self-auto">
+      <span class="mat-icon text-base select-none leading-none">add</span>
+      <span>Añadir Especificación</span>
+    </button>
     }
   </div>
 
   <!-- Alerta de Atributos Duplicados (Regla Crítica 409 Conflict) -->
   @if (hasDuplicateAttributes()) {
-    <div
-      role="alert"
-      class="flex items-center gap-2.5 p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-medium animate-fadeIn"
-    >
-      <span class="mat-icon text-base text-amber-600 dark:text-amber-400 select-none flex-shrink-0">warning</span>
-      <span>
-        Has seleccionado el mismo atributo técnico más de una vez. Cada atributo debe ser único por producto para evitar conflictos.
-      </span>
-    </div>
+  <div role="alert"
+    class="flex items-center gap-2.5 p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-medium animate-fadeIn">
+    <span class="mat-icon text-base text-amber-600 dark:text-amber-400 select-none flex-shrink-0">warning</span>
+    <span>
+      Has seleccionado el mismo atributo técnico más de una vez. Cada atributo debe ser único por producto para evitar
+      conflictos.
+    </span>
+  </div>
   }
 
   <!-- Estado Vacío cuando no hay filas configuradas -->
   @if (rows().length === 0) {
+  <div
+    class="flex flex-col items-center justify-center p-8 sm:p-10 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 text-center select-none">
     <div
-      class="flex flex-col items-center justify-center p-8 sm:p-10 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 text-center select-none"
-    >
-      <div
-        class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 text-indigo-500 dark:text-indigo-400 flex items-center justify-center shadow-sm border border-slate-200/80 dark:border-slate-700/80 mb-3"
-      >
-        <span class="mat-icon text-3xl select-none" aria-hidden="true">format_list_bulleted</span>
-      </div>
-      <h4 class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 mb-1">
-        No se han asignado especificaciones técnicas
-      </h4>
-      <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-4 leading-relaxed">
-        Agrega detalles como capacidad de almacenamiento, color del chasis o tipo de pantalla para que los compradores puedan comparar las variantes del producto.
-      </p>
-
-      @if (!readonly()) {
-        <button
-          type="button"
-          (click)="onAddRow()"
-          [disabled]="availableMasterAttributes().length === 0"
-          class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60 shadow-2xs cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <span class="mat-icon text-base select-none leading-none">add_circle_outline</span>
-          <span>Añadir primera especificación</span>
-        </button>
-      }
+      class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 text-indigo-500 dark:text-indigo-400 flex items-center justify-center shadow-sm border border-slate-200/80 dark:border-slate-700/80 mb-3">
+      <span class="mat-icon text-3xl select-none" aria-hidden="true">format_list_bulleted</span>
     </div>
+    <h4 class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 mb-1">
+      No se han asignado especificaciones técnicas
+    </h4>
+    <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-4 leading-relaxed">
+      Agrega detalles como capacidad de almacenamiento, color del chasis o tipo de pantalla para que los compradores
+      puedan comparar las variantes del producto.
+    </p>
+
+    @if (!readonly()) {
+    <button type="button" (click)="onAddRow()" [disabled]="availableMasterAttributes().length === 0"
+      class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60 shadow-2xs cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-primary">
+      <span class="mat-icon text-base select-none leading-none">add_circle_outline</span>
+      <span>Añadir primera especificación</span>
+    </button>
+    }
+  </div>
   }
 
   <!-- Matriz de Atributos (Desktop Table + Mobile Cards) -->
   @if (rows().length > 0) {
-    <div class="overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="border-b border-slate-100 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-800/40 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            <th scope="col" class="py-3 px-3 w-14 text-center">Orden</th>
-            <th scope="col" class="py-3 px-4 w-1/3 sm:w-2/5">Atributo Maestro</th>
-            <th scope="col" class="py-3 px-4">Valor de la Característica</th>
-            @if (!readonly()) {
-              <th scope="col" class="py-3 px-3 w-28 text-right">Acciones</th>
-            }
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
-          @for (row of rows(); track row.tempId; let idx = $index) {
-            <tr
-              class="group hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
-              [ngClass]="{
-                'bg-amber-50/20 dark:bg-amber-950/10': isAttributeUsedInOtherRow(row.attributeId, row.tempId)
-              }"
-            >
-              <!-- 1. Columna de Orden con flechas de reordenamiento -->
-              <td class="py-3 px-2 text-center align-middle">
-                <div class="flex items-center justify-center gap-1">
-                  @if (!readonly()) {
-                    <div class="flex flex-col items-center">
-                      <button
-                        type="button"
-                        (click)="onMoveRow(idx, 'up')"
-                        [disabled]="idx === 0"
-                        matTooltip="Mover arriba"
-                        class="p-0.5 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-20 cursor-pointer disabled:cursor-default"
-                        aria-label="Subir orden"
-                      >
-                        <span class="mat-icon text-xs leading-none">expand_less</span>
-                      </button>
-                      <button
-                        type="button"
-                        (click)="onMoveRow(idx, 'down')"
-                        [disabled]="idx === rows().length - 1"
-                        matTooltip="Mover abajo"
-                        class="p-0.5 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-20 cursor-pointer disabled:cursor-default"
-                        aria-label="Bajar orden"
-                      >
-                        <span class="mat-icon text-xs leading-none">expand_more</span>
-                      </button>
-                    </div>
-                  }
-                  <span class="font-mono font-semibold text-slate-600 dark:text-slate-400 text-xs min-w-[20px]">
-                    #{{ row.displayOrder }}
-                  </span>
-                </div>
-              </td>
-
-              <!-- 2. Columna Atributo Maestro (Dropdown con prevención de duplicados) -->
-              <td class="py-3 px-4 align-middle">
-                @if (readonly()) {
-                  <span class="font-semibold text-slate-800 dark:text-slate-200">
-                    {{ getAttributeName(row.attributeId) }}
-                  </span>
-                } @else {
-                  <div class="relative">
-                    <select
-                      [(ngModel)]="row.attributeId"
-                      (change)="onFieldChange()"
-                      [attr.aria-label]="'Atributo técnico fila ' + (idx + 1)"
-                      class="w-full px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer"
-                      [ngClass]="{
-                        'border-amber-400 dark:border-amber-500': isAttributeUsedInOtherRow(row.attributeId, row.tempId)
-                      }"
-                    >
-                      <option value="" disabled>Selecciona un atributo...</option>
-                      @for (attr of availableMasterAttributes(); track attr.id) {
-                        <option
-                          [value]="attr.id"
-                          [disabled]="isAttributeUsedInOtherRow(attr.id, row.tempId)"
-                        >
-                          {{ attr.name }}
-                          {{ isAttributeUsedInOtherRow(attr.id, row.tempId) ? ' (ya seleccionado)' : '' }}
-                        </option>
-                      }
-                    </select>
-                  </div>
-                }
-              </td>
-
-              <!-- 3. Columna Valor de la Característica (Input de Texto) -->
-              <td class="py-3 px-4 align-middle">
-                @if (readonly()) {
-                  <span class="text-slate-700 dark:text-slate-300 font-mono">
-                    {{ row.value || '---' }}
-                  </span>
-                } @else {
-                  <input
-                    type="text"
-                    [(ngModel)]="row.value"
-                    (input)="onFieldChange()"
-                    maxlength="200"
-                    [attr.aria-label]="'Valor de la característica fila ' + (idx + 1)"
-                    placeholder="ej. 256 GB, Azul Titanio, 6.7 pulgadas..."
-                    class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  />
-                }
-              </td>
-
-              <!-- 4. Columna Acciones (Eliminar) -->
-              @if (!readonly()) {
-                <td class="py-3 px-3 text-right align-middle">
-                  <button
-                    type="button"
-                    (click)="onRemoveRow(row.tempId)"
-                    matTooltip="Quitar especificación"
-                    class="w-8 h-8 rounded-xl text-slate-400 hover:text-danger-600 dark:hover:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/40 flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
-                    [attr.aria-label]="'Quitar especificación ' + getAttributeName(row.attributeId)"
-                  >
-                    <span class="mat-icon text-lg select-none leading-none">delete_outline</span>
-                  </button>
-                </td>
-              }
-            </tr>
+  <div
+    class="overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr
+          class="border-b border-slate-100 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-800/40 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <th scope="col" class="py-3 px-3 w-14 text-center">Orden</th>
+          <th scope="col" class="py-3 px-4 w-1/3 sm:w-2/5">Atributo Maestro</th>
+          <th scope="col" class="py-3 px-4">Valor de la Característica</th>
+          @if (!readonly()) {
+          <th scope="col" class="py-3 px-3 w-28 text-right">Acciones</th>
           }
-        </tbody>
-      </table>
-    </div>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
+        @for (row of rows(); track row.tempId; let idx = $index) {
+        <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors" [ngClass]="{
+                'bg-amber-50/20 dark:bg-amber-950/10': isAttributeUsedInOtherRow(row.attributeId, row.tempId)
+              }">
+          <!-- 1. Columna de Orden con flechas de reordenamiento -->
+          <td class="py-3 px-2 text-center align-middle">
+            <div class="flex items-center justify-center gap-1">
+              @if (!readonly()) {
+              <div class="flex flex-col items-center">
+                <button type="button" (click)="onMoveRow(idx, 'up')" [disabled]="idx === 0" matTooltip="Mover arriba"
+                  class="p-0.5 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-20 cursor-pointer disabled:cursor-default"
+                  aria-label="Subir orden">
+                  <span class="mat-icon text-xs leading-none">expand_less</span>
+                </button>
+                <button type="button" (click)="onMoveRow(idx, 'down')" [disabled]="idx === rows().length - 1"
+                  matTooltip="Mover abajo"
+                  class="p-0.5 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-20 cursor-pointer disabled:cursor-default"
+                  aria-label="Bajar orden">
+                  <span class="mat-icon text-xs leading-none">expand_more</span>
+                </button>
+              </div>
+              }
+              <span class="font-mono font-semibold text-slate-600 dark:text-slate-400 text-xs min-w-[20px]">
+                #{{ row.displayOrder }}
+              </span>
+            </div>
+          </td>
+
+          <!-- 2. Columna Atributo Maestro (Dropdown con prevención de duplicados) -->
+          <td class="py-3 px-4 align-middle">
+            @if (readonly()) {
+            <span class="font-semibold text-slate-800 dark:text-slate-200">
+              {{ getAttributeName(row.attributeId) }}
+            </span>
+            } @else {
+            <div class="relative">
+              <select [(ngModel)]="row.attributeId" (change)="onFieldChange()"
+                [attr.aria-label]="'Atributo técnico fila ' + (idx + 1)"
+                class="w-full px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer"
+                [ngClass]="{
+                        'border-amber-400 dark:border-amber-500': isAttributeUsedInOtherRow(row.attributeId, row.tempId)
+                      }">
+                <option value="" disabled>Selecciona un atributo...</option>
+                @for (attr of availableMasterAttributes(); track attr.id) {
+                <option [value]="attr.id" [disabled]="isAttributeUsedInOtherRow(attr.id, row.tempId)">
+                  {{ attr.name }}
+                  {{ isAttributeUsedInOtherRow(attr.id, row.tempId) ? ' (ya seleccionado)' : '' }}
+                </option>
+                }
+              </select>
+            </div>
+            }
+          </td>
+
+          <!-- 3. Columna Valor de la Característica (Input de Texto) -->
+          <td class="py-3 px-4 align-middle">
+            @if (readonly()) {
+            <span class="text-slate-700 dark:text-slate-300 font-mono">
+              {{ row.value || '---' }}
+            </span>
+            } @else {
+            <input type="text" [(ngModel)]="row.value" (input)="onFieldChange()" maxlength="200"
+              [attr.aria-label]="'Valor de la característica fila ' + (idx + 1)"
+              placeholder="ej. 256 GB, Azul Titanio, 6.7 pulgadas..."
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" />
+            }
+          </td>
+
+          <!-- 4. Columna Acciones (Eliminar) -->
+          @if (!readonly()) {
+          <td class="py-3 px-3 text-right align-middle">
+            <button type="button" (click)="onRemoveRow(row.tempId)" matTooltip="Quitar especificación"
+              class="w-8 h-8 rounded-xl text-slate-400 hover:text-danger-600 dark:hover:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/40 flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
+              [attr.aria-label]="'Quitar especificación ' + getAttributeName(row.attributeId)">
+              <span class="mat-icon text-lg select-none leading-none">delete_outline</span>
+            </button>
+          </td>
+          }
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
   }
 </div>

@@ -58,25 +58,6 @@
       </div>
     </div>
 
-    <!-- Botones de Acción Superiores -->
-    <div class="flex items-center gap-2.5 self-end sm:self-auto w-full sm:w-auto">
-      <a routerLink="/admin/inventory/products"
-        class="inline-flex items-center justify-center px-4 py-2 min-h-[42px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 shadow-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary flex-1 sm:flex-initial">
-        Cancelar
-      </a>
-      <button type="button" (click)="onSubmit()" [disabled]="isSubmitting() || isLoading()"
-        class="inline-flex items-center justify-center gap-2 px-5 py-2 min-h-[42px] text-xs sm:text-sm font-semibold rounded-xl bg-primary hover:bg-primary-700 active:scale-[0.99] text-white shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer flex-1 sm:flex-initial">
-        @if (isSubmitting()) {
-        <span class="mat-icon text-base animate-spin select-none flex-shrink-0" aria-hidden="true">refresh</span>
-        <span>Guardando...</span>
-        } @else {
-        <span class="mat-icon text-base select-none flex-shrink-0" aria-hidden="true">
-          {{ isEditMode() ? 'save' : 'add_box' }}
-        </span>
-        <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Producto' }}</span>
-        }
-      </button>
-    </div>
   </header>
 
   <!-- Banner de error si la API retorna una excepción (ej. 409 SKU/slug duplicado o 400 dependencia inactiva) -->
@@ -98,7 +79,7 @@
   <!-- Vista Esqueleto durante la carga de datos del producto -->
   @if (isLoading()) {
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-pulse">
-    <div class="lg:col-span-8 flex flex-col gap-6">
+    <div class="lg:col-span-7 flex flex-col gap-6">
       <div
         class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
         <div class="h-5 w-52 rounded bg-slate-200 dark:bg-slate-800"></div>
@@ -118,7 +99,7 @@
         <div class="h-20 rounded-xl bg-slate-100 dark:bg-slate-800/60"></div>
       </div>
     </div>
-    <div class="lg:col-span-4 flex flex-col gap-6">
+    <div class="lg:col-span-5 flex flex-col gap-6">
       <div
         class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 flex flex-col items-center space-y-4">
         <div class="w-24 h-24 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
@@ -133,7 +114,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
       <!-- ==================== COLUMNA PRINCIPAL (8 columnas) ==================== -->
-      <div class="lg:col-span-8 flex flex-col gap-6">
+      <div class="lg:col-span-7 flex flex-col gap-6">
 
         <!-- Tarjeta 1: Información General y Clasificación -->
         <section
@@ -538,7 +519,7 @@
       </div>
 
       <!-- ==================== COLUMNA LATERAL (4 columnas) ==================== -->
-      <aside class="lg:col-span-4 flex flex-col gap-6">
+      <aside class="lg:col-span-5 flex flex-col gap-6">
 
         <!-- ==================== SECCIÓN 1 LATERAL: PRECIOS Y MÁRGENES ==================== -->
         <section
@@ -687,19 +668,10 @@
     </div>
 
     <!-- Barra Inferior Flotante de Acciones Global -->
-    <app-form-actions-dock
-      [isEditMode]="isEditMode()"
-      [isSubmitting]="isSubmitting()"
-      [isLoading]="isLoading()"
-      [isDirty]="isDirty()"
-      [isValid]="form.valid"
-      [progress]="formCompletion()"
-      backRoute="/admin/inventory/products"
-      backLabel="Volver a Productos"
-      [submitLabel]="isEditMode() ? 'Guardar Cambios' : 'Crear Producto'"
-      [submitIcon]="isEditMode() ? 'save' : 'add_box'"
-      (discardTriggered)="discard()"
-    ></app-form-actions-dock>
+    <app-form-actions-dock [isEditMode]="isEditMode()" [isSubmitting]="isSubmitting()" [isLoading]="isLoading()"
+      [isDirty]="isDirty()" [isValid]="form.valid" [progress]="formCompletion()" backRoute="/admin/inventory/products"
+      backLabel="Volver a Productos" [submitLabel]="isEditMode() ? 'Guardar Cambios' : 'Crear Producto'"
+      [submitIcon]="isEditMode() ? 'save' : 'add_box'" (discardTriggered)="discard()"></app-form-actions-dock>
   </form>
   }
 </div>
