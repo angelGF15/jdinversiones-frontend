@@ -35,6 +35,7 @@ import { CategoryChild } from '../../../../../core/models/category.models';
 import { CatalogBrand } from '../../../../../core/models/brand.models';
 import { ProductGalleryComponent } from '../components/product-gallery/product-gallery.component';
 import { ProductAttributesEditorComponent } from '../components/product-attributes-editor/product-attributes-editor.component';
+import { FormActionsDockComponent } from '../../../../../shared/components/form-actions-dock/form-actions-dock.component';
 
 /**
  * Convierte una cadena de texto en un slug URL-friendly normalizado.
@@ -72,6 +73,7 @@ export interface FormCompletionState {
     MatTooltipModule,
     ProductGalleryComponent,
     ProductAttributesEditorComponent,
+    FormActionsDockComponent,
   ],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css'],

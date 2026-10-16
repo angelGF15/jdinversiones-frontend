@@ -686,158 +686,20 @@
 
     </div>
 
-    <!-- Barra Inferior Flotante de Acciones (Dock Premium Desacoplado) -->
-    <footer
-      class="sticky bottom-4 sm:bottom-6 z-20 mt-6 mb-2 rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/80 shadow-2xl shadow-slate-900/10 dark:shadow-black/50 ring-1 ring-slate-900/5 dark:ring-white/10 p-3.5 sm:p-5 lg:px-6 lg:py-4 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 lg:gap-6 relative overflow-hidden transition-all duration-300 floating-actions-dock">
-      <!-- Reflejo specular superior para profundidad vítrea -->
-      <div
-        class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-300/60 dark:via-white/15 to-transparent pointer-events-none"
-        aria-hidden="true"></div>
-
-      @if (!isEditMode()) {
-      <!-- Barra de Completación del Formulario (Solo modo crear) -->
-      <div class="flex-1 flex flex-col gap-2 min-w-0 max-w-2xl">
-        <!-- Cabecera del Progreso: Icono, Estado y Porcentaje -->
-        <div class="flex items-center justify-between gap-3 text-xs sm:text-sm">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <div
-              class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300"
-              [ngClass]="
-                    formCompletion().isComplete
-                      ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400 ring-1 ring-emerald-500/25'
-                      : 'bg-primary-50 text-primary dark:bg-primary-500/15 dark:text-primary-300 ring-1 ring-primary-500/25'
-                  ">
-              <span class="mat-icon text-base sm:text-lg select-none" aria-hidden="true">
-                {{ formCompletion().isComplete ? 'check_circle' : 'pending_actions' }}
-              </span>
-            </div>
-            <div class="min-w-0">
-              <span class="font-semibold text-slate-800 dark:text-slate-100 truncate block text-xs sm:text-sm">
-                {{ formCompletion().isComplete ? 'Formulario completo' : 'Progreso del producto' }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Badge de porcentaje minimalista con indicador pulsante -->
-          <span
-            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold font-mono tracking-tight tabular-nums transition-all duration-300 border shadow-xs"
-            [ngClass]="
-                  formCompletion().isComplete
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200/90 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20'
-                    : 'bg-primary-50 text-primary-700 border-primary-200/90 dark:bg-primary-500/10 dark:text-primary-300 dark:border-primary-500/20'
-                ">
-            <span class="w-1.5 h-1.5 rounded-full transition-colors"
-              [ngClass]="formCompletion().isComplete ? 'bg-emerald-500' : 'bg-primary animate-pulse'"></span>
-            {{ formCompletion().percentage }}%
-          </span>
-        </div>
-
-        <!-- Pista y Barra de Progreso Minimalista Premium -->
-        <div
-          class="w-full h-2 bg-slate-100 dark:bg-slate-800/80 rounded-full overflow-hidden p-[2px] ring-1 ring-inset ring-slate-200/70 dark:ring-slate-700/60 transition-all"
-          role="progressbar" [attr.aria-valuenow]="formCompletion().percentage" aria-valuemin="0" aria-valuemax="100"
-          [attr.aria-valuetext]="formCompletion().percentage + '% completado'">
-          <div class="h-full rounded-full transition-all duration-700 ease-out relative overflow-hidden" [ngClass]="
-                  formCompletion().isComplete
-                    ? 'bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.35)]'
-                    : 'bg-gradient-to-r from-primary via-primary-500 to-indigo-500 shadow-[0_0_10px_rgba(var(--primary-500)/0.3)]'
-                " [style.width.%]="formCompletion().percentage">
-            <!-- Brillo sutil de acabado vidrio -->
-            <div class="absolute inset-0 bg-gradient-to-b from-white/25 to-transparent rounded-full" aria-hidden="true">
-            </div>
-          </div>
-        </div>
-
-        <!-- Detalle de campos obligatorios completados y pendientes -->
-        <div class="flex items-center justify-between text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 gap-3">
-          <span class="flex-shrink-0 font-medium inline-flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full"
-              [ngClass]="formCompletion().isComplete ? 'bg-emerald-500' : 'bg-slate-400 dark:bg-slate-600'"></span>
-            {{ formCompletion().completedCount }} de {{ formCompletion().totalCount }} campos requeridos
-          </span>
-          @if (!formCompletion().isComplete && formCompletion().pendingFields.length > 0) {
-          <span
-            class="truncate text-amber-600 dark:text-amber-400 font-medium text-right inline-flex items-center gap-1 min-w-0"
-            [title]="'Faltan: ' + formCompletion().pendingFields.join(', ')">
-            <span class="mat-icon text-xs select-none flex-shrink-0" aria-hidden="true">info</span>
-            <span class="truncate">Falta: {{ formCompletion().pendingFields.join(', ') }}</span>
-          </span>
-          } @else {
-          <span
-            class="text-emerald-600 dark:text-emerald-400 font-semibold flex-shrink-0 inline-flex items-center gap-1">
-            <span class="mat-icon text-sm select-none" aria-hidden="true">check</span>
-            Listo para crear producto
-          </span>
-          }
-        </div>
-      </div>
-      } @else {
-      <!-- Modo Edición: Resumen de Estado Convencional Estilizado -->
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
-          [ngClass]="
-                !isDirty() && form.valid
-                  ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400 ring-1 ring-emerald-500/25'
-                  : 'bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400 ring-1 ring-amber-500/25'
-              ">
-          <span class="mat-icon text-lg sm:text-xl select-none" aria-hidden="true">
-            {{ !isDirty() && form.valid ? 'check_circle' : 'pending_actions' }}
-          </span>
-        </div>
-        <div class="flex flex-col min-w-0">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
-              {{ form.valid ? 'Ficha técnica lista' : 'Campos pendientes de validación' }}
-            </span>
-            @if (isDirty()) {
-            <span
-              class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20">
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-              Cambios sin guardar
-            </span>
-            } @else if (form.valid) {
-            <span
-              class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              Sincronizado
-            </span>
-            }
-          </div>
-          <span class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
-            {{ isDirty() ? 'Guarda las modificaciones para aplicarlas al catálogo' : 'No hay cambios pendientes de
-            sincronizar' }}
-          </span>
-        </div>
-      </div>
-      }
-
-      <!-- Grupo de Botones de Acción -->
-      <div
-        class="flex items-center gap-2.5 sm:gap-3 w-full lg:w-auto justify-end flex-wrap sm:flex-nowrap flex-shrink-0">
-        <button type="button" (click)="discard()" [disabled]="!isDirty() || isSubmitting() || isLoading()"
-          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-[0.98] cursor-pointer">
-          <span class="mat-icon text-base select-none" aria-hidden="true">undo</span>
-          <span>Descartar cambios</span>
-        </button>
-        <a routerLink="/admin/inventory/products"
-          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-all active:scale-[0.98]">
-
-          <span>Volver a Productos</span>
-        </a>
-        <button type="submit" [disabled]="isSubmitting() || isLoading()"
-          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 min-h-[44px] rounded-xl bg-primary hover:bg-primary-700 active:scale-[0.98] text-white font-semibold text-xs sm:text-sm shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer">
-          @if (isSubmitting()) {
-          <span class="mat-icon text-lg animate-spin select-none" aria-hidden="true">refresh</span>
-          <span>Guardando...</span>
-          } @else {
-          <span class="mat-icon text-lg select-none" aria-hidden="true">
-            {{ isEditMode() ? 'save' : 'add_box' }}
-          </span>
-          <span>{{ isEditMode() ? 'Guardar Cambios' : 'Crear Producto' }}</span>
-          }
-        </button>
-      </div>
-    </footer>
+    <!-- Barra Inferior Flotante de Acciones Global -->
+    <app-form-actions-dock
+      [isEditMode]="isEditMode()"
+      [isSubmitting]="isSubmitting()"
+      [isLoading]="isLoading()"
+      [isDirty]="isDirty()"
+      [isValid]="form.valid"
+      [progress]="formCompletion()"
+      backRoute="/admin/inventory/products"
+      backLabel="Volver a Productos"
+      [submitLabel]="isEditMode() ? 'Guardar Cambios' : 'Crear Producto'"
+      [submitIcon]="isEditMode() ? 'save' : 'add_box'"
+      (discardTriggered)="discard()"
+    ></app-form-actions-dock>
   </form>
   }
 </div>
