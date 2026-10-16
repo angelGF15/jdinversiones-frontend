@@ -10,7 +10,7 @@ import { signal } from '@angular/core';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
-import { BrandService } from '../../../core/services/brand/brand.service';
+import { BrandingService, BrandService } from '../../../core/services/branding/branding.service';
 import { LoginResponse } from '../../../core/auth/models/auth.models';
 
 describe('LoginComponent', () => {
@@ -71,6 +71,7 @@ describe('LoginComponent', () => {
             },
           },
         },
+        { provide: BrandingService, useValue: mockBrandService },
         { provide: BrandService, useValue: mockBrandService },
       ],
     }).compileComponents();

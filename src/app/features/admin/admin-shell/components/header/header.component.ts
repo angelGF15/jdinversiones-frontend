@@ -9,7 +9,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuthState } from '../../../../../core/auth/auth.state';
 import { ThemeService } from '../../../../../core/services/theme/theme.service';
-import { BrandService } from '../../../../../core/services/brand/brand.service';
+import { BrandingService } from '../../../../../core/services/branding/branding.service';
 import { AvatarUploadDialogComponent } from '../../../../../shared/components/avatar-upload-dialog/avatar-upload-dialog.component';
 
 @Component({
@@ -31,7 +31,8 @@ import { AvatarUploadDialogComponent } from '../../../../../shared/components/av
 export class HeaderComponent {
   public readonly authState = inject(AuthState);
   public readonly themeService = inject(ThemeService);
-  public readonly brandService = inject(BrandService);
+  public readonly brandService = inject(BrandingService);
+  public readonly brandingService = this.brandService;
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 

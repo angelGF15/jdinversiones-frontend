@@ -10,14 +10,14 @@ import {
   LogoUploadDialogData,
 } from './logo-upload-dialog.component';
 import { ConfigService } from '../../../core/services/config/config.service';
-import { BrandService } from '../../../core/services/brand/brand.service';
+import { BrandingService, BrandService } from '../../../core/services/branding/branding.service';
 
 describe('LogoUploadDialogComponent', () => {
   let component: LogoUploadDialogComponent;
   let fixture: ComponentFixture<LogoUploadDialogComponent>;
   let dialogRefSpy: jasmine.SpyObj<MatDialogRef<LogoUploadDialogComponent>>;
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
-  let brandServiceSpy: jasmine.SpyObj<BrandService>;
+  let brandServiceSpy: jasmine.SpyObj<BrandingService>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
 
   const initialData: LogoUploadDialogData = {
@@ -31,7 +31,7 @@ describe('LogoUploadDialogComponent', () => {
       of({ logoUrl: 'https://cdn.example.com/nuevo-logo.webp' })
     );
 
-    brandServiceSpy = jasmine.createSpyObj('BrandService', ['refresh', 'patchBrandLocally']);
+    brandServiceSpy = jasmine.createSpyObj('BrandingService', ['refresh', 'patchBrandLocally']);
     brandServiceSpy.refresh.and.returnValue(of(null));
 
     snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
@@ -43,6 +43,7 @@ describe('LogoUploadDialogComponent', () => {
         { provide: MatDialogRef, useValue: dialogRefSpy },
         { provide: MAT_DIALOG_DATA, useValue: initialData },
         { provide: ConfigService, useValue: configServiceSpy },
+        { provide: BrandingService, useValue: brandServiceSpy },
         { provide: BrandService, useValue: brandServiceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
       ],

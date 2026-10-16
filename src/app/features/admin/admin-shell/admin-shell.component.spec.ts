@@ -10,7 +10,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
 import { MenuService } from '../../../core/services/menu/menu.service';
 
-import { BrandService } from '../../../core/services/brand/brand.service';
+import { BrandingService, BrandService } from '../../../core/services/branding/branding.service';
 
 describe('AdminShellComponent', () => {
   let component: AdminShellComponent;
@@ -72,6 +72,7 @@ describe('AdminShellComponent', () => {
         { provide: AuthState, useValue: authStateSpy },
         { provide: MenuService, useValue: menuServiceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
+        { provide: BrandingService, useValue: mockBrandService },
         { provide: BrandService, useValue: mockBrandService },
       ],
     }).compileComponents();

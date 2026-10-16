@@ -6,8 +6,7 @@ import { SidebarComponent } from './sidebar.component';
 import { AuthState } from '../../../../../core/auth/auth.state';
 import { MenuService } from '../../../../../core/services/menu/menu.service';
 import { MenuItem } from '../../../../../core/models/menu.models';
-
-import { BrandService } from '../../../../../core/services/brand/brand.service';
+import { BrandingService, BrandService } from '../../../../../core/services/branding/branding.service';
 
 describe('SidebarComponent', () => {
   let component: SidebarComponent;
@@ -92,6 +91,7 @@ describe('SidebarComponent', () => {
         provideRouter([]),
         { provide: AuthState, useValue: authStateSpy },
         { provide: MenuService, useValue: menuServiceSpy },
+        { provide: BrandingService, useValue: mockBrandService },
         { provide: BrandService, useValue: mockBrandService },
       ],
     }).compileComponents();

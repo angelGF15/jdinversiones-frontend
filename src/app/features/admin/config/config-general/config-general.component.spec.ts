@@ -7,7 +7,7 @@ import { of, throwError } from 'rxjs';
 
 import { ConfigGeneralComponent } from './config-general.component';
 import { ConfigService } from '../../../../core/services/config/config.service';
-import { BrandService } from '../../../../core/services/brand/brand.service';
+import { BrandingService, BrandService } from '../../../../core/services/branding/branding.service';
 import { AuthState } from '../../../../core/auth/auth.state';
 import { ConfigGroup, Setting } from '../../../../core/models/config.models';
 
@@ -15,7 +15,7 @@ describe('ConfigGeneralComponent', () => {
   let component: ConfigGeneralComponent;
   let fixture: ComponentFixture<ConfigGeneralComponent>;
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
-  let brandServiceSpy: jasmine.SpyObj<BrandService>;
+  let brandServiceSpy: jasmine.SpyObj<BrandingService>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
   let authStateSpy: jasmine.SpyObj<AuthState>;
 
@@ -120,7 +120,7 @@ describe('ConfigGeneralComponent', () => {
       })
     );
 
-    brandServiceSpy = jasmine.createSpyObj('BrandService', [
+    brandServiceSpy = jasmine.createSpyObj('BrandingService', [
       'applyPrimaryColor',
       'refresh',
       'patchBrandLocally',
@@ -137,6 +137,7 @@ describe('ConfigGeneralComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: ConfigService, useValue: configServiceSpy },
+        { provide: BrandingService, useValue: brandServiceSpy },
         { provide: BrandService, useValue: brandServiceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
         { provide: AuthState, useValue: authStateSpy },

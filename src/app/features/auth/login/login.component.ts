@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthState } from '../../../core/auth/auth.state';
-import { BrandService } from '../../../core/services/brand/brand.service';
+import { BrandingService } from '../../../core/services/branding/branding.service';
 
 export type LoginErrorType = 'validation' | 'credentials' | 'suspended' | 'rate-limit' | 'network' | null;
 
@@ -36,7 +36,8 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly authState = inject(AuthState);
-  public readonly brandService = inject(BrandService);
+  public readonly brandService = inject(BrandingService);
+  public readonly brandingService = this.brandService;
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly snackBar = inject(MatSnackBar);

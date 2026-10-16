@@ -5,7 +5,7 @@ import { HeaderComponent } from './header.component';
 import { AuthState } from '../../../../../core/auth/auth.state';
 import { ThemeService } from '../../../../../core/services/theme/theme.service';
 
-import { BrandService } from '../../../../../core/services/brand/brand.service';
+import { BrandingService, BrandService } from '../../../../../core/services/branding/branding.service';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -32,6 +32,7 @@ describe('HeaderComponent', () => {
         provideZonelessChangeDetection(),
         provideNoopAnimations(),
         { provide: AuthState, useValue: authStateSpy },
+        { provide: BrandingService, useValue: mockBrandService },
         { provide: BrandService, useValue: mockBrandService },
       ],
     }).compileComponents();

@@ -25,14 +25,14 @@ const DEFAULT_PRIMARY_COLOR = '#032EDD';
 @Injectable({
   providedIn: 'root',
 })
-export class BrandService {
+export class BrandingService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
   private readonly configService = inject(ConfigService);
   private readonly transferState = inject(TransferState);
   private readonly titleService = inject(Title);
 
-  // --- Signals de Estado de Marca ---
+  // --- Signals de Estado de Marca Institucional ---
   public readonly branding = signal<PublicBranding | null>(null);
   public readonly logoVersion = signal<number>(Date.now());
 
@@ -270,3 +270,8 @@ export class BrandService {
     }
   }
 }
+
+/**
+ * Alias de retrocompatibilidad para evitar roturas
+ */
+export { BrandingService as BrandService };

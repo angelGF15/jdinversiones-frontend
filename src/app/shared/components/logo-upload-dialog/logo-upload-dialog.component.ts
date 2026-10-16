@@ -16,7 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ConfigService } from '../../../core/services/config/config.service';
-import { BrandService } from '../../../core/services/brand/brand.service';
+import { BrandingService } from '../../../core/services/branding/branding.service';
 
 export interface LogoUploadDialogData {
   currentLogoUrl?: string | null;
@@ -49,7 +49,8 @@ export class LogoUploadDialogComponent implements OnDestroy {
   public readonly dialogRef = inject(MatDialogRef<LogoUploadDialogComponent>);
   public readonly data: LogoUploadDialogData = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
   private readonly configService = inject(ConfigService);
-  private readonly brandService = inject(BrandService);
+  private readonly brandService = inject(BrandingService);
+  public readonly brandingService = this.brandService;
   private readonly snackBar = inject(MatSnackBar);
 
   // --- Signals de Estado ---

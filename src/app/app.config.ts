@@ -13,7 +13,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { routes } from './app.routes';
 import { authInterceptor, refreshTokenInterceptor } from './core/interceptors';
-import { BrandService } from './core/services/brand/brand.service';
+import { BrandingService } from './core/services/branding/branding.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,8 +27,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     provideAppInitializer(() => {
-      const brandService = inject(BrandService);
-      return firstValueFrom(brandService.load());
+      const brandingService = inject(BrandingService);
+      return firstValueFrom(brandingService.load());
     }),
   ],
 };

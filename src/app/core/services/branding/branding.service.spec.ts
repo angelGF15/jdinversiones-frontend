@@ -2,12 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
 import { provideZonelessChangeDetection, PLATFORM_ID, TransferState } from '@angular/core';
 import { of, throwError } from 'rxjs';
-import { BrandService } from './brand.service';
+import { BrandingService } from './branding.service';
 import { ConfigService } from '../config/config.service';
 import { PublicBranding } from '../../models/config.models';
 
-describe('BrandService', () => {
-  let service: BrandService;
+describe('BrandingService', () => {
+  let service: BrandingService;
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
   let titleServiceSpy: jasmine.SpyObj<Title>;
 
@@ -38,7 +38,7 @@ describe('BrandService', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        BrandService,
+        BrandingService,
         { provide: ConfigService, useValue: configServiceSpy },
         { provide: Title, useValue: titleServiceSpy },
         { provide: PLATFORM_ID, useValue: 'browser' },
@@ -46,7 +46,7 @@ describe('BrandService', () => {
       ],
     });
 
-    service = TestBed.inject(BrandService);
+    service = TestBed.inject(BrandingService);
   });
 
   it('debe crearse con valores por defecto cuando no hay branding cargado', () => {

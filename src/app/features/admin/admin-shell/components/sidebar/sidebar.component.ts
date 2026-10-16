@@ -21,7 +21,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 import { AuthState } from '../../../../../core/auth/auth.state';
 import { MenuService } from '../../../../../core/services/menu/menu.service';
-import { BrandService } from '../../../../../core/services/brand/brand.service';
+import { BrandingService } from '../../../../../core/services/branding/branding.service';
 import { MenuItem } from '../../../../../core/models/menu.models';
 
 export type NavItem = MenuItem;
@@ -44,7 +44,8 @@ export type NavItem = MenuItem;
 export class SidebarComponent implements OnInit {
   public readonly authState = inject(AuthState);
   public readonly menuService = inject(MenuService);
-  public readonly brandService = inject(BrandService);
+  public readonly brandService = inject(BrandingService);
+  public readonly brandingService = this.brandService;
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 

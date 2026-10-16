@@ -26,7 +26,7 @@ import { Subscription } from 'rxjs';
 
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 import { ConfigService } from '../../../../core/services/config/config.service';
-import { BrandService } from '../../../../core/services/brand/brand.service';
+import { BrandingService } from '../../../../core/services/branding/branding.service';
 import {
   ConfigGroup,
   Setting,
@@ -69,7 +69,8 @@ export class ConfigGeneralComponent implements OnInit {
 
   private readonly fb = inject(FormBuilder);
   private readonly configService = inject(ConfigService);
-  private readonly brandService = inject(BrandService);
+  private readonly brandService = inject(BrandingService);
+  public readonly brandingService = this.brandService;
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
