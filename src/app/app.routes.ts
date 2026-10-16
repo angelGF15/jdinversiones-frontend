@@ -124,6 +124,15 @@ export const routes: Routes = [
           ).then((m) => m.AttributesListComponent),
       },
       {
+        path: 'inventory/brands',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'BRAND_VIEW' },
+        loadComponent: () =>
+          import(
+            './features/admin/inventory/brands/brands-list/brands-list.component'
+          ).then((m) => m.BrandsListComponent),
+      },
+      {
         path: 'inventory/categories',
         canActivate: [permissionGuard],
         data: { requiredPermission: 'CATEGORY_VIEW' },
