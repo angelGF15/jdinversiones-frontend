@@ -669,7 +669,7 @@
 
     <!-- Barra Inferior Flotante de Acciones Global -->
     <app-form-actions-dock [isEditMode]="isEditMode()" [isSubmitting]="isSubmitting()" [isLoading]="isLoading()"
-      [isDirty]="isDirty()" [isValid]="form.valid" [progress]="formCompletion()" backRoute="/admin/inventory/products"
+      [isDirty]="isDirty()" [isValid]="form.valid" backRoute="/admin/inventory/products"
       backLabel="Volver a Productos" [submitLabel]="isEditMode() ? 'Guardar Cambios' : 'Crear Producto'"
       [submitIcon]="isEditMode() ? 'save' : 'add_box'" (discardTriggered)="discard()"></app-form-actions-dock>
   </form>

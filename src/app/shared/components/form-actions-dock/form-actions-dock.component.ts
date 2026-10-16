@@ -8,15 +8,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-export interface DockProgressState {
-  percentage: number;
-  completedCount: number;
-  totalCount: number;
-  pendingFields?: string[];
-  isComplete?: boolean;
-  label?: string;
-}
-
 @Component({
   selector: 'app-form-actions-dock',
   standalone: true,
@@ -32,9 +23,6 @@ export class FormActionsDockComponent {
   public readonly isLoading = input<boolean>(false);
   public readonly isDirty = input<boolean>(false);
   public readonly isValid = input<boolean>(true);
-
-  // --- Progreso Opcional (Modo Barra de Completación Minimalista) ---
-  public readonly progress = input<DockProgressState | null>(null);
 
   // --- Slots / Personalización Extensible ---
   public readonly customStatus = input<boolean>(false);

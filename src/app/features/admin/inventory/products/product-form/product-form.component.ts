@@ -115,6 +115,28 @@ export class ProductFormComponent implements OnInit {
 
   private initialStatusCode = 'active';
 
+  // Línea base (valores originales) para detectar cambios reales y no el flag `dirty` de Angular,
+  // que permanece activo aunque el usuario devuelva el valor original.
+  private baselineFormJson = '';
+  private baselineAttrsJson = '[]';
+
+  private serializeAttributes(
+    attrs: { attributeId: string; value: string; displayOrder: number }[] | null | undefined,
+  ): string {
+    return JSON.stringify(
+      (attrs ?? []).map((a) => ({
+        attributeId: a.attributeId,
+        value: (a.value ?? '').trim(),
+        displayOrder: a.displayOrder,
+      })),
+    );
+  }
+
+  private captureBaseline(attrs?: ProductAttributeInput[] | null): void {
+    this.baselineFormJson = JSON.stringify(this.form.getRawValue());
+    this.baselineAttrsJson = this.serializeAttributes(attrs);
+  }
+
   public onAttributesChange(attrs: ProductAttributeInput[]): void {
     this.currentAttributes.set(attrs);
   }
@@ -177,6 +199,7 @@ export class ProductFormComponent implements OnInit {
       this.isCustomSlug.set(true);
       this.loadProductDetail(idParam);
     } else {
+      this.captureBaseline();
       // Autogenerar slug en tiempo real mientras se escribe el nombre
       this.form.controls.name.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
@@ -263,6 +286,7 @@ export class ProductFormComponent implements OnInit {
             metaTitle: product.metaTitle ?? '',
             metaDescription: product.metaDescription ?? '',
           });
+          this.captureBaseline(product.attributes as ProductAttributeInput[] | undefined);
         },
         error: (err: HttpErrorResponse) => {
           this.isLoading.set(false);
@@ -279,7 +303,9 @@ export class ProductFormComponent implements OnInit {
    * Determina si el formulario tiene cambios sin guardar.
    */
   public isDirty(): boolean {
-    return this.form.dirty;
+    if (JSON.stringify(this.form.getRawValue()) !== this.baselineFormJson) return true;
+    const attrs = this.currentAttributes();
+    return attrs !== null && this.serializeAttributes(attrs) !== this.baselineAttrsJson;
   }
 
   /**
