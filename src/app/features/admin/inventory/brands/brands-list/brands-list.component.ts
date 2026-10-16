@@ -35,6 +35,7 @@ import {
   ConfirmDialogComponent,
 } from '../../../../../shared/components';
 import { ListQueryState } from '../../../../../shared/utils/list-query-state';
+import { BrandFormDialogComponent } from '../dialogs/brand-form-dialog/brand-form-dialog.component';
 
 @Component({
   selector: 'app-brands-list',
@@ -190,10 +191,32 @@ export class BrandsListComponent implements OnInit {
   }
 
   /**
-   * Hook para diálogo de formulario de marca (Fase 4)
+   * Apertura del diálogo para crear o editar una marca comercial (Fase 4)
    */
   public openBrandFormDialog(brand?: CatalogBrand): void {
-    // Gancho preparado para Fase 4 (BrandFormDialogComponent)
+    const dialogRef = this.dialog.open(BrandFormDialogComponent, {
+      width: '480px',
+      data: {
+        mode: brand ? 'edit' : 'create',
+        brand,
+      },
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((savedBrand: CatalogBrand | null) => {
+        if (!savedBrand) return;
+
+        if (brand) {
+          this.items.update((list) =>
+            list.map((item) => (item.id === savedBrand.id ? savedBrand : item))
+          );
+        } else {
+          this.items.update((list) => [savedBrand, ...list]);
+          this.total.update((t) => t + 1);
+        }
+      });
   }
 
   /**

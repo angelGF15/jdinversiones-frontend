@@ -211,4 +211,47 @@ describe('BrandsListComponent', () => {
       })
     );
   });
+
+  it('debe abrir BrandFormDialogComponent en onNewBrand() y anteponer la marca creada', () => {
+    const newBrand: CatalogBrand = {
+      id: 'brand-new',
+      name: 'Nintendo',
+      slug: 'nintendo',
+      logoUrl: null,
+      isActive: true,
+      productCount: 0,
+      createdAt: '2026-10-15T00:00:00Z',
+      updatedAt: '2026-10-15T00:00:00Z',
+    };
+
+    const dialogRefSpy = {
+      afterClosed: () => of(newBrand),
+    } as MatDialogRef<any>;
+    dialogSpy.open.and.returnValue(dialogRefSpy);
+
+    const initialTotal = component.total();
+    component.onNewBrand();
+
+    expect(dialogSpy.open).toHaveBeenCalled();
+    expect(component.items()[0].id).toBe('brand-new');
+    expect(component.total()).toBe(initialTotal + 1);
+  });
+
+  it('debe abrir BrandFormDialogComponent en onEditBrand() y actualizar la marca en items', () => {
+    const editedBrand: CatalogBrand = {
+      ...mockBrands[0],
+      name: 'Sony Corporation Renamed',
+    };
+
+    const dialogRefSpy = {
+      afterClosed: () => of(editedBrand),
+    } as MatDialogRef<any>;
+    dialogSpy.open.and.returnValue(dialogRefSpy);
+
+    component.onEditBrand(mockBrands[0]);
+
+    expect(dialogSpy.open).toHaveBeenCalled();
+    const updated = component.items().find((i) => i.id === 'brand-1');
+    expect(updated?.name).toBe('Sony Corporation Renamed');
+  });
 });
