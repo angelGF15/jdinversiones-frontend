@@ -1,1 +1,55 @@
-/* Products list styles */
+/* ==========================================================================
+   ProductsListComponent Styles — UI/UX Pro Max & Frontend Design Polished
+   ========================================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* Centrado geométrico estricto para iconos Material */
+.mat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  line-height: 1;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
+/* Elevación suave y transiciones de tarjetas de filtros */
+.filters-card {
+  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filters-card:hover {
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+/* Etiqueta técnica de SKU con micro-interacción sutil */
+.sku-badge {
+  letter-spacing: 0.02em;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+/* Indicadores de foco accesibles */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgb(var(--primary-500));
+  outline-offset: 2px;
+}
+
+/* Respeto estricto a accesibilidad para usuarios con sensibilidad al movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

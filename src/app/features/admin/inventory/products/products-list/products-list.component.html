@@ -1,3 +1,370 @@
-<div class="p-6">
-  <p>Products List</p>
+<div class="products-page-container flex flex-col gap-5 w-full">
+  <!-- Cabecera de la Pantalla (Espejo de UsersListComponent + Toolbar de Exportación) -->
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="space-y-1">
+      <div class="flex items-center gap-2.5">
+        <div
+          aria-hidden="true"
+          class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm flex-shrink-0"
+        >
+          <span class="mat-icon text-xl select-none">inventory_2</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              Catálogo de Productos
+            </h1>
+            @if (!isLoading() && total() > 0) {
+              <span
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80"
+                aria-label="Total de productos registrados"
+              >
+                <span>{{ total() }}</span>
+                <span class="font-sans font-normal text-slate-500 dark:text-slate-400">SKUs</span>
+              </span>
+            }
+          </div>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            Control de referencias SKU, precios comerciales, márgenes y estados de publicación.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones Globales: Exportación Excel/CSV y Nuevo Producto -->
+    <div class="flex flex-wrap items-center gap-2.5">
+      <!-- Menú Desplegable de Exportación con protección RBAC PRODUCT_EXPORT -->
+      <div *hasPermission="'PRODUCT_EXPORT'" class="relative flex items-center">
+        <button
+          type="button"
+          [matMenuTriggerFor]="exportMenu"
+          [disabled]="isExporting() || isLoading()"
+          class="export-trigger-btn inline-flex items-center gap-2 px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 font-medium text-sm shadow-sm transition-all disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer"
+          aria-label="Exportar catálogo de productos"
+        >
+          @if (isExporting()) {
+            <span class="mat-icon text-lg text-primary animate-spin select-none" aria-hidden="true">
+              sync
+            </span>
+            <span>
+              Exportando {{ exportingFormat() === 'csv' ? 'CSV' : 'Excel' }}...
+            </span>
+          } @else {
+            <span class="mat-icon text-lg text-emerald-600 dark:text-emerald-400 select-none" aria-hidden="true">
+              download
+            </span>
+            <span>Exportar</span>
+            <span class="mat-icon text-base text-slate-400 select-none" aria-hidden="true">
+              expand_more
+            </span>
+          }
+        </button>
+
+        <mat-menu #exportMenu="matMenu" class="rounded-xl">
+          <button
+            mat-menu-item
+            type="button"
+            (click)="onExport('xlsx')"
+            [disabled]="isExporting()"
+            class="flex items-center gap-2.5 text-sm"
+          >
+            <span class="mat-icon text-lg text-emerald-600 dark:text-emerald-400 select-none" aria-hidden="true">
+              table_view
+            </span>
+            <div class="flex flex-col text-left leading-tight py-0.5">
+              <span class="font-semibold text-slate-800 dark:text-slate-100">Exportar a Excel (.xlsx)</span>
+              <span class="text-[11px] text-slate-500 dark:text-slate-400">Hoja de cálculo con formato contable</span>
+            </div>
+          </button>
+
+          <button
+            mat-menu-item
+            type="button"
+            (click)="onExport('csv')"
+            [disabled]="isExporting()"
+            class="flex items-center gap-2.5 text-sm"
+          >
+            <span class="mat-icon text-lg text-primary dark:text-primary-400 select-none" aria-hidden="true">
+              description
+            </span>
+            <div class="flex flex-col text-left leading-tight py-0.5">
+              <span class="font-semibold text-slate-800 dark:text-slate-100">Exportar a CSV (.csv)</span>
+              <span class="text-[11px] text-slate-500 dark:text-slate-400">Texto plano separado por comas</span>
+            </div>
+          </button>
+        </mat-menu>
+      </div>
+
+      <!-- Botón Nuevo Producto con protección RBAC PRODUCT_CREATE -->
+      <div *hasPermission="'PRODUCT_CREATE'" class="flex items-center">
+        <a
+          routerLink="/admin/inventory/products/new"
+          class="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-primary hover:bg-primary-700 text-white font-medium text-sm shadow-sm hover:shadow-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+        >
+          <span class="mat-icon text-lg select-none" aria-hidden="true">add_box</span>
+          <span>Nuevo Producto</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banner de error si falla la comunicación con la API -->
+  @if (errorMessage() && !isLoading()) {
+    <div
+      role="alert"
+      aria-live="assertive"
+      class="flex items-center justify-between p-4 rounded-xl bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800/40 text-danger-700 dark:text-danger-300 text-sm"
+    >
+      <div class="flex items-center gap-3">
+        <span class="mat-icon text-xl text-danger-500 select-none" aria-hidden="true">error_outline</span>
+        <span class="font-medium">{{ errorMessage() }}</span>
+      </div>
+      <button
+        type="button"
+        (click)="retry()"
+        class="px-3 py-1.5 min-h-[36px] rounded-lg text-xs font-semibold bg-white dark:bg-slate-900 text-danger-700 dark:text-danger-300 border border-danger-300 dark:border-danger-700 hover:bg-danger-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 cursor-pointer"
+      >
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- Barra de Filtros Integrada -->
+  <section
+    aria-label="Filtros de búsqueda de productos"
+    class="filters-card p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm"
+  >
+    <app-list-filters
+      [searchPlaceholder]="'Buscar por SKU o nombre...'"
+      [selects]="selectFilters()"
+      [toggles]="toggleFilters"
+      [initialValues]="queryState.filters()"
+      (filterChange)="onFilterChange($event)"
+    />
+  </section>
+
+  <!-- Tabla de Datos y Paginador -->
+  <section class="table-section flex flex-col gap-3 sm:gap-4 w-full" aria-label="Tabla de productos">
+    <app-data-table
+      [columns]="columns"
+      [data]="items()"
+      [loading]="isLoading()"
+      emptyTitle="No se encontraron productos"
+      emptyDescription="No hay productos que coincidan con los filtros aplicados o aún no se han registrado referencias en el catálogo."
+      emptyIcon="inventory_2"
+      ariaLabel="Tabla de productos del catálogo"
+    >
+      <!-- 1. Template Celda: Imagen Miniatura (44x44px) -->
+      <ng-template [dataTableColumn]="'primaryImageUrl'" let-product>
+        <div class="flex items-center justify-center py-0.5">
+          @if (product.primaryImageUrl && !isImageBroken(product.id)) {
+            <img
+              [src]="product.primaryImageUrl"
+              [alt]="product.name"
+              class="w-11 h-11 rounded-xl object-cover border border-slate-200/80 dark:border-slate-700/80 shadow-2xs flex-shrink-0 bg-slate-50 dark:bg-slate-800"
+              (error)="onImageError(product.id)"
+            />
+          } @else {
+            <div
+              aria-hidden="true"
+              class="w-11 h-11 rounded-xl bg-primary-50/80 text-primary-600 dark:bg-primary-950/40 dark:text-primary-300 border border-primary-100 dark:border-primary-800/40 flex items-center justify-center flex-shrink-0 select-none"
+            >
+              <span class="mat-icon text-xl select-none">inventory_2</span>
+            </div>
+          }
+        </div>
+      </ng-template>
+
+      <!-- 2. Template Celda: SKU (Monospace Bold Técnico) -->
+      <ng-template [dataTableColumn]="'sku'" let-product>
+        <div class="py-1">
+          <span
+            class="sku-badge inline-flex items-center px-2.5 py-1 rounded-lg font-mono text-xs font-bold tracking-tight bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80"
+          >
+            {{ product.sku }}
+          </span>
+        </div>
+      </ng-template>
+
+      <!-- 3. Template Celda: Producto (Nombre + Badge Destacado + Slug secundario) -->
+      <ng-template [dataTableColumn]="'name'" let-product>
+        <div class="flex flex-col min-w-0 py-1 gap-0.5">
+          <div class="flex items-center gap-2 min-w-0">
+            <span
+              class="text-sm font-semibold text-slate-900 dark:text-white truncate"
+              [title]="product.name"
+            >
+              {{ product.name }}
+            </span>
+            @if (product.isFeatured) {
+              <span
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200/80 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30 flex-shrink-0"
+                matTooltip="Producto destacado en portada"
+                aria-label="Producto destacado"
+              >
+                <span class="mat-icon text-xs text-amber-500 select-none" aria-hidden="true">star</span>
+                <span>Destacado</span>
+              </span>
+            }
+          </div>
+          <span class="text-xs text-slate-500 dark:text-slate-400 truncate font-mono">
+            /{{ product.slug }}
+          </span>
+        </div>
+      </ng-template>
+
+      <!-- 4. Template Celda: Categoría (Chip corporativo) -->
+      <ng-template [dataTableColumn]="'categoryName'" let-product>
+        <div class="py-1">
+          @if (product.categoryName) {
+            <span
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-medium bg-primary-50 text-primary-700 border border-primary-100 dark:bg-primary-950/40 dark:text-primary-300 dark:border-primary-800/40 max-w-full truncate"
+              [title]="product.categoryName"
+            >
+              <span class="truncate">{{ product.categoryName }}</span>
+            </span>
+          } @else {
+            <span class="text-xs text-slate-400 dark:text-slate-500 italic">Sin categoría</span>
+          }
+        </div>
+      </ng-template>
+
+      <!-- 5. Template Celda: Marca -->
+      <ng-template [dataTableColumn]="'brandName'" let-product>
+        <div class="py-1">
+          @if (product.brandName) {
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300 truncate block">
+              {{ product.brandName }}
+            </span>
+          } @else {
+            <span class="text-xs text-slate-400 dark:text-slate-500">—</span>
+          }
+        </div>
+      </ng-template>
+
+      <!-- 6. Template Celda: Precio (LPS) con referencia de costo / margen -->
+      <ng-template [dataTableColumn]="'price'" let-product>
+        <div class="flex flex-col items-end justify-center py-1 font-mono tabular-nums">
+          <span class="text-sm font-bold text-slate-900 dark:text-white">
+            L {{ product.price | number: '1.2-2' }}
+          </span>
+          @if (product.costPrice !== null && product.costPrice !== undefined) {
+            <span
+              class="text-[11px] text-slate-400 dark:text-slate-500"
+              [matTooltip]="
+                getGrossMarginPercent(product) !== null
+                  ? 'Margen bruto estimado: ' + (getGrossMarginPercent(product)! | number: '1.1-1') + '%'
+                  : ''
+              "
+            >
+              Costo: L {{ product.costPrice | number: '1.2-2' }}
+            </span>
+          }
+        </div>
+      </ng-template>
+
+      <!-- 7. Template Celda: Estado (Active / Draft / Inactive) -->
+      <ng-template [dataTableColumn]="'statusCode'" let-product>
+        <div class="flex justify-center py-1">
+          @switch ((product.statusCode || '').toLowerCase()) {
+            @case ('active') {
+              <span
+                role="status"
+                aria-label="Estado: Activo"
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-transparent"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true"></span>
+                <span>Activo</span>
+              </span>
+            }
+            @case ('draft') {
+              <span
+                role="status"
+                aria-label="Estado: Borrador"
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-transparent"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500" aria-hidden="true"></span>
+                <span>Borrador</span>
+              </span>
+            }
+            @default {
+              <span
+                role="status"
+                aria-label="Estado: Inactivo"
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-transparent"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400" aria-hidden="true"></span>
+                <span>{{ getStatusLabel(product.statusCode) }}</span>
+              </span>
+            }
+          }
+        </div>
+      </ng-template>
+
+      <!-- 8. Template Celda: Acciones (Fija a la derecha stickyEnd con permiso PRODUCT_EDIT) -->
+      <ng-template [dataTableColumn]="'Acciones'" let-product>
+        <div class="flex items-center justify-end gap-1">
+          <!-- 1. Editar producto -->
+          <button
+            *hasPermission="'PRODUCT_EDIT'"
+            type="button"
+            (click)="onEditProduct(product)"
+            matTooltip="Editar producto"
+            class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-primary-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-primary-300 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer"
+            [attr.aria-label]="'Editar producto ' + product.name"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">edit</span>
+          </button>
+
+          <!-- 2. Cambiar estado (Activar / Desactivar) -->
+          <button
+            *hasPermission="'PRODUCT_EDIT'"
+            type="button"
+            (click)="onToggleStatus(product)"
+            [matTooltip]="
+              product.statusCode === 'active'
+                ? 'Desactivar producto'
+                : 'Activar producto'
+            "
+            [ngClass]="{
+              'text-slate-500 hover:text-danger-600 hover:bg-danger-50 dark:text-slate-400 dark:hover:text-danger-400 dark:hover:bg-danger-950/30':
+                product.statusCode === 'active',
+              'text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 dark:text-slate-400 dark:hover:text-emerald-400 dark:hover:bg-emerald-950/30':
+                product.statusCode !== 'active'
+            }"
+            class="w-9 h-9 flex items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer"
+            [attr.aria-label]="
+              (product.statusCode === 'active' ? 'Desactivar producto ' : 'Activar producto ') +
+              product.name
+            "
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">
+              {{ product.statusCode === 'active' ? 'block' : 'check_circle' }}
+            </span>
+          </button>
+        </div>
+      </ng-template>
+
+      <!-- Acción en Empty State -->
+      <div emptyAction *hasPermission="'PRODUCT_CREATE'">
+        <a
+          routerLink="/admin/inventory/products/new"
+          class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl bg-primary text-white hover:bg-primary-700 transition-colors shadow-sm"
+        >
+          <span class="mat-icon text-base select-none">add_box</span>
+          <span>Crear Producto</span>
+        </a>
+      </div>
+    </app-data-table>
+
+    <!-- Barra de Paginación 1-based -->
+    <app-pagination
+      [page]="queryState.page()"
+      [pageSize]="queryState.pageSize()"
+      [total]="total()"
+      [totalPages]="totalPages()"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    />
+  </section>
 </div>
