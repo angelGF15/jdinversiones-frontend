@@ -36,6 +36,7 @@ import {
 } from '../../../../../shared/components';
 import { ListQueryState } from '../../../../../shared/utils/list-query-state';
 import { BrandFormDialogComponent } from '../dialogs/brand-form-dialog/brand-form-dialog.component';
+import { BrandLogoDialogComponent } from '../dialogs/brand-logo-dialog/brand-logo-dialog.component';
 
 @Component({
   selector: 'app-brands-list',
@@ -220,10 +221,34 @@ export class BrandsListComponent implements OnInit {
   }
 
   /**
-   * Hook para diálogo de subida de logotipo a Cloudinary (Fase 5)
+   * Apertura del diálogo para actualizar logotipo en Cloudinary (Fase 5)
    */
   public openBrandLogoDialog(brand: CatalogBrand): void {
-    // Gancho preparado para Fase 5 (BrandLogoDialogComponent)
+    const dialogRef = this.dialog.open(BrandLogoDialogComponent, {
+      width: '480px',
+      data: { brand },
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((updatedBrand: CatalogBrand | null) => {
+        if (!updatedBrand) return;
+
+        this.brokenImageIds.update((set) => {
+          const next = new Set(set);
+          next.delete(updatedBrand.id);
+          return next;
+        });
+
+        this.items.update((list) =>
+          list.map((item) =>
+            item.id === updatedBrand.id
+              ? { ...item, logoUrl: updatedBrand.logoUrl }
+              : item
+          )
+        );
+      });
   }
 
   /**

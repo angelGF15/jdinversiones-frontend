@@ -254,4 +254,24 @@ describe('BrandsListComponent', () => {
     const updated = component.items().find((i) => i.id === 'brand-1');
     expect(updated?.name).toBe('Sony Corporation Renamed');
   });
+
+  it('debe abrir BrandLogoDialogComponent en onUpdateLogo() y actualizar logoUrl en items', () => {
+    component.brokenImageIds.set(new Set(['brand-1']));
+    const updatedLogoBrand: CatalogBrand = {
+      ...mockBrands[0],
+      logoUrl: 'https://res.cloudinary.com/demo/image/upload/sony-new.png',
+    };
+
+    const dialogRefSpy = {
+      afterClosed: () => of(updatedLogoBrand),
+    } as MatDialogRef<any>;
+    dialogSpy.open.and.returnValue(dialogRefSpy);
+
+    component.onUpdateLogo(mockBrands[0]);
+
+    expect(dialogSpy.open).toHaveBeenCalled();
+    const updated = component.items().find((i) => i.id === 'brand-1');
+    expect(updated?.logoUrl).toBe('https://res.cloudinary.com/demo/image/upload/sony-new.png');
+    expect(component.brokenImageIds().has('brand-1')).toBeFalse();
+  });
 });

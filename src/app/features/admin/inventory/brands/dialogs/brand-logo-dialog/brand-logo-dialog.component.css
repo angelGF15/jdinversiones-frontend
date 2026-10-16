@@ -1,0 +1,46 @@
+/* ==========================================================================
+   BrandLogoDialogComponent Styles — UI/UX Pro Max Polished
+   ========================================================================== */
+
+:host {
+  display: block;
+}
+
+.brand-logo-dialog-card {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Indicadores de foco accesibles */
+button:focus-visible,
+input:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid rgb(var(--primary-500));
+  outline-offset: 2px;
+}
+
+/* Animación sutil de alerta de error */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.upload-dropzone {
+  min-height: 180px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
