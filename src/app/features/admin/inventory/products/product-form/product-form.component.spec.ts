@@ -8,6 +8,7 @@ import { ProductFormComponent } from './product-form.component';
 import { ProductsService } from '../../../../../core/services/products/products.service';
 import { CategoriesService } from '../../../../../core/services/categories/categories.service';
 import { BrandsService } from '../../../../../core/services/brands/brands.service';
+import { AttributesService } from '../../../../../core/services/attributes/attributes.service';
 import {
   ProductDetail,
   ProductStatus,
@@ -92,12 +93,14 @@ describe('ProductFormComponent', () => {
     ]);
     categoriesServiceSpy = jasmine.createSpyObj('CategoriesService', ['listParents']);
     brandsServiceSpy = jasmine.createSpyObj('BrandsService', ['listActive']);
+    const attributesServiceSpy = jasmine.createSpyObj('AttributesService', ['listActive']);
     snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
 
     productsServiceSpy.listStatuses.and.returnValue(of(mockStatuses));
     productsServiceSpy.getById.and.returnValue(of(mockProductDetail));
     categoriesServiceSpy.listParents.and.returnValue(of(mockCategories));
     brandsServiceSpy.listActive.and.returnValue(of(mockBrands));
+    attributesServiceSpy.listActive.and.returnValue(of([]));
 
     TestBed.configureTestingModule({
       providers: [
@@ -106,6 +109,7 @@ describe('ProductFormComponent', () => {
         { provide: ProductsService, useValue: productsServiceSpy },
         { provide: CategoriesService, useValue: categoriesServiceSpy },
         { provide: BrandsService, useValue: brandsServiceSpy },
+        { provide: AttributesService, useValue: attributesServiceSpy },
         { provide: MatSnackBar, useValue: snackBarSpy },
         {
           provide: ActivatedRoute,

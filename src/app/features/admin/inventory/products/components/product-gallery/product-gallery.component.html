@@ -1,0 +1,358 @@
+<div class="product-gallery-container flex flex-col gap-5">
+  <!-- Cabecera de la Galería -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+    <div class="flex items-center gap-2.5">
+      <div
+        aria-hidden="true"
+        class="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-xs flex-shrink-0"
+      >
+        <span class="mat-icon text-lg select-none leading-none">photo_library</span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+            Galería Fotográfica
+          </h3>
+          <span
+            class="px-2 py-0.5 rounded-full text-xs font-mono font-semibold"
+            [ngClass]="{
+              'bg-primary-50 text-primary-700 dark:bg-primary-950/60 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60':
+                totalImagesCount() > 0,
+              'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400':
+                totalImagesCount() === 0
+            }"
+          >
+            {{ totalImagesCount() }} {{ totalImagesCount() === 1 ? 'foto' : 'fotos' }}
+          </span>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          La imagen marcada con estrella servirá como portada principal en el catálogo y listados.
+        </p>
+      </div>
+    </div>
+
+    <!-- Botón Seleccionar Archivos -->
+    @if (!readonly()) {
+      <div class="flex items-center gap-2">
+        <label
+          for="gallery-file-input"
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 shadow-sm cursor-pointer transition-all hover:shadow focus-within:ring-2 focus-within:ring-primary"
+        >
+          <span class="mat-icon text-base select-none leading-none">add_photo_alternate</span>
+          <span>Añadir Fotos</span>
+          <input
+            id="gallery-file-input"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            (change)="onFileSelected($event)"
+            [disabled]="isUploading()"
+            class="sr-only"
+          />
+        </label>
+      </div>
+    }
+  </div>
+
+  <!-- Barra de Progreso durante la Subida a Cloudinary -->
+  @if (isUploading()) {
+    <div class="p-4 rounded-xl bg-primary-50/70 dark:bg-primary-950/30 border border-primary-200/80 dark:border-primary-800/60 flex flex-col gap-2 animate-fadeIn">
+      <div class="flex items-center justify-between text-xs font-semibold text-primary-800 dark:text-primary-200">
+        <span class="flex items-center gap-2">
+          <span class="mat-icon text-base animate-spin select-none">progress_activity</span>
+          <span>Subiendo fotos a la nube en alta resolución...</span>
+        </span>
+        <span class="font-mono">{{ uploadProgress() }}%</span>
+      </div>
+      <div class="w-full h-2 rounded-full bg-primary-100 dark:bg-primary-900/60 overflow-hidden">
+        <div
+          class="h-full bg-gradient-to-r from-primary to-indigo-500 rounded-full transition-all duration-300"
+          [style.width.%]="uploadProgress()"
+        ></div>
+      </div>
+    </div>
+  }
+
+  <!-- Zona de Drag & Drop cuando no hay fotos aún -->
+  @if (totalImagesCount() === 0) {
+    <div
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      class="dropzone-area relative flex flex-col items-center justify-center p-8 sm:p-12 rounded-2xl border-2 border-dashed transition-all duration-200 text-center select-none"
+      [ngClass]="{
+        'border-primary bg-primary-50/40 dark:bg-primary-950/20 scale-[1.01]': isDragOver(),
+        'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40':
+          !isDragOver()
+      }"
+    >
+      <div
+        class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 text-primary dark:text-primary-400 flex items-center justify-center shadow-sm border border-slate-200/80 dark:border-slate-700/80 mb-3"
+      >
+        <span class="mat-icon text-3xl select-none" aria-hidden="true">cloud_upload</span>
+      </div>
+      <h4 class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 mb-1">
+        Arrastra tus fotos aquí o haz clic para explorar
+      </h4>
+      <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mb-4 leading-relaxed">
+        Admite formatos <span class="font-semibold text-slate-700 dark:text-slate-300">WebP, PNG y JPG</span> de hasta <span class="font-semibold text-slate-700 dark:text-slate-300">10 MB</span> por archivo.
+      </p>
+
+      <label
+        for="gallery-dropzone-input"
+        class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60 shadow-2xs cursor-pointer transition-all focus-within:ring-2 focus-within:ring-primary"
+      >
+        <span class="mat-icon text-base select-none leading-none">folder_open</span>
+        <span>Examinar archivos de la computadora</span>
+        <input
+          id="gallery-dropzone-input"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+          (change)="onFileSelected($event)"
+          [disabled]="isUploading() || readonly()"
+          class="sr-only"
+        />
+      </label>
+    </div>
+  }
+
+  <!-- Cuadrícula Bento de Miniaturas cuando ya existen fotos -->
+  @if (totalImagesCount() > 0) {
+    <div
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      class="gallery-grid-wrapper relative rounded-2xl transition-all"
+      [ngClass]="{
+        'ring-2 ring-primary ring-offset-2 dark:ring-offset-slate-900 bg-primary-50/10': isDragOver()
+      }"
+    >
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
+        <!-- 1. Imágenes Guardadas en Base de Datos -->
+        @for (img of galleryImages(); track img.id; let idx = $index) {
+          <div
+            class="gallery-card group relative aspect-square rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border transition-all duration-200 hover:shadow-md"
+            [ngClass]="{
+              'border-amber-400 dark:border-amber-500/80 ring-2 ring-amber-400/20 shadow-xs': img.isPrimary,
+              'border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700': !img.isPrimary
+            }"
+          >
+            <!-- Imagen Renderizada -->
+            @if (!isImageBroken(img.id)) {
+              <img
+                [src]="img.imageUrl"
+                [alt]="img.altText || ('Foto ' + (idx + 1))"
+                (error)="onImageError(img.id)"
+                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+                (click)="openPreview(img.imageUrl)"
+              />
+            } @else {
+              <div
+                class="w-full h-full flex flex-col items-center justify-center p-2 bg-slate-100 dark:bg-slate-800 text-slate-400 text-center select-none"
+              >
+                <span class="mat-icon text-2xl">broken_image</span>
+                <span class="text-[10px] mt-1 font-mono">Error al cargar</span>
+              </div>
+            }
+
+            <!-- Badge de Portada Principal -->
+            @if (img.isPrimary) {
+              <div
+                class="absolute top-2 left-2 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white shadow-xs backdrop-blur-xs select-none"
+              >
+                <span class="mat-icon text-xs leading-none">star</span>
+                <span>Principal</span>
+              </div>
+            }
+
+            <!-- Badge de Orden (#1, #2, ...) -->
+            <div
+              class="absolute bottom-2 left-2 z-10 px-1.5 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-black/60 text-white/90 backdrop-blur-xs select-none"
+            >
+              #{{ img.displayOrder || (idx + 1) }}
+            </div>
+
+            <!-- Overlay de Acciones en Hover -->
+            @if (!readonly()) {
+              <div
+                class="absolute inset-0 bg-slate-950/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2 p-2 z-20"
+              >
+                <!-- Botón Previsualizar Grande -->
+                <button
+                  type="button"
+                  (click)="openPreview(img.imageUrl)"
+                  matTooltip="Ver en pantalla completa"
+                  class="w-8 h-8 rounded-xl bg-white/90 hover:bg-white text-slate-800 shadow-sm flex items-center justify-center transition-all hover:scale-105 cursor-pointer focus:outline-none"
+                  aria-label="Ver foto"
+                >
+                  <span class="mat-icon text-base select-none leading-none">zoom_in</span>
+                </button>
+
+                <!-- Botón Establecer como Principal -->
+                @if (!img.isPrimary) {
+                  <button
+                    type="button"
+                    (click)="onSetPrimary(img)"
+                    matTooltip="Marcar como foto principal"
+                    class="w-8 h-8 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-900 shadow-sm flex items-center justify-center transition-all hover:scale-105 cursor-pointer focus:outline-none"
+                    aria-label="Marcar como principal"
+                  >
+                    <span class="mat-icon text-base select-none leading-none">star</span>
+                  </button>
+                }
+
+                <!-- Botón Eliminar Imagen -->
+                <button
+                  type="button"
+                  (click)="onDeleteImage(img)"
+                  matTooltip="Eliminar de la galería"
+                  class="w-8 h-8 rounded-xl bg-danger-500 hover:bg-danger-600 text-white shadow-sm flex items-center justify-center transition-all hover:scale-105 cursor-pointer focus:outline-none"
+                  aria-label="Eliminar foto"
+                >
+                  <span class="mat-icon text-base select-none leading-none">delete</span>
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- 2. Imágenes Locales Encoladas (Modo Creación) -->
+        @for (item of localQueue(); track item.id; let qIdx = $index) {
+          <div
+            class="gallery-card group relative aspect-square rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border transition-all duration-200 hover:shadow-md"
+            [ngClass]="{
+              'border-amber-400 dark:border-amber-500/80 ring-2 ring-amber-400/20 shadow-xs': item.isPrimary,
+              'border-slate-200/80 dark:border-slate-800': !item.isPrimary
+            }"
+          >
+            <img
+              [src]="item.previewUrl"
+              [alt]="item.altText"
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+              (click)="openPreview(item.previewUrl)"
+            />
+
+            <!-- Badge En Cola -->
+            <div
+              class="absolute top-2 right-2 z-10 px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-primary-600 text-white shadow-xs backdrop-blur-xs select-none"
+            >
+              En cola
+            </div>
+
+            <!-- Badge de Portada Principal Local -->
+            @if (item.isPrimary) {
+              <div
+                class="absolute top-2 left-2 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white shadow-xs backdrop-blur-xs select-none"
+              >
+                <span class="mat-icon text-xs leading-none">star</span>
+                <span>Principal</span>
+              </div>
+            }
+
+            <div
+              class="absolute bottom-2 left-2 z-10 px-1.5 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-black/60 text-white/90 backdrop-blur-xs select-none"
+            >
+              #{{ item.displayOrder }}
+            </div>
+
+            <!-- Overlay de Acciones para Encoladas -->
+            <div
+              class="absolute inset-0 bg-slate-950/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2 p-2 z-20"
+            >
+              <button
+                type="button"
+                (click)="openPreview(item.previewUrl)"
+                matTooltip="Previsualizar"
+                class="w-8 h-8 rounded-xl bg-white/90 hover:bg-white text-slate-800 shadow-sm flex items-center justify-center transition-all hover:scale-105 cursor-pointer focus:outline-none"
+                aria-label="Ver foto"
+              >
+                <span class="mat-icon text-base select-none leading-none">zoom_in</span>
+              </button>
+
+              @if (!item.isPrimary) {
+                <button
+                  type="button"
+                  (click)="onSetPrimaryLocal(item.id)"
+                  matTooltip="Marcar como foto principal"
+                  class="w-8 h-8 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-900 shadow-sm flex items-center justify-center transition-all hover:scale-105 cursor-pointer focus:outline-none"
+                  aria-label="Marcar como principal"
+                >
+                  <span class="mat-icon text-base select-none leading-none">star</span>
+                </button>
+              }
+
+              <button
+                type="button"
+                (click)="onDeleteLocalImage(item.id)"
+                matTooltip="Quitar de la cola"
+                class="w-8 h-8 rounded-xl bg-danger-500 hover:bg-danger-600 text-white shadow-sm flex items-center justify-center transition-all hover:scale-105 cursor-pointer focus:outline-none"
+                aria-label="Quitar foto"
+              >
+                <span class="mat-icon text-base select-none leading-none">close</span>
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- 3. Tarjeta Mini Dropzone para agregar más imágenes -->
+        @if (!readonly()) {
+          <label
+            for="gallery-mini-dropzone-input"
+            class="mini-dropzone group aspect-square rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary-400 bg-slate-50/50 dark:bg-slate-900/40 hover:bg-primary-50/30 dark:hover:bg-primary-950/20 flex flex-col items-center justify-center text-center p-3 cursor-pointer transition-all duration-200 select-none"
+          >
+            <div
+              class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 group-hover:bg-primary-50 dark:group-hover:bg-primary-950 text-slate-400 group-hover:text-primary dark:group-hover:text-primary-300 flex items-center justify-center shadow-2xs border border-slate-200/80 dark:border-slate-700/80 transition-all mb-1.5"
+            >
+              <span class="mat-icon text-xl select-none leading-none">add</span>
+            </div>
+            <span class="text-xs font-semibold text-slate-700 dark:text-slate-300 group-hover:text-primary dark:group-hover:text-primary-300">
+              Agregar más
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono mt-0.5">JPG, PNG, WebP</span>
+            <input
+              id="gallery-mini-dropzone-input"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              (change)="onFileSelected($event)"
+              [disabled]="isUploading()"
+              class="sr-only"
+            />
+          </label>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Modal de Zoom / Previsualización de Imagen en Pantalla Completa -->
+  @if (activePreviewImage()) {
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Vista previa de imagen ampliada"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn"
+      (click)="closePreview()"
+    >
+      <div
+        class="relative max-w-4xl max-h-[85vh] rounded-2xl overflow-hidden bg-slate-900 shadow-2xl border border-slate-700/60"
+        (click)="$event.stopPropagation()"
+      >
+        <button
+          type="button"
+          (click)="closePreview()"
+          class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-slate-900/80 text-white hover:bg-slate-900 flex items-center justify-center shadow-md backdrop-blur-xs transition-all hover:scale-105 cursor-pointer focus:outline-none"
+          aria-label="Cerrar vista previa"
+        >
+          <span class="mat-icon text-lg select-none">close</span>
+        </button>
+
+        <img
+          [src]="activePreviewImage()"
+          alt="Vista previa ampliada"
+          class="w-full h-full max-h-[80vh] object-contain select-none"
+        />
+      </div>
+    </div>
+  }
+</div>

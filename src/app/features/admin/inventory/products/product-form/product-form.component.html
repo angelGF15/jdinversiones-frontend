@@ -795,6 +795,31 @@
               </div>
             </div>
           </section>
+
+          <!-- ==================== SECCIÓN 4: GALERÍA DE IMÁGENES ==================== -->
+          <section
+            aria-label="Galería de imágenes"
+            class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm"
+          >
+            <app-product-gallery
+              [productId]="productId()"
+              [images]="product()?.images ?? []"
+              (imagesChange)="onGalleryImagesChange($event)"
+              (productUpdated)="onProductUpdated($event)"
+              (localQueueChange)="onLocalQueueChange($event)"
+            ></app-product-gallery>
+          </section>
+
+          <!-- ==================== SECCIÓN 5: ESPECIFICACIONES TÉCNICAS Y ATRIBUTOS ==================== -->
+          <section
+            aria-label="Especificaciones y atributos técnicos"
+            class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm"
+          >
+            <app-product-attributes-editor
+              [attributes]="product()?.attributes ?? []"
+              (attributesChange)="onAttributesChange($event)"
+            ></app-product-attributes-editor>
+          </section>
         </div>
 
         <!-- ==================== COLUMNA LATERAL (4 columnas) ==================== -->

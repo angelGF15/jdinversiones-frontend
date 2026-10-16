@@ -28,9 +28,13 @@ import {
   UpdateProductRequest,
   ProductDetail,
   ProductStatus,
+  ProductImage,
+  ProductAttributeInput,
 } from '../../../../../core/models/product.models';
 import { CategoryChild } from '../../../../../core/models/category.models';
 import { CatalogBrand } from '../../../../../core/models/brand.models';
+import { ProductGalleryComponent } from '../components/product-gallery/product-gallery.component';
+import { ProductAttributesEditorComponent } from '../components/product-attributes-editor/product-attributes-editor.component';
 
 /**
  * Convierte una cadena de texto en un slug URL-friendly normalizado.
@@ -55,6 +59,8 @@ export function slugifyProduct(text: string): string {
     RouterModule,
     ReactiveFormsModule,
     MatTooltipModule,
+    ProductGalleryComponent,
+    ProductAttributesEditorComponent,
   ],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.css'],
@@ -79,6 +85,8 @@ export class ProductFormComponent implements OnInit {
   public readonly errorMessage = signal<string | null>(null);
   public readonly isCustomSlug = signal<boolean>(false);
   public readonly isImageBroken = signal<boolean>(false);
+  public readonly currentAttributes = signal<ProductAttributeInput[] | null>(null);
+  public readonly queuedImages = signal<File[]>([]);
 
   // --- Catálogos Maestros Activos ---
   public readonly availableCategories = signal<CategoryChild[]>([]);
@@ -86,6 +94,22 @@ export class ProductFormComponent implements OnInit {
   public readonly availableStatuses = signal<ProductStatus[]>([]);
 
   private initialStatusCode = 'active';
+
+  public onAttributesChange(attrs: ProductAttributeInput[]): void {
+    this.currentAttributes.set(attrs);
+  }
+
+  public onGalleryImagesChange(images: ProductImage[]): void {
+    this.product.update((p) => (p ? { ...p, images } : p));
+  }
+
+  public onProductUpdated(updated: ProductDetail): void {
+    this.product.set(updated);
+  }
+
+  public onLocalQueueChange(files: File[]): void {
+    this.queuedImages.set(files);
+  }
 
   // --- Formulario Reactivo con Validadores Espejo del Backend ---
   public readonly form = this.fb.group({
@@ -390,6 +414,7 @@ export class ProductFormComponent implements OnInit {
       description: raw.description?.trim() ? raw.description.trim() : undefined,
       metaTitle: raw.metaTitle?.trim() ? raw.metaTitle.trim() : undefined,
       metaDescription: raw.metaDescription?.trim() ? raw.metaDescription.trim() : undefined,
+      attributes: this.currentAttributes() ? this.currentAttributes()! : undefined,
     };
 
     this.isSubmitting.set(true);
@@ -429,7 +454,8 @@ export class ProductFormComponent implements OnInit {
       String(raw.costPrice).trim() !== '';
 
     // Importante: Se omiten `images` y `attributes` (undefined) para preservar intactos
-    // los registros existentes en base de datos durante la actualización de datos base.
+    // los registros existentes en base de datos durante la actualización de datos base
+    // a menos que hayan sido modificados explícitamente en el editor de atributos.
     const payload: UpdateProductRequest = {
       sku: raw.sku!.trim(),
       name: raw.name!.trim(),
@@ -444,6 +470,10 @@ export class ProductFormComponent implements OnInit {
       metaTitle: raw.metaTitle?.trim() ?? '',
       metaDescription: raw.metaDescription?.trim() ?? '',
     };
+
+    if (this.currentAttributes() !== null) {
+      payload.attributes = this.currentAttributes()!;
+    }
 
     const nextStatusCode = raw.statusCode || this.initialStatusCode;
     const statusChanged = nextStatusCode !== this.initialStatusCode;
