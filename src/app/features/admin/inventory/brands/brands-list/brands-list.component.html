@@ -1,4 +1,225 @@
-<div class="brands-list-container">
-  <!-- Marcador de posición para Fase 2 - Se implementará en Fase 3 -->
-  <p>Gestión de Marcas Comerciales</p>
+<div class="brands-page-container flex flex-col gap-5 w-full">
+  <!-- Cabecera de la Pantalla -->
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="space-y-1">
+      <div class="flex items-center gap-2.5">
+        <div
+          aria-hidden="true"
+          class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-xs"
+        >
+          <span class="mat-icon text-xl select-none">verified</span>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Marcas Comerciales
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            Catálogo de fabricantes, firmas y marcas de productos de la tienda.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón Nueva Marca con protección RBAC BRAND_CREATE -->
+    <div *hasPermission="'BRAND_CREATE'" class="flex items-center">
+      <button
+        type="button"
+        (click)="onNewBrand()"
+        class="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-primary hover:bg-primary-700 text-white font-medium text-sm shadow-xs hover:shadow-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer"
+      >
+        <span class="mat-icon text-lg select-none" aria-hidden="true">add</span>
+        <span>Nueva Marca</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Banner de error si falla la comunicación con la API -->
+  @if (errorMessage() && !isLoading()) {
+    <div
+      role="alert"
+      aria-live="assertive"
+      class="flex items-center justify-between p-4 rounded-xl bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800/40 text-danger-700 dark:text-danger-300 text-sm"
+    >
+      <div class="flex items-center gap-3">
+        <span class="mat-icon text-xl text-danger-500 select-none" aria-hidden="true">error_outline</span>
+        <span class="font-medium">{{ errorMessage() }}</span>
+      </div>
+      <button
+        type="button"
+        (click)="retry()"
+        class="px-3 py-1.5 min-h-[36px] rounded-lg text-xs font-semibold bg-white dark:bg-slate-900 text-danger-700 dark:text-danger-300 border border-danger-300 dark:border-danger-700 hover:bg-danger-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 cursor-pointer"
+      >
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- Barra de Filtros Integrada -->
+  <section
+    aria-label="Filtros de búsqueda de marcas"
+    class="filters-card p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-xs"
+  >
+    <app-list-filters
+      [searchPlaceholder]="'Buscar por nombre o slug...'"
+      [toggles]="toggleFilters"
+      [initialValues]="queryState.filters()"
+      (filterChange)="onFilterChange($event)"
+    />
+  </section>
+
+  <!-- Tabla de Datos y Paginador -->
+  <section class="table-section flex flex-col gap-3 sm:gap-4 w-full" aria-label="Tabla de marcas comerciales">
+    <app-data-table
+      [columns]="columns"
+      [data]="items()"
+      [loading]="isLoading()"
+      emptyTitle="No se encontraron marcas"
+      emptyDescription="No hay marcas que coincidan con los filtros aplicados o aún no se han registrado marcas en el catálogo."
+      emptyIcon="verified"
+      ariaLabel="Tabla de marcas comerciales del catálogo"
+    >
+      <!-- Template Celda: Logotipo (44x44px con fondo adaptado a light/dark mode) -->
+      <ng-template [dataTableColumn]="'logoUrl'" let-brand>
+        <div class="flex items-center justify-center py-1">
+          @if (brand.logoUrl && !isImageBroken(brand.id)) {
+            <div class="w-11 h-11 p-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-center shadow-2xs flex-shrink-0">
+              <img
+                [src]="brand.logoUrl"
+                [alt]="brand.name + ' logo'"
+                class="max-w-full max-h-full object-contain"
+                (error)="onImageError(brand.id)"
+              />
+            </div>
+          } @else {
+            <div
+              aria-hidden="true"
+              class="w-11 h-11 rounded-xl bg-primary-50 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300 border border-primary-100 dark:border-primary-800/40 flex items-center justify-center font-bold text-xs tracking-wider select-none shadow-2xs flex-shrink-0"
+              [matTooltip]="'Iniciales de ' + brand.name"
+            >
+              {{ getInitials(brand.name) }}
+            </div>
+          }
+        </div>
+      </ng-template>
+
+      <!-- Template Celda: Marca (Nombre principal + Slug secundario en monospace) -->
+      <ng-template [dataTableColumn]="'name'" let-brand>
+        <div class="flex flex-col min-w-0 py-1">
+          <span class="text-sm font-semibold text-slate-900 dark:text-white truncate">
+            {{ brand.name }}
+          </span>
+          <span class="text-xs text-slate-500 dark:text-slate-400 font-mono truncate flex items-center gap-0.5">
+            <span class="text-slate-400 select-none">/</span>{{ brand.slug }}
+          </span>
+        </div>
+      </ng-template>
+
+      <!-- Template Celda: Productos asociados -->
+      <ng-template [dataTableColumn]="'productCount'" let-brand>
+        <div class="flex justify-center py-1">
+          <span
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700/70 shadow-2xs"
+            [matTooltip]="(brand.productCount ?? 0) + ' productos asociados a esta marca'"
+          >
+            <span class="mat-icon text-xs text-slate-400 select-none" aria-hidden="true">inventory_2</span>
+            <span class="font-bold">{{ brand.productCount ?? 0 }}</span>
+          </span>
+        </div>
+      </ng-template>
+
+      <!-- Template Celda: Estado (Activo / Inactivo con badge contrastado) -->
+      <ng-template [dataTableColumn]="'isActive'" let-brand>
+        <div class="flex justify-center py-1">
+          @if (brand.isActive) {
+            <span
+              role="status"
+              aria-label="Estado: Activo"
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-transparent"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true"></span>
+              <span>Activo</span>
+            </span>
+          } @else {
+            <span
+              role="status"
+              aria-label="Estado: Inactivo"
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-transparent"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-400" aria-hidden="true"></span>
+              <span>Inactivo</span>
+            </span>
+          }
+        </div>
+      </ng-template>
+
+      <!-- Template Celda: Acciones (Fija a la derecha stickyEnd con permiso BRAND_EDIT) -->
+      <ng-template [dataTableColumn]="'Acciones'" let-brand>
+        <div class="flex items-center justify-end gap-1">
+          <!-- 1. Editar marca -->
+          <button
+            *hasPermission="'BRAND_EDIT'"
+            type="button"
+            (click)="onEditBrand(brand)"
+            matTooltip="Editar marca"
+            class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-primary-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-primary-300 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer"
+            [attr.aria-label]="'Editar datos de la marca ' + brand.name"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">edit</span>
+          </button>
+
+          <!-- 2. Actualizar logotipo en Cloudinary -->
+          <button
+            *hasPermission="'BRAND_EDIT'"
+            type="button"
+            (click)="onUpdateLogo(brand)"
+            matTooltip="Subir / cambiar logotipo"
+            class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:text-slate-400 dark:hover:text-indigo-300 dark:hover:bg-indigo-950/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-indigo-500 dark:focus-visible:ring-offset-slate-900 cursor-pointer"
+            [attr.aria-label]="'Actualizar logotipo de ' + brand.name"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">add_photo_alternate</span>
+          </button>
+
+          <!-- 3. Activar / Desactivar estado -->
+          <button
+            *hasPermission="'BRAND_EDIT'"
+            type="button"
+            (click)="onToggleStatus(brand)"
+            [matTooltip]="brand.isActive ? 'Desactivar marca' : 'Activar marca'"
+            [ngClass]="{
+              'text-slate-500 hover:text-danger-600 hover:bg-danger-50 dark:text-slate-400 dark:hover:text-danger-400 dark:hover:bg-danger-950/30': brand.isActive,
+              'text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 dark:text-slate-400 dark:hover:text-emerald-400 dark:hover:bg-emerald-950/30': !brand.isActive
+            }"
+            class="w-9 h-9 flex items-center justify-center rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-danger-500 dark:focus-visible:ring-offset-slate-900 cursor-pointer"
+            [attr.aria-label]="(brand.isActive ? 'Desactivar marca ' : 'Activar marca ') + brand.name"
+          >
+            <span class="mat-icon text-lg select-none" aria-hidden="true">
+              {{ brand.isActive ? 'block' : 'check_circle' }}
+            </span>
+          </button>
+        </div>
+      </ng-template>
+
+      <!-- Acción en Empty State -->
+      <div emptyAction *hasPermission="'BRAND_CREATE'">
+        <button
+          type="button"
+          (click)="onNewBrand()"
+          class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl bg-primary text-white hover:bg-primary-700 transition-colors shadow-xs cursor-pointer"
+        >
+          <span class="mat-icon text-base select-none">add</span>
+          <span>Crear Marca</span>
+        </button>
+      </div>
+    </app-data-table>
+
+    <!-- Barra de Paginación 1-based -->
+    <app-pagination
+      [page]="queryState.page()"
+      [pageSize]="queryState.pageSize()"
+      [total]="total()"
+      [totalPages]="totalPages()"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    />
+  </section>
 </div>
