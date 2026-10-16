@@ -159,6 +159,33 @@ export const routes: Routes = [
             './features/admin/inventory/categories/category-form/category-form.component'
           ).then((m) => m.CategoryFormComponent),
       },
+      {
+        path: 'inventory/products',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'PRODUCT_VIEW' },
+        loadComponent: () =>
+          import(
+            './features/admin/inventory/products/products-list/products-list.component'
+          ).then((m) => m.ProductsListComponent),
+      },
+      {
+        path: 'inventory/products/new',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'PRODUCT_CREATE' },
+        loadComponent: () =>
+          import(
+            './features/admin/inventory/products/product-form/product-form.component'
+          ).then((m) => m.ProductFormComponent),
+      },
+      {
+        path: 'inventory/products/:id/edit',
+        canActivate: [permissionGuard],
+        data: { requiredPermission: 'PRODUCT_EDIT' },
+        loadComponent: () =>
+          import(
+            './features/admin/inventory/products/product-form/product-form.component'
+          ).then((m) => m.ProductFormComponent),
+      },
     ],
   },
   {
