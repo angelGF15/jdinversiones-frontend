@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
+import { FormActionsDockComponent } from '../../../../shared/components/form-actions-dock/form-actions-dock.component';
 import { RolesService } from '../../../../core/services/roles/roles.service';
 import { PermissionsService } from '../../../../core/services/permissions/permissions.service';
 import { RoleListItem } from '../../../../core/models/role.models';
@@ -33,6 +34,7 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
     RouterModule,
     MatTooltipModule,
     HasPermissionDirective,
+    FormActionsDockComponent,
   ],
   templateUrl: './permission-matrix.component.html',
   styleUrls: ['./permission-matrix.component.css'],

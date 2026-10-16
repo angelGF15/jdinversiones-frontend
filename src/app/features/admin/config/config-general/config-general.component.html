@@ -322,52 +322,82 @@
         </section>
       }
 
-      <!-- Barra Inferior Fija de Acciones -->
-      <footer
-        class="sticky bottom-0 z-20 -mx-4 px-4 sm:-mx-6 sm:px-6 py-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800/80 rounded-b-2xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3"
+      <!-- Barra Inferior Flotante de Acciones Global (Custom Slots) -->
+      <app-form-actions-dock
+        [customStatus]="true"
+        [customActions]="true"
       >
-        <!-- Resumen de Cambios -->
-        <div class="flex items-center gap-2 text-xs sm:text-sm font-medium">
-          @if (isDirty()) {
-            <span class="mat-icon text-lg select-none text-amber-500 animate-pulse">pending</span>
-            <span class="text-slate-700 dark:text-slate-200">
-              Tienes <strong>{{ dirtyCount() }}</strong> {{ dirtyCount() === 1 ? 'cambio pendiente' : 'cambios pendientes' }} por guardar.
+        <!-- Slot de Estado Personalizado: Estado de Sincronización de Ajustes -->
+        <div dock-status class="flex items-center gap-3 min-w-0">
+          <div
+            class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
+            [ngClass]="
+              !isDirty() && form.valid
+                ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400 ring-1 ring-emerald-500/25'
+                : 'bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400 ring-1 ring-amber-500/25'
+            "
+          >
+            <span class="mat-icon text-lg sm:text-xl select-none" aria-hidden="true">
+              {{ !isDirty() && form.valid ? 'check_circle' : 'pending_actions' }}
             </span>
-          } @else {
-            <span class="mat-icon text-lg select-none text-emerald-500">check_circle</span>
-            <span class="text-slate-500 dark:text-slate-400">
-              Todas las configuraciones están sincronizadas con el servidor.
+          </div>
+          <div class="flex flex-col min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+                {{ isDirty() ? 'Ajustes modificados' : 'Configuración sincronizada' }}
+              </span>
+              @if (isDirty()) {
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20"
+                >
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                  {{ dirtyCount() }} {{ dirtyCount() === 1 ? 'cambio pendiente' : 'cambios pendientes' }}
+                </span>
+              } @else {
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20"
+                >
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  Al día
+                </span>
+              }
+            </div>
+            <span class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
+              {{ isDirty() ? 'Recuerda guardar los cambios para aplicarlos en todo el sistema.' : 'Todas las variables y umbrales coinciden con el servidor.' }}
             </span>
-          }
+          </div>
         </div>
 
-        <!-- Botones de Acción -->
-        <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+        <!-- Slot de Acciones Personalizado: Descartar y Guardar con Permisos -->
+        <div dock-actions class="flex items-center gap-2.5 sm:gap-3 w-full lg:w-auto justify-end flex-wrap sm:flex-nowrap flex-shrink-0">
+          <!-- Botón Descartar Cambios -->
           <button
             type="button"
             (click)="discard()"
-            [disabled]="!isDirty() || isSaving()"
-            class="inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            [disabled]="!isDirty() || isSaving() || isLoading()"
+            class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-[0.98] cursor-pointer"
           >
-            Descartar cambios
+            <span class="mat-icon text-base select-none" aria-hidden="true">undo</span>
+            <span>Descartar cambios</span>
           </button>
 
+          <!-- Botón Guardar Configuración -->
           <button
             *hasPermission="'CONFIG_EDIT'"
             type="submit"
-            [disabled]="!isDirty() || isSaving() || form.invalid"
-            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] text-xs sm:text-sm font-semibold rounded-xl text-white bg-primary hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900"
+            [disabled]="!isDirty() || isSaving() || form.invalid || isLoading()"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 min-h-[44px] rounded-xl bg-primary hover:bg-primary-700 active:scale-[0.98] text-white font-semibold text-xs sm:text-sm shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-offset-slate-900 cursor-pointer"
           >
             @if (isSaving()) {
-              <span class="mat-icon text-lg animate-spin select-none">refresh</span>
+              <span class="mat-icon text-lg animate-spin select-none" aria-hidden="true">refresh</span>
               <span>Guardando...</span>
             } @else {
-              <span class="mat-icon text-lg select-none">save</span>
+              <span class="mat-icon text-lg select-none" aria-hidden="true">save</span>
               <span>Guardar configuración</span>
             }
           </button>
         </div>
-      </footer>
+      </app-form-actions-dock>
     </form>
   }
 </div>

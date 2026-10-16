@@ -4,7 +4,15 @@
 
 :host {
   display: block;
+  position: sticky;
+  bottom: 1rem;
+  z-index: 30;
   width: 100%;
+  pointer-events: none;
+}
+
+:host .floating-actions-dock {
+  pointer-events: auto;
 }
 
 .mat-icon {

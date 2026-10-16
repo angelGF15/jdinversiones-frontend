@@ -25,6 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
 
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
+import { FormActionsDockComponent } from '../../../../shared/components/form-actions-dock/form-actions-dock.component';
 import { ConfigService } from '../../../../core/services/config/config.service';
 import { BrandingService } from '../../../../core/services/branding/branding.service';
 import {
@@ -59,6 +60,7 @@ export interface ConfigSettingGroupView {
     MatTooltipModule,
     MatDialogModule,
     HasPermissionDirective,
+    FormActionsDockComponent,
   ],
   templateUrl: './config-general.component.html',
   styleUrls: ['./config-general.component.css'],
