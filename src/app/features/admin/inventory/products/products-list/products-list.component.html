@@ -270,6 +270,7 @@
             type="button"
             (click)="onOpenStatusDialog(product)"
             matTooltip="Clic para cambiar estado"
+            [attr.aria-label]="'Cambiar estado del producto ' + product.name"
             class="group focus:outline-none cursor-pointer rounded-full transition-transform active:scale-95"
           >
             @switch ((product.statusCode || '').toLowerCase()) {

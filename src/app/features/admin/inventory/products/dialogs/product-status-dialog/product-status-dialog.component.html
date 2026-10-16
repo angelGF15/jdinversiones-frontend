@@ -32,7 +32,7 @@
   <!-- Resumen del Producto a Modificar -->
   <div class="my-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/60 flex items-center gap-3.5">
     <div class="w-12 h-12 rounded-xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 flex-shrink-0 flex items-center justify-center">
-      @if (data?.product?.primaryImageUrl) {
+      @if (data.product.primaryImageUrl) {
         <img
           [src]="data.product.primaryImageUrl!"
           [alt]="data.product.name"
@@ -46,16 +46,16 @@
     <div class="flex-1 min-w-0">
       <div class="flex items-center gap-2">
         <h4 class="text-sm font-bold text-slate-900 dark:text-white truncate">
-          {{ data?.product?.name }}
+          {{ data.product.name }}
         </h4>
       </div>
       <div class="flex items-center gap-2.5 mt-0.5 text-xs text-slate-500 dark:text-slate-400">
         <span class="font-mono font-semibold text-slate-700 dark:text-slate-300">
-          {{ data?.product?.sku }}
+          {{ data.product.sku }}
         </span>
         <span>•</span>
         <span class="font-mono">
-          L {{ data?.product?.price | number: '1.2-2' }}
+          L {{ data.product.price | number: '1.2-2' }}
         </span>
       </div>
     </div>
@@ -67,22 +67,22 @@
         class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold"
         [ngClass]="{
           'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-transparent':
-            data?.product?.statusCode === 'active',
+            data.product.statusCode === 'active',
           'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-transparent':
-            data?.product?.statusCode === 'draft',
+            data.product.statusCode === 'draft',
           'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-transparent':
-            data?.product?.statusCode !== 'active' && data?.product?.statusCode !== 'draft'
+            data.product.statusCode !== 'active' && data.product.statusCode !== 'draft'
         }"
       >
         <span
           class="w-1.5 h-1.5 rounded-full"
           [ngClass]="{
-            'bg-emerald-500': data?.product?.statusCode === 'active',
-            'bg-amber-500': data?.product?.statusCode === 'draft',
-            'bg-slate-400': data?.product?.statusCode !== 'active' && data?.product?.statusCode !== 'draft'
+            'bg-emerald-500': data.product.statusCode === 'active',
+            'bg-amber-500': data.product.statusCode === 'draft',
+            'bg-slate-400': data.product.statusCode !== 'active' && data.product.statusCode !== 'draft'
           }"
         ></span>
-        <span class="capitalize">{{ data?.product?.statusCode || 'Activo' }}</span>
+        <span class="capitalize">{{ data.product.statusCode || 'Activo' }}</span>
       </span>
     </div>
   </div>
@@ -105,7 +105,8 @@
     @for (option of statusOptions; track option.code) {
       <div
         (click)="selectStatus(option.code)"
-        role="button"
+        role="radio"
+        [attr.aria-checked]="selectedStatusCode() === option.code"
         tabindex="0"
         (keydown.space)="$event.preventDefault(); selectStatus(option.code)"
         (keydown.enter)="$event.preventDefault(); selectStatus(option.code)"
@@ -142,7 +143,7 @@
             <span class="text-sm font-bold text-slate-900 dark:text-white">
               {{ option.name }}
             </span>
-            @if (data?.product?.statusCode === option.code) {
+            @if (data.product.statusCode === option.code) {
               <span class="text-[10px] font-mono px-2 py-0.2 rounded-full bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
                 Estado actual
               </span>

@@ -144,7 +144,12 @@
                 [src]="img.imageUrl"
                 [alt]="img.altText || ('Foto ' + (idx + 1))"
                 (error)="onImageError(img.id)"
-                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+                tabindex="0"
+                role="button"
+                [attr.aria-label]="'Ampliar ' + (img.altText || ('foto ' + (idx + 1)))"
+                (keydown.enter)="openPreview(img.imageUrl)"
+                (keydown.space)="$event.preventDefault(); openPreview(img.imageUrl)"
+                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 (click)="openPreview(img.imageUrl)"
               />
             } @else {
@@ -229,7 +234,12 @@
             <img
               [src]="item.previewUrl"
               [alt]="item.altText"
-              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+              tabindex="0"
+              role="button"
+              [attr.aria-label]="'Ampliar ' + item.altText"
+              (keydown.enter)="openPreview(item.previewUrl)"
+              (keydown.space)="$event.preventDefault(); openPreview(item.previewUrl)"
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               (click)="openPreview(item.previewUrl)"
             />
 
