@@ -180,7 +180,8 @@ describe('BrandsListComponent', () => {
     );
   });
 
-  it('debe abrir modal informativo de conflicto si la desactivación falla con 409', () => {
+  it('debe abrir modal informativo de conflicto si la desactivación falla con 409 y navegar a productos si confirma', () => {
+    const router = TestBed.inject(Router);
     const dialogRefSpy = {
       afterClosed: () => of(true),
     } as MatDialogRef<ConfirmDialogComponent>;
@@ -207,9 +208,13 @@ describe('BrandsListComponent', () => {
         data: jasmine.objectContaining({
           title: 'No se puede desactivar la marca',
           message: jasmine.stringContaining('No se puede desactivar la marca'),
+          confirmText: 'Ver Productos',
         }),
       })
     );
+    expect(router.navigate).toHaveBeenCalledWith(['/admin/inventory/products'], {
+      queryParams: { brandId: 'brand-1' },
+    });
   });
 
   it('debe abrir BrandFormDialogComponent en onNewBrand() y anteponer la marca creada', () => {

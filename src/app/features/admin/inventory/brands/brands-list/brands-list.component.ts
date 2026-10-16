@@ -298,17 +298,28 @@ export class BrandsListComponent implements OnInit {
               : err.error?.message ?? 'No se pudo actualizar el estado de la marca.';
 
             if (err.status === 409) {
-              this.dialog.open(ConfirmDialogComponent, {
+              const conflictRef = this.dialog.open(ConfirmDialogComponent, {
                 width: '460px',
                 data: {
                   title: 'No se puede desactivar la marca',
-                  message: `${msg}\n\nDebes desvincular o archivar los productos vinculados antes de poder desactivar esta marca del catálogo.`,
-                  confirmText: 'Entendido',
+                  message: `${msg}\n\nPara desactivarla, primero debes reasignar o desvincular dichos productos del catálogo.`,
+                  confirmText: 'Ver Productos',
                   cancelText: 'Cerrar',
                   icon: 'warning',
                   isDestructive: false,
                 },
               });
+
+              conflictRef
+                .afterClosed()
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe((viewProducts) => {
+                  if (viewProducts) {
+                    this.router.navigate(['/admin/inventory/products'], {
+                      queryParams: { brandId: brand.id },
+                    });
+                  }
+                });
             } else {
               this.snackBar.open(msg, 'Cerrar', {
                 duration: 5000,
