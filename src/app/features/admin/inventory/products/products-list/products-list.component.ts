@@ -27,6 +27,7 @@ import {
   ProductListItem,
   ProductListQuery,
   ProductStatus,
+  ProductDetail,
 } from '../../../../../core/models/product.models';
 import { CategoryChild } from '../../../../../core/models/category.models';
 import { CatalogBrand } from '../../../../../core/models/brand.models';
@@ -43,6 +44,7 @@ import {
   ConfirmDialogComponent,
 } from '../../../../../shared/components';
 import { ListQueryState } from '../../../../../shared/utils/list-query-state';
+import { ProductStatusDialogComponent } from '../dialogs/product-status-dialog/product-status-dialog.component';
 
 @Component({
   selector: 'app-products-list',
@@ -360,6 +362,39 @@ export class ProductsListComponent implements OnInit {
             });
           },
         });
+      });
+  }
+
+  /**
+   * Abre el diálogo especializado de cambio rápido de estado (`ProductStatusDialogComponent`),
+   * permitiendo seleccionar entre Activo, Borrador e Inactivo con previsualización del producto.
+   */
+  public onOpenStatusDialog(product: ProductListItem): void {
+    const dialogRef = this.dialog.open(ProductStatusDialogComponent, {
+      width: '480px',
+      data: {
+        product,
+        statuses: this.statuses(),
+      },
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((updatedProduct?: ProductDetail | null) => {
+        if (!updatedProduct) return;
+
+        this.items.update((products) =>
+          products.map((p) =>
+            p.id === updatedProduct.id
+              ? {
+                  ...p,
+                  statusCode: updatedProduct.statusCode,
+                  statusId: updatedProduct.statusId,
+                }
+              : p
+          )
+        );
       });
   }
 

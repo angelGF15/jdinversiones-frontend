@@ -19,6 +19,7 @@ import {
 import { CategoryChild } from '../../../../../core/models/category.models';
 import { CatalogBrand } from '../../../../../core/models/brand.models';
 import { ConfirmDialogComponent } from '../../../../../shared/components';
+import { ProductStatusDialogComponent } from '../dialogs/product-status-dialog/product-status-dialog.component';
 
 describe('ProductsListComponent', () => {
   let component: ProductsListComponent;
@@ -265,6 +266,38 @@ describe('ProductsListComponent', () => {
         'Cerrar',
         jasmine.any(Object)
       );
+    });
+
+    it('debe abrir ProductStatusDialogComponent y actualizar items al confirmar', () => {
+      const updatedDetail: ProductDetail = {
+        ...mockProducts[0],
+        statusCode: 'draft',
+        statusId: 'st-2',
+        shortDescription: null,
+        description: null,
+        metaTitle: null,
+        metaDescription: null,
+        images: [],
+        attributes: [],
+      };
+
+      dialogSpy.open.and.returnValue({
+        afterClosed: () => of(updatedDetail),
+      } as MatDialogRef<any>);
+
+      component.onOpenStatusDialog(mockProducts[0]);
+
+      expect(dialogSpy.open).toHaveBeenCalledWith(
+        ProductStatusDialogComponent,
+        jasmine.objectContaining({
+          data: jasmine.objectContaining({
+            product: mockProducts[0],
+          }),
+        })
+      );
+
+      const updatedItem = component.items().find((p) => p.id === 'prod-1');
+      expect(updatedItem?.statusCode).toBe('draft');
     });
   });
 

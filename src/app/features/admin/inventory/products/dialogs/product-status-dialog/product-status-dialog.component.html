@@ -1,0 +1,212 @@
+<div class="product-status-dialog flex flex-col max-w-lg w-full p-6 bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200/80 dark:border-slate-800">
+  <!-- Cabecera del Diálogo Modal -->
+  <div class="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+    <div class="flex items-center gap-3">
+      <div
+        aria-hidden="true"
+        class="w-10 h-10 rounded-2xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-xs flex-shrink-0"
+      >
+        <span class="mat-icon text-xl select-none leading-none">swap_horiz</span>
+      </div>
+      <div>
+        <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+          Cambiar Estado del Producto
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          Modifica la visibilidad y disponibilidad del artículo en el catálogo comercial.
+        </p>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      (click)="onCancel()"
+      [disabled]="isSubmitting()"
+      class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer focus:outline-none"
+      aria-label="Cerrar modal"
+    >
+      <span class="mat-icon text-lg select-none leading-none">close</span>
+    </button>
+  </div>
+
+  <!-- Resumen del Producto a Modificar -->
+  <div class="my-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/60 flex items-center gap-3.5">
+    <div class="w-12 h-12 rounded-xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 flex-shrink-0 flex items-center justify-center">
+      @if (data?.product?.primaryImageUrl) {
+        <img
+          [src]="data.product.primaryImageUrl!"
+          [alt]="data.product.name"
+          class="w-full h-full object-cover"
+        />
+      } @else {
+        <span class="mat-icon text-xl text-slate-400 select-none">inventory_2</span>
+      }
+    </div>
+
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-2">
+        <h4 class="text-sm font-bold text-slate-900 dark:text-white truncate">
+          {{ data?.product?.name }}
+        </h4>
+      </div>
+      <div class="flex items-center gap-2.5 mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+        <span class="font-mono font-semibold text-slate-700 dark:text-slate-300">
+          {{ data?.product?.sku }}
+        </span>
+        <span>•</span>
+        <span class="font-mono">
+          L {{ data?.product?.price | number: '1.2-2' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Badge Estado Actual -->
+    <div class="flex flex-col items-end flex-shrink-0">
+      <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-0.5">Actual</span>
+      <span
+        class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold"
+        [ngClass]="{
+          'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-transparent':
+            data?.product?.statusCode === 'active',
+          'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-transparent':
+            data?.product?.statusCode === 'draft',
+          'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-transparent':
+            data?.product?.statusCode !== 'active' && data?.product?.statusCode !== 'draft'
+        }"
+      >
+        <span
+          class="w-1.5 h-1.5 rounded-full"
+          [ngClass]="{
+            'bg-emerald-500': data?.product?.statusCode === 'active',
+            'bg-amber-500': data?.product?.statusCode === 'draft',
+            'bg-slate-400': data?.product?.statusCode !== 'active' && data?.product?.statusCode !== 'draft'
+          }"
+        ></span>
+        <span class="capitalize">{{ data?.product?.statusCode || 'Activo' }}</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Mensaje de Error en caso de falla de API -->
+  @if (errorMessage()) {
+    <div
+      role="alert"
+      class="mb-3 p-3 rounded-xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 text-xs font-medium flex items-center gap-2 animate-fadeIn"
+    >
+      <span class="mat-icon text-base text-danger-500 select-none flex-shrink-0">error_outline</span>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+
+  <!-- Tarjetas Interactivas de Selección de Estado -->
+  <fieldset class="space-y-2.5 my-2">
+    <legend class="sr-only">Selecciona el nuevo estado del producto</legend>
+
+    @for (option of statusOptions; track option.code) {
+      <div
+        (click)="selectStatus(option.code)"
+        role="button"
+        tabindex="0"
+        (keydown.space)="$event.preventDefault(); selectStatus(option.code)"
+        (keydown.enter)="$event.preventDefault(); selectStatus(option.code)"
+        class="status-card group relative p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer flex items-start gap-3.5 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        [ngClass]="{
+          'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20 shadow-xs ring-1 ring-emerald-500/30':
+            selectedStatusCode() === option.code && option.code === 'active',
+          'border-amber-500 bg-amber-50/40 dark:bg-amber-950/20 shadow-xs ring-1 ring-amber-500/30':
+            selectedStatusCode() === option.code && option.code === 'draft',
+          'border-slate-500 bg-slate-100/60 dark:bg-slate-800/40 shadow-xs ring-1 ring-slate-500/30':
+            selectedStatusCode() === option.code && option.code === 'inactive',
+          'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900':
+            selectedStatusCode() !== option.code
+        }"
+      >
+        <!-- Icono de Estado -->
+        <div
+          class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-105"
+          [ngClass]="{
+            'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300':
+              option.code === 'active',
+            'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300':
+              option.code === 'draft',
+            'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300':
+              option.code === 'inactive'
+          }"
+        >
+          <span class="mat-icon text-lg select-none leading-none">{{ option.icon }}</span>
+        </div>
+
+        <!-- Contenido y Descripción -->
+        <div class="flex-1 min-w-0 pr-6">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold text-slate-900 dark:text-white">
+              {{ option.name }}
+            </span>
+            @if (data?.product?.statusCode === option.code) {
+              <span class="text-[10px] font-mono px-2 py-0.2 rounded-full bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                Estado actual
+              </span>
+            }
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+            {{ option.description }}
+          </p>
+        </div>
+
+        <!-- Radio Indicator / Checkmark -->
+        <div class="absolute top-3.5 right-3.5">
+          <div
+            class="w-5 h-5 rounded-full border flex items-center justify-center transition-all"
+            [ngClass]="{
+              'border-emerald-600 bg-emerald-600 text-white':
+                selectedStatusCode() === option.code && option.code === 'active',
+              'border-amber-600 bg-amber-600 text-white':
+                selectedStatusCode() === option.code && option.code === 'draft',
+              'border-slate-600 bg-slate-700 text-white':
+                selectedStatusCode() === option.code && option.code === 'inactive',
+              'border-slate-300 dark:border-slate-700 bg-transparent':
+                selectedStatusCode() !== option.code
+            }"
+          >
+            @if (selectedStatusCode() === option.code) {
+              <span class="mat-icon text-xs leading-none select-none font-bold">check</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </fieldset>
+
+  <!-- Botones de Acción del Modal -->
+  <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-2">
+    <button
+      type="button"
+      (click)="onCancel()"
+      [disabled]="isSubmitting()"
+      class="px-4 py-2 min-h-[40px] text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-2xs transition-all cursor-pointer focus:outline-none"
+    >
+      Cancelar
+    </button>
+
+    <button
+      type="button"
+      (click)="onSubmit()"
+      [disabled]="!hasChanged() || isSubmitting()"
+      class="inline-flex items-center justify-center gap-2 px-5 py-2 min-h-[40px] text-xs sm:text-sm font-semibold rounded-xl text-white shadow-sm transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+      [ngClass]="{
+        'bg-emerald-600 hover:bg-emerald-700': selectedStatusCode() === 'active',
+        'bg-amber-600 hover:bg-amber-700': selectedStatusCode() === 'draft',
+        'bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600':
+          selectedStatusCode() === 'inactive'
+      }"
+    >
+      @if (isSubmitting()) {
+        <span class="mat-icon text-base animate-spin select-none" aria-hidden="true">refresh</span>
+        <span>Actualizando...</span>
+      } @else {
+        <span class="mat-icon text-base select-none" aria-hidden="true">save</span>
+        <span>Actualizar a {{ currentOption().name }}</span>
+      }
+    </button>
+  </div>
+</div>
