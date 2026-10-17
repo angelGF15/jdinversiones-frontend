@@ -16,16 +16,6 @@
   <header
     class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-200/60 dark:border-slate-800/60">
     <div class="flex items-center gap-3">
-      <div aria-hidden="true"
-        class="w-11 h-11 rounded-xl flex items-center justify-center border shadow-xs flex-shrink-0 transition-colors"
-        [ngClass]="{
-          'bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 border-primary-100 dark:border-primary-800/40': !isEditMode(),
-          'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800/40': isEditMode()
-        }">
-        <span class="mat-icon text-2xl select-none leading-none">
-          {{ isEditMode() ? 'edit' : 'local_offer' }}
-        </span>
-      </div>
       <div>
         <div class="flex items-center gap-2.5 flex-wrap">
           <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -100,10 +90,6 @@
         <section
           class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-5">
           <div class="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-            <div aria-hidden="true"
-              class="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-900/50 flex-shrink-0">
-              <span class="mat-icon text-lg select-none leading-none">edit_note</span>
-            </div>
             <div>
               <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                 Datos de la Categoría
@@ -293,10 +279,6 @@
           <div
             class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
             <div class="flex items-center gap-3">
-              <div aria-hidden="true"
-                class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-900/50 flex-shrink-0">
-                <span class="mat-icon text-lg select-none leading-none">account_tree</span>
-              </div>
               <div>
                 <div class="flex items-center gap-2">
                   <h2 id="subcategories-section-title"
@@ -561,8 +543,7 @@
         @if (!isEditMode()) {
         <section aria-label="Guía de estructura del catálogo"
           class="form-section-card p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-4">
-          <div class="flex items-center gap-2.5 text-primary dark:text-primary-300">
-            <span class="mat-icon text-xl select-none flex-shrink-0" aria-hidden="true">lightbulb</span>
+          <div class="pb-3 border-b border-slate-100 dark:border-slate-800">
             <h3 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
               Organización del Catálogo
             </h3>

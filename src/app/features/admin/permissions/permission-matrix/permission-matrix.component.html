@@ -3,12 +3,6 @@
   <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div class="space-y-1">
       <div class="flex items-center gap-2.5">
-        <div
-          aria-hidden="true"
-          class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm"
-        >
-          <span class="mat-icon text-xl select-none">key</span>
-        </div>
         <div>
           <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Matriz de Permisos
@@ -145,9 +139,6 @@
           <!-- Cabecera del Módulo -->
           <div class="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800 flex-wrap">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 flex-shrink-0">
-                <span class="mat-icon text-lg select-none leading-none">{{ getModuleIcon(module.moduleCode) }}</span>
-              </div>
               <div class="min-w-0">
                 <h2 class="text-sm font-bold text-slate-900 dark:text-white truncate">
                   {{ module.moduleName }}

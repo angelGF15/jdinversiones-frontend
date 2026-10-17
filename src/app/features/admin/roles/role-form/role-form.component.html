@@ -17,12 +17,6 @@
   <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div class="space-y-1">
       <div class="flex items-center gap-2.5">
-        <div aria-hidden="true"
-          class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40 shadow-sm">
-          <span class="mat-icon text-xl select-none">
-            {{ isEditMode() ? 'manage_accounts' : 'admin_panel_settings' }}
-          </span>
-        </div>
         <div>
           <div class="flex items-center gap-2 flex-wrap">
             <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -92,10 +86,6 @@
           class="form-section-card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
           <!-- Header de la sección -->
           <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
-            <div
-              class="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-950/40 text-primary dark:text-primary-300 flex items-center justify-center border border-primary-100 dark:border-primary-800/40">
-              <span class="mat-icon text-lg select-none">badge</span>
-            </div>
             <div>
               <h2 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                 Identidad del Rol
@@ -236,9 +226,8 @@
         <!-- Guía de Alta de Rol (Modo Creación) -->
         <section
           class="form-section-card p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
-          <div class="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
-            <span class="mat-icon text-primary select-none text-xl">info</span>
-            <h3 class="text-sm font-bold text-slate-900 dark:text-white">
+          <div class="pb-3 border-b border-slate-100 dark:border-slate-800">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
               Guía de Alta de Roles
             </h3>
           </div>
