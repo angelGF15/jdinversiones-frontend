@@ -90,6 +90,7 @@ describe('ProductFormComponent', () => {
       'create',
       'update',
       'setStatus',
+      'uploadImage',
     ]);
     categoriesServiceSpy = jasmine.createSpyObj('CategoriesService', ['listParents']);
     brandsServiceSpy = jasmine.createSpyObj('BrandsService', ['listActive']);
@@ -233,6 +234,61 @@ describe('ProductFormComponent', () => {
         })
       );
       expect(snackBarSpy.open).toHaveBeenCalled();
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/admin/inventory/products']);
+    });
+
+    it('debe subir las imágenes encoladas secuencialmente tras crear el producto y luego redirigir', () => {
+      productsServiceSpy.create.and.returnValue(of(mockProductDetail));
+      productsServiceSpy.uploadImage.and.returnValue(of(mockProductDetail));
+
+      const mockFile1 = new File(['img1'], 'iphone-front.webp', { type: 'image/webp' });
+      const mockFile2 = new File(['img2'], 'iphone-back.webp', { type: 'image/webp' });
+
+      component.onLocalQueueChange([
+        {
+          id: 'local-1',
+          file: mockFile1,
+          previewUrl: 'blob:1',
+          isPrimary: false,
+          altText: 'iphone-front.webp',
+          displayOrder: 1,
+        },
+        {
+          id: 'local-2',
+          file: mockFile2,
+          previewUrl: 'blob:2',
+          isPrimary: true,
+          altText: 'iphone-back.webp',
+          displayOrder: 2,
+        },
+      ]);
+
+      component.form.patchValue({
+        sku: 'IPH-17PM',
+        name: 'iPhone 17 Pro Max',
+        categoryId: 'cat-1',
+        brandId: 'brand-1',
+        price: 24000,
+      });
+
+      component.onSubmit();
+
+      expect(productsServiceSpy.create).toHaveBeenCalled();
+      expect(productsServiceSpy.uploadImage).toHaveBeenCalledTimes(2);
+      expect(productsServiceSpy.uploadImage).toHaveBeenCalledWith(
+        'prod-1',
+        mockFile1,
+        false,
+        'iphone-front.webp',
+        1
+      );
+      expect(productsServiceSpy.uploadImage).toHaveBeenCalledWith(
+        'prod-1',
+        mockFile2,
+        true,
+        'iphone-back.webp',
+        2
+      );
       expect(routerSpy.navigate).toHaveBeenCalledWith(['/admin/inventory/products']);
     });
 

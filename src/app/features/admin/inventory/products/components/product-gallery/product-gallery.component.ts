@@ -62,8 +62,8 @@ export class ProductGalleryComponent implements OnInit {
   /** Emite cuando el producto completo es actualizado por el backend (en modo edición). */
   public readonly productUpdated = output<ProductDetail>();
 
-  /** Emite la cola de archivos locales en modo creación para subida posterior. */
-  public readonly localQueueChange = output<File[]>();
+  /** Emite la cola de archivos locales con sus metadatos en modo creación para subida posterior. */
+  public readonly localQueueChange = output<LocalQueuedImage[]>();
 
   // --- Signals Locales de Estado ---
   public readonly galleryImages = signal<ProductImage[]>([]);
@@ -248,7 +248,7 @@ export class ProductGalleryComponent implements OnInit {
     }
 
     this.localQueue.update((list) => [...list, ...newQueued]);
-    this.localQueueChange.emit(this.localQueue().map((item) => item.file));
+    this.localQueueChange.emit(this.localQueue());
 
     this.snackBar.open(
       `${files.length} ${files.length === 1 ? 'imagen añadida' : 'imágenes añadidas'} a la cola de subida`,
@@ -311,6 +311,7 @@ export class ProductGalleryComponent implements OnInit {
         isPrimary: item.id === queuedId,
       }))
     );
+    this.localQueueChange.emit(this.localQueue());
   }
 
   /**
@@ -374,14 +375,24 @@ export class ProductGalleryComponent implements OnInit {
    */
   public onDeleteLocalImage(queuedId: string): void {
     this.localQueue.update((list) => {
-      const filtered = list.filter((item) => item.id !== queuedId);
+      const filtered = list
+        .filter((item) => item.id !== queuedId)
+        .map((item, idx) => ({ ...item, displayOrder: idx + 1 }));
       // Si eliminamos la principal y quedan más, marcar la primera como principal
       if (filtered.length > 0 && !filtered.some((item) => item.isPrimary)) {
         filtered[0].isPrimary = true;
       }
       return filtered;
     });
-    this.localQueueChange.emit(this.localQueue().map((item) => item.file));
+    this.localQueueChange.emit(this.localQueue());
+  }
+
+  /**
+   * Limpia la cola de imágenes locales (por ejemplo al descartar el formulario).
+   */
+  public clearLocalQueue(): void {
+    this.localQueue.set([]);
+    this.localQueueChange.emit([]);
   }
 
   public openPreview(url: string): void {

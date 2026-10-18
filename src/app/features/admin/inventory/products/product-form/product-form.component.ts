@@ -4,6 +4,7 @@ import {
   DestroyRef,
   inject,
   signal,
+  viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -33,7 +34,10 @@ import {
 } from '../../../../../core/models/product.models';
 import { CategoryChild } from '../../../../../core/models/category.models';
 import { CatalogBrand } from '../../../../../core/models/brand.models';
-import { ProductGalleryComponent } from '../components/product-gallery/product-gallery.component';
+import {
+  ProductGalleryComponent,
+  LocalQueuedImage,
+} from '../components/product-gallery/product-gallery.component';
 import { ProductAttributesEditorComponent } from '../components/product-attributes-editor/product-attributes-editor.component';
 import { FormActionsDockComponent } from '../../../../../shared/components/form-actions-dock/form-actions-dock.component';
 
@@ -89,6 +93,8 @@ export class ProductFormComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
+  private readonly galleryComponent = viewChild(ProductGalleryComponent);
+
   // --- Signals de Estado ---
   public readonly isEditMode = signal<boolean>(false);
   public readonly productId = signal<string | null>(null);
@@ -99,7 +105,7 @@ export class ProductFormComponent implements OnInit {
   public readonly isCustomSlug = signal<boolean>(false);
   public readonly isImageBroken = signal<boolean>(false);
   public readonly currentAttributes = signal<ProductAttributeInput[] | null>(null);
-  public readonly queuedImages = signal<File[]>([]);
+  public readonly queuedImages = signal<LocalQueuedImage[]>([]);
   public readonly formCompletion = signal<FormCompletionState>({
     percentage: 0,
     completedCount: 0,
@@ -149,7 +155,7 @@ export class ProductFormComponent implements OnInit {
     this.product.set(updated);
   }
 
-  public onLocalQueueChange(files: File[]): void {
+  public onLocalQueueChange(files: LocalQueuedImage[]): void {
     this.queuedImages.set(files);
   }
 
@@ -304,6 +310,7 @@ export class ProductFormComponent implements OnInit {
    */
   public isDirty(): boolean {
     if (JSON.stringify(this.form.getRawValue()) !== this.baselineFormJson) return true;
+    if (!this.isEditMode() && this.queuedImages().length > 0) return true;
     const attrs = this.currentAttributes();
     return attrs !== null && this.serializeAttributes(attrs) !== this.baselineAttrsJson;
   }
@@ -347,6 +354,8 @@ export class ProductFormComponent implements OnInit {
         metaDescription: '',
       });
       this.currentAttributes.set([]);
+      this.queuedImages.set([]);
+      this.galleryComponent()?.clearLocalQueue();
       this.updateFormCompletion();
     }
   }
@@ -564,6 +573,7 @@ export class ProductFormComponent implements OnInit {
       attributes: this.currentAttributes() ? this.currentAttributes()! : undefined,
     };
 
+    const imagesToUpload = [...this.queuedImages()];
     this.isSubmitting.set(true);
 
     this.productsService
@@ -571,23 +581,96 @@ export class ProductFormComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
-          this.isSubmitting.set(false);
-          this.snackBar.open(
-            `Producto "${created.name}" creado exitosamente.`,
-            'Cerrar',
-            {
-              duration: 3500,
-              horizontalPosition: 'right',
-              verticalPosition: 'top',
-            }
-          );
-          this.router.navigate(['/admin/inventory/products']);
+          if (imagesToUpload.length === 0) {
+            this.isSubmitting.set(false);
+            this.snackBar.open(
+              `Producto "${created.name}" creado exitosamente.`,
+              'Cerrar',
+              {
+                duration: 3500,
+                horizontalPosition: 'right',
+                verticalPosition: 'top',
+              }
+            );
+            this.router.navigate(['/admin/inventory/products']);
+            return;
+          }
+
+          this.uploadQueuedImagesForCreatedProduct(created, imagesToUpload);
         },
         error: (err: HttpErrorResponse) => {
           this.isSubmitting.set(false);
           this.handleHttpError(err, 'Ocurrió un error al crear el producto.');
         },
       });
+  }
+
+  private uploadQueuedImagesForCreatedProduct(
+    created: ProductDetail,
+    queue: LocalQueuedImage[],
+  ): void {
+    const gallery = this.galleryComponent();
+    gallery?.isUploading.set(true);
+    gallery?.uploadProgress.set(10);
+
+    let index = 0;
+    const total = queue.length;
+
+    const uploadNext = () => {
+      if (index >= total) {
+        gallery?.isUploading.set(false);
+        gallery?.uploadProgress.set(100);
+        this.isSubmitting.set(false);
+        this.snackBar.open(
+          `Producto "${created.name}" creado exitosamente con ${total} ${total === 1 ? 'imagen' : 'imágenes'}.`,
+          'Cerrar',
+          {
+            duration: 3500,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          }
+        );
+        this.router.navigate(['/admin/inventory/products']);
+        return;
+      }
+
+      const item = queue[index];
+      this.productsService
+        .uploadImage(
+          created.id,
+          item.file,
+          item.isPrimary,
+          item.altText,
+          item.displayOrder ?? index + 1,
+        )
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            index++;
+            gallery?.uploadProgress.set(Math.round((index / total) * 100));
+            uploadNext();
+          },
+          error: (err: HttpErrorResponse) => {
+            gallery?.isUploading.set(false);
+            this.isSubmitting.set(false);
+            const msg = Array.isArray(err.error?.message)
+              ? err.error.message.join(' · ')
+              : err.error?.message ?? `Error al subir "${item.file.name}".`;
+            this.snackBar.open(
+              `El producto fue creado, pero ocurrió un error al subir algunas imágenes: ${msg}`,
+              'Cerrar',
+              {
+                duration: 5000,
+                horizontalPosition: 'right',
+                verticalPosition: 'top',
+              }
+            );
+            this.router.navigate(['/admin/inventory/products', created.id, 'edit']);
+          },
+        });
+    };
+
+    uploadNext();
   }
 
   private handleEditSubmit(): void {
