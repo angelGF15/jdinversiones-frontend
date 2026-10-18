@@ -213,44 +213,26 @@
       [customActions]="true"
     >
       <!-- Slot de Estado Personalizado: Métricas y Sincronización de la Matriz -->
-      <div dock-status class="flex items-center gap-3 min-w-0">
-        <div
-          class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
-          [ngClass]="
-            !isDirty()
-              ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400 ring-1 ring-emerald-500/25'
-              : 'bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400 ring-1 ring-amber-500/25'
-          "
-        >
-          <span class="mat-icon text-lg sm:text-xl select-none" aria-hidden="true">
-            {{ !isDirty() ? 'verified_user' : 'pending_actions' }}
+      <div dock-status class="flex flex-col min-w-0 gap-0.5">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+            {{ isDirty() ? 'Modificaciones sin guardar' : 'Matriz sincronizada' }}
           </span>
-        </div>
-        <div class="flex flex-col min-w-0">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
-              {{ isDirty() ? 'Modificaciones sin guardar' : 'Matriz sincronizada' }}
+          @if (isDirty()) {
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-amber-600 dark:text-amber-400">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+              Cambios pendientes
             </span>
-            @if (isDirty()) {
-              <span
-                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20"
-              >
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                Cambios pendientes
-              </span>
-            } @else {
-              <span
-                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20"
-              >
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                Al día
-              </span>
-            }
-          </div>
-          <span class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
-            <strong class="font-semibold text-slate-700 dark:text-slate-200">{{ selectedCount() }}</strong> de {{ totalPermissions() }} permisos asignados al rol
-          </span>
+          } @else {
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              Al día
+            </span>
+          }
         </div>
+        <span class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">
+          <strong class="font-semibold text-slate-700 dark:text-slate-200">{{ selectedCount() }}</strong> de {{ totalPermissions() }} permisos asignados al rol
+        </span>
       </div>
 
       <!-- Slot de Acciones Personalizado: Control de Permisos y Botones -->
